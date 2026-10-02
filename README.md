@@ -37,10 +37,6 @@ El build genera `llms.txt`, `llms-full.txt`, `skill.md` y el Markdown de cada p�
 
 El sitio corre en Olimpia: proyecto `olimpia-internal`, app `docs` (`https://docs-1078.olimpia.cc`), construida con el `Dockerfile` (Blume + Caddy sirviendo `dist/`).
 
-Olimpia no deja usar sus propios dominios (`olimpia.dev`, `olimpia.cc`) como dominio propio de una app, y el plan Free de Cloudflare no permite reescribir el Host con una Origin Rule. Por eso `docs.olimpia.dev` es un Worker (`edge/`) en la ruta `docs.olimpia.dev/*` que reenvía a la app y cachea las respuestas en el edge 5 minutos. El DNS es un `AAAA docs 100::` con proxy, igual que `builder.olimpia.dev`.
+`docs.olimpia.dev` es un dominio propio de esa app (Cloudflare for SaaS en la zona `olimpia.cc`, con un `CNAME docs → domains.olimpia.cc` solo DNS en la zona `olimpia.dev`). La API de Olimpia no acepta subdominios de `olimpia.dev`, así que se dio de alta a mano: el custom hostname con `cf custom-hostnames create --zone olimpia.cc` y la fila en `app_domains` de la base de la plataforma.
 
-```bash
-cd edge && bun install && cf deploy
-```
-
-Para desplegar una versión nueva del sitio, subí el código a la app `docs` (desde tu agente: "desplegá esta carpeta en la app docs de olimpia-internal"). Los cambios se ven en docs.olimpia.dev en hasta 5 minutos.
+Para desplegar una versión nueva, subí el código a la app `docs` (desde tu agente: "desplegá esta carpeta en la app docs de olimpia-internal").
