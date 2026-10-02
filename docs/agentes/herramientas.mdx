@@ -109,15 +109,15 @@ Cancela un deploy en cola o construyendo (el último por defecto).
 
 ### `list_templates`
 
-Busca en el catálogo de templates (los de Dokploy más los de Olimpia). Devuelve hasta 25 resultados con `id`, `name`, `description` y `available`. Los disponibles traen `image`, `postgres` y `redis` (qué bases crea); los demás, `reason` (`volumes`, `services`, `command`, `files`, `extension`…).
+Lista o busca los templates que se pueden deployar, con `id`, `name`, `description`, `image`, `postgres` y `redis` (qué bases crea `deploy_template`).
 
 | Parámetro | Tipo | |
 | --- | --- | --- |
-| `search` | string | Opcional. Palabras a buscar en el nombre, la descripción y las etiquetas. Sin búsqueda, lista solo los disponibles. |
+| `search` | string | Opcional. Palabras a buscar en el nombre, la descripción y las etiquetas. Sin búsqueda, lista todo el catálogo. |
 
 ### `deploy_template`
 
-Despliega un template disponible como una app nueva: crea la base Postgres y el Redis si el template los necesita, genera los secretos y las URLs como variables (se ven con `get_env`) y arranca el primer deploy. Ver [Templates](/apps/templates).
+Despliega un template como una app nueva: crea la base Postgres y el Redis si el template los necesita, genera los secretos y las URLs como variables (se ven con `get_env`) y arranca el primer deploy. Ver [Templates](/apps/templates).
 
 | Parámetro | Tipo | |
 | --- | --- | --- |

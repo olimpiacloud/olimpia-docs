@@ -1,6 +1,6 @@
 ---
 title: Templates
-description: Más de 500 herramientas open source, como n8n, cal.com o Infisical, listas para deployar con su base y sus secretos configurados.
+description: Herramientas open source como n8n, cal.com o Infisical, listas para deployar con su base y sus secretos configurados.
 sidebar:
   icon: layout-grid
 ---
@@ -21,19 +21,9 @@ Un template es una herramienta open source que ya viene preparada para Olimpia: 
 
 ## El catálogo
 
-El catálogo tiene los más de 500 [templates de Dokploy](https://github.com/Dokploy/templates) y algunos preparados por Olimpia. Cada tarjeta muestra si el template usa Postgres o Redis.
+El catálogo reúne los [templates de Dokploy](https://github.com/Dokploy/templates) que corren como **una sola app** en Olimpia (un contenedor web que guarda sus datos en Postgres, en Redis o en ningún lado) y algunos preparados por Olimpia. Cada tarjeta muestra si el template usa Postgres o Redis.
 
-Hoy se pueden deployar los que corren como **una sola app**: un contenedor web que guarda sus datos en Postgres, en Redis o en ningún lado. El resto aparece como **Pronto**, con el motivo:
-
-| Motivo | Qué falta |
-| --- | --- |
-| **Necesita disco persistente** | Guarda archivos en el disco del contenedor, que en Olimpia se borra en cada deploy. |
-| **Usa varios contenedores** | Son varios servicios (por ejemplo, un worker aparte) o expone más de un puerto. |
-| **Necesita un comando propio** | Cambia el comando con el que arranca la imagen. |
-| **Necesita archivos de configuración** | Monta archivos de configuración en el contenedor. |
-| **Necesita una extensión de Postgres** | Usa pgvector, PostGIS o TimescaleDB. |
-
-Los volúmenes persistentes son lo próximo: con ellos se habilita la mayoría de los que hoy figuran como **Pronto**.
+Si la herramienta que buscás no está, probablemente necesita disco persistente, varios contenedores o archivos de configuración montados, algo que las apps de Olimpia todavía no soportan.
 
 ## Qué se crea
 
