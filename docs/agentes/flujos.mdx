@@ -55,6 +55,16 @@ query_postgres(database: "main", sql: "update users set plan = 'pro' where id = 
 
 Antes de cualquier sentencia que borre o reescriba datos, el agente tiene que pedir confirmación.
 
+## Backups de una base
+
+```txt
+set_backups(database: "main", bucket: "backups")              # un bucket de Olimpia del mismo proyecto
+run_backup(database: "main")                                  # verifica que funcione
+set_backups(database: "main", schedule: "0 */6 * * *")        # después, cambiar solo la frecuencia
+```
+
+Para guardarlos en un S3 propio, en vez de `bucket` se pasan `endpoint`, `s3_bucket`, `access_key_id` y `secret_access_key`. `get_backups` muestra la configuración y los últimos archivos.
+
 ## Dominio propio
 
 ```txt

@@ -1,6 +1,6 @@
 ---
 title: Herramientas
-description: Referencia de las 27 herramientas del servidor MCP de Olimpia, con sus parámetros y qué devuelven.
+description: Referencia de las 31 herramientas del servidor MCP de Olimpia, con sus parámetros y qué devuelven.
 sidebar:
   icon: wrench
 ---
@@ -187,6 +187,34 @@ Corre SQL como el usuario dueño de la base (no superusuario).
 | `database` | string | Nombre o id de la base. |
 | `sql` | string | En lectura, una sola consulta `SELECT`, `WITH` o `VALUES` (hasta 200 filas). En escritura, cualquier sentencia, varias separadas por `;`, en una transacción. |
 | `write` | boolean | Modo escritura, con 30 segundos como máximo. |
+
+## Backups
+
+### `get_backups`
+
+Configuración de los backups de una base Postgres (destino, frecuencia en UTC y cuántos se conservan) y sus archivos más recientes. `config` vuelve en `null` si no tiene backups configurados. Parámetro: `database`.
+
+### `set_backups`
+
+Programa backups de una base en un bucket de Olimpia o en cualquier S3. Olimpia prueba el acceso al bucket antes de guardar. Si ya estaban configurados, lo que no se pasa queda como estaba: alcanza con `schedule` para cambiar solo la frecuencia.
+
+| Parámetro | Tipo | |
+| --- | --- | --- |
+| `database` | string | Nombre o id de la base. |
+| `bucket` | string | Un bucket de Olimpia del mismo proyecto. No hace falta pasar credenciales. |
+| `endpoint` | string | En vez de `bucket`, un S3 externo: `https://host`, sin ruta. |
+| `s3_bucket`, `access_key_id`, `secret_access_key` | string | El bucket y la key del S3 externo. Sin `secret_access_key` se mantiene la guardada. |
+| `region` | string | Del S3 externo. `auto` por defecto. |
+| `schedule` | string | Cron de cinco campos en UTC, con el minuto fijo. `0 3 * * *` por defecto. |
+| `keep` | number | Cuántos backups conservar, de 1 a 90. 7 por defecto. |
+
+### `run_backup`
+
+Hace un backup ahora con el destino configurado y devuelve los archivos más recientes. Parámetro: `database`.
+
+### `disable_backups`
+
+Deja de hacer backups de una base. Los archivos que ya están en el bucket no se borran. Exige `confirm` con el nombre exacto de la base.
 
 ## Dominios
 

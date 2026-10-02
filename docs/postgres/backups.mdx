@@ -1,6 +1,6 @@
 ---
 title: Backups en tu S3
-description: Programá copias automáticas de tu base en AWS S3, Cloudflare R2, Backblaze B2, MinIO o cualquier servicio compatible con S3.
+description: Programá copias automáticas de tu base en un bucket de Olimpia, AWS S3, Cloudflare R2, Backblaze B2, MinIO o cualquier servicio compatible con S3.
 sidebar:
   label: Backups
   icon: archive-restore
@@ -67,6 +67,16 @@ gunzip -c backup.sql.gz | psql "postgresql://app:<contraseña>@pg-<id>.db.olimpi
 ## Desactivar
 
 **Desactivar** deja de hacer backups de esa base. Los archivos que ya están en tu bucket no se borran.
+
+## Desde tu agente
+
+Tu agente puede configurarlos con las herramientas del [servidor MCP](/agentes/herramientas#backups). Lo más simple es usar un bucket de Olimpia del mismo proyecto, sin cargar credenciales:
+
+```txt
+Programá backups diarios de la base main en el bucket backups y hacé uno ahora para probar.
+```
+
+También puede usar tu propio S3 si le pasás el endpoint, el bucket y la key, cambiar la frecuencia o la retención, y hacer un backup antes de una migración.
 
 ## Ejemplos por proveedor
 
