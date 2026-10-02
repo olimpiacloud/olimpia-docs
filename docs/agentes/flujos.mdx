@@ -36,6 +36,14 @@ Desde ahí, cada push a `main` despliega solo. Si `create_app` devuelve `invalid
 create_app(name: "uptime", source: "image", image: "louislam/uptime-kuma:2", port: 3001)
 ```
 
+## Template
+
+```txt
+list_templates()
+deploy_template(template: "n8n", name: "flujos")   # crea la app, la base "flujos" y las variables
+get_deployment(app: "flujos", wait_seconds: 50)
+```
+
 ## Base de datos para una app
 
 ```txt

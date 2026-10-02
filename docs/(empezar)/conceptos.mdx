@@ -18,7 +18,7 @@ Un proyecto agrupa apps, bases y buckets que trabajan juntos. Usalo para separar
 
 | Recurso | Qué es | Dónde se conecta |
 | --- | --- | --- |
-| **App** | Un contenedor construido desde GitHub, una carpeta subida o una imagen de Docker. | `https://<subdominio>.olimpia.cc` y tus dominios propios. |
+| **App** | Un contenedor construido desde GitHub, una carpeta subida, una imagen de Docker o un template. | `https://<subdominio>.olimpia.cc` y tus dominios propios. |
 | **Postgres** | Una base Postgres 18 administrada. | `DATABASE_URL` por la red interna; opcionalmente por TLS desde afuera. |
 | **Redis** | Una instancia de Redis 8 persistente. | `REDIS_URL` por la red interna; opcionalmente por TLS desde afuera. |
 | **Bucket** | Object storage compatible con S3. | Las variables `AWS_*` y `BUCKET_NAME`, desde cualquier lado. |

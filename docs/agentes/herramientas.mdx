@@ -1,6 +1,6 @@
 ---
 title: Herramientas
-description: Referencia de las 31 herramientas del servidor MCP de Olimpia, con sus parámetros y qué devuelven.
+description: Referencia de las 33 herramientas del servidor MCP de Olimpia, con sus parámetros y qué devuelven.
 sidebar:
   icon: wrench
 ---
@@ -104,6 +104,22 @@ Vuelve a un deploy anterior que haya estado online, reusando su imagen sin build
 ### `cancel_deployment`
 
 Cancela un deploy en cola o construyendo (el último por defecto).
+
+## Templates
+
+### `list_templates`
+
+Lista los templates disponibles (n8n, Centrifugo, Umami, Metabase…): para cada uno, `id`, `name`, `image`, `port`, `postgres` (si crea una base) y `docs`. Sin parámetros.
+
+### `deploy_template`
+
+Despliega un template como una app nueva: crea la base Postgres si el template la necesita, genera los secretos y las URLs como variables (se ven con `get_env`) y arranca el primer deploy. Ver [Templates](/apps/templates).
+
+| Parámetro | Tipo | |
+| --- | --- | --- |
+| `template` | string | Id del template, por ejemplo `n8n`. |
+| `name` | string | Opcional. Nombre de la app y subdominio; también el de la base. El id del template por defecto. |
+| `project` | string | Opcional. |
 
 ## Configurar
 

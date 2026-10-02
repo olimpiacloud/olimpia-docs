@@ -11,6 +11,10 @@ Copiá cualquiera de estos prompts en Claude Code, Codex o Cursor con Olimpia [c
 Desplegá esta carpeta en Olimpia como una app nueva. Revisá primero el stack, el comando de inicio y el puerto, y asegurate de que la app escuche en 0.0.0.0 y en $PORT. Cuando termine, verificá la URL con curl y revisá los logs.
 </Prompt>
 
+<Prompt description="**n8n** propio" actions={["copy"]}>
+Levantá n8n en Olimpia con el template, en una app llamada flujos. Cuando el deploy quede activo, verificá la URL y decime cómo entro a crear la cuenta.
+</Prompt>
+
 <Prompt description="**Base de datos** para una app" actions={["copy"]}>
 Creá una base Postgres en Olimpia, conectala a mi app y configurá las migraciones para que corran al arrancar la app. Después desplegá y verificá que las tablas existan con list_tables.
 </Prompt>

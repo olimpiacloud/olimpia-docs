@@ -1,0 +1,70 @@
+---
+title: Templates
+description: Herramientas open source listas para usar, como n8n o Centrifugo, con su base y sus secretos ya configurados.
+sidebar:
+  icon: layout-grid
+---
+
+Un template es una imagen pública de Docker que ya viene preparada para Olimpia: con el puerto, las variables de entorno y, si la necesita, una base Postgres. No hay que leer la documentación de la herramienta para levantarla.
+
+<Steps>
+  <Step title="Elegí Templates">
+    En **Apps → Nueva app**, elegí **Templates** y tocá el que quieras.
+  </Step>
+  <Step title="Elegí el nombre">
+    Es también el subdominio: `n8n` queda en `https://n8n.olimpia.cc`. Si el template usa Postgres, la base se llama igual que la app.
+  </Step>
+  <Step title="Deployá">
+    Olimpia crea la base, genera las claves, carga las variables y arranca el primer deploy. Lo seguís en vivo en **Deploys**.
+  </Step>
+</Steps>
+
+## Qué se crea
+
+- **Una app** con la imagen del template, como cualquier [imagen de Docker](/apps/docker).
+- **Una base Postgres** en el mismo proyecto, si el template la necesita, ya conectada a la app por la [red interna](/plataforma/red-interna).
+- **Las variables de entorno**: cada clave secreta es un valor al azar de 64 caracteres, distinto por variable, y las URLs usan el subdominio de la app. Las ves y las cambiás en [Variables](/apps/variables).
+
+Después del primer deploy es una app más: podés cambiarle variables, agregarle [dominios propios](/apps/dominios), ver sus [logs](/apps/logs-y-metricas) o volver a un deploy anterior.
+
+## El catálogo
+
+| Template | Imagen | Postgres | Para qué |
+| --- | --- | --- | --- |
+| **n8n** | `n8nio/n8n:stable` | Sí | Automatizaciones y flujos con IA conectando cientos de servicios. |
+| **Centrifugo** | `centrifugo/centrifugo:v6` | No | Mensajería en tiempo real por WebSocket y SSE. |
+| **Umami** | `ghcr.io/umami-software/umami:3` | Sí | Analítica web simple y respetuosa de la privacidad. |
+| **Metabase** | `metabase/metabase:latest` | Sí | Dashboards y consultas sobre tus bases, sin escribir SQL. |
+
+### n8n
+
+Abrí la URL y creá la cuenta de dueño. Los workflows, las credenciales y los archivos que procesan se guardan en Postgres, así que sobreviven a cada deploy. Los webhooks usan la URL de la app (`N8N_WEBHOOK_URL`).
+
+:::warning
+No cambies ni borres `N8N_ENCRYPTION_KEY`: con esa clave n8n cifra las credenciales guardadas, y sin ella no las puede volver a leer.
+:::
+
+### Centrifugo
+
+El panel de admin está en la URL de la app, con la contraseña de `CENTRIFUGO_ADMIN_PASSWORD`.
+
+- Tu backend publica con la API HTTP en `/api/*`, mandando `CENTRIFUGO_HTTP_API_KEY` en el header `X-API-Key`.
+- Los clientes se conectan a `wss://<subdominio>.olimpia.cc/connection/websocket` con un JWT firmado con `CENTRIFUGO_CLIENT_TOKEN_HMAC_SECRET_KEY`.
+- `CENTRIFUGO_CLIENT_ALLOWED_ORIGINS` viene en `*`. Conviene cambiarlo por el origen de tu frontend, por ejemplo `https://miapp.com` (si son varios, separados por espacios).
+
+Corre con el motor en memoria, pensado para una sola instancia. Si necesitás historial persistente, creá un [Redis](/redis) y cargá `CENTRIFUGO_ENGINE_TYPE=redis` y `CENTRIFUGO_ENGINE_REDIS_ADDRESS` con su URL interna.
+
+### Umami
+
+El usuario inicial es `admin` con contraseña `umami`. Cambiala apenas entres.
+
+### Metabase
+
+El primer arranque corre las migraciones de Metabase y tarda unos minutos; el avance se ve en **Logs**. Después, el asistente te pide crear la cuenta de admin. Para consultar una base de Olimpia desde Metabase, usá su host interno, que está en la pestaña **Conexión** de la base.
+
+## Para tener en cuenta
+
+- **Las variables se completan una sola vez**, al crear la app. Si después cambiás el subdominio o pasás a usar un dominio propio, actualizá a mano las que tienen la URL: `N8N_WEBHOOK_URL`, `N8N_EDITOR_BASE_URL` y `N8N_HOST` en n8n, `MB_SITE_URL` en Metabase.
+- **Solo hay templates que guardan todo en Postgres o que no guardan nada**, porque el disco del contenedor se borra en cada deploy. Cualquier otra imagen la podés correr igual como [imagen de Docker](/apps/docker), guardando sus datos en Postgres, Redis o un bucket.
+- **Para actualizar**, tocá **Deployar**: Olimpia vuelve a descargar el tag del template. Si preferís fijar una versión, cambiá la imagen en **Configuración**.
+- **Desde tu agente**, `list_templates` muestra el catálogo y `deploy_template` hace todo lo de arriba. Ver [herramientas](/agentes/herramientas#templates).

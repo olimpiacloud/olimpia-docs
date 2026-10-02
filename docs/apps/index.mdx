@@ -1,6 +1,6 @@
 ---
 title: Apps
-description: Servicios web y APIs en contenedores, desplegados desde GitHub, desde una imagen de Docker o desde tu carpeta local, con HTTPS y sin cortes.
+description: Servicios web y APIs en contenedores, desplegados desde GitHub, desde una imagen de Docker, desde un template o desde tu carpeta local, con HTTPS y sin cortes.
 sidebar:
   label: Introducción
   icon: rocket
@@ -8,14 +8,17 @@ sidebar:
 
 Una app de Olimpia es un contenedor que corre tu código y responde en `https://<subdominio>.olimpia.cc`. Vos elegís de dónde sale el código; Olimpia lo construye, lo publica con HTTPS y lo mantiene online.
 
-## Tres formas de desplegar
+## Cuatro formas de desplegar
 
-<CardGroup cols={3}>
+<CardGroup cols={2}>
   <Card title="Desde GitHub" href="/apps/github" icon="git-branch">
     Conectás un repo y cada push se despliega solo.
   </Card>
   <Card title="Imagen de Docker" href="/apps/docker" icon="container">
     Cualquier imagen pública de un registry.
+  </Card>
+  <Card title="Templates" href="/apps/templates" icon="layout-grid">
+    n8n, Centrifugo, Umami o Metabase, con su base y sus secretos listos.
   </Card>
   <Card title="Tu carpeta" href="/apps/subir-codigo" icon="folder-up">
     Subís el código desde tu máquina, tu agente o tu CI.
