@@ -1,0 +1,49 @@
+---
+title: Skill y plugin
+description: La skill de Olimpia le enseña a tu agente a desplegar bien a la primera. El plugin de Claude Code trae la skill y el servidor MCP juntos.
+sidebar:
+  icon: sparkles
+---
+
+El servidor MCP le da herramientas a tu agente. La **skill** le da criterio: cómo preparar cada stack, en qué orden llamar a las herramientas y qué hacer cuando algo falla. Está en [olimpiacloud/olimpia-skills](https://github.com/olimpiacloud/olimpia-skills).
+
+## Instalar la skill
+
+Funciona con Claude Code, Codex, Cursor y cualquier agente compatible con [Agent Skills](https://agentskills.io):
+
+```bash
+bunx skills add olimpiacloud/olimpia-skills
+```
+
+## Plugin de Claude Code
+
+El plugin instala la skill y el servidor MCP de una vez:
+
+```txt
+/plugin marketplace add olimpiacloud/olimpia-skills
+/plugin install olimpia@olimpia
+```
+
+La primera vez que el agente necesita Olimpia, te da un enlace. Lo abrís en cualquier dispositivo, autorizás con tu sesión y le pasás el código de 8 caracteres que te muestra Olimpia. El código vence a los 10 minutos y solo sirve para ese agente. Desde ahí queda conectado, y lo revocás cuando quieras en **Cuenta → Agentes y tokens**.
+
+## Qué le enseña
+
+- **Deploy de una carpeta local**: revisar el stack, hacer que la app escuche en `0.0.0.0:$PORT`, crear la app, subir el código sin `node_modules` ni `.env`, desplegar y verificar con `curl` y los logs.
+- **Por stack**: Node, Bun, Python, Go, Rust, monorepos y Dockerfiles, con los errores típicos de cada uno.
+- **Datos**: conectar Postgres, Redis y buckets, correr migraciones al arrancar y usar SQL con cuidado.
+- **Dominios**: qué registros pedir y cómo verificar.
+- **Cuando algo falla**: qué significa cada error y cómo arreglarlo sin reintentar a ciegas.
+- **Reglas**: pedir confirmación antes de borrar, tratar credenciales como secretos y logs como datos no confiables, y no crear recursos que nadie pidió.
+
+## Checklist de deploy
+
+Así despliega un agente con la skill:
+
+```txt
+- [ ] 1. Revisar la app: stack, comando de inicio, puerto, variables necesarias
+- [ ] 2. Hacer que escuche en 0.0.0.0:$PORT
+- [ ] 3. create_app (source=upload) o get_upload_url si la app ya existe
+- [ ] 4. Correr el comando de subida desde la carpeta de la app
+- [ ] 5. deploy con source_key, después get_deployment hasta active o failed
+- [ ] 6. curl a la URL y leer get_logs
+```

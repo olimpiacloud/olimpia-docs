@@ -1,0 +1,85 @@
+---
+title: Deploy desde tu propio CI
+description: Corré tus tests en GitHub Actions, GitLab CI o cualquier pipeline y desplegá en Olimpia solo cuando pasan.
+sidebar:
+  label: Desde tu CI
+  icon: workflow
+---
+
+El [deploy automático con GitHub](/apps/github) despliega cada push sin pasos extra. Si preferís que tu pipeline decida cuándo desplegar (por ejemplo, después de correr los tests), usá una app con [código subido](/apps/subir-codigo) y llamá a la API desde tu CI.
+
+## Qué necesitás
+
+1. Una app creada con `source: "upload"`. Ver [Subir tu carpeta](/apps/subir-codigo#el-flujo).
+2. Un [token personal](/cuenta/tokens), guardado como secreto del CI (`OLIMPIA_TOKEN`).
+3. El `id` de la app, como variable del CI (`OLIMPIA_APP_ID`).
+
+## GitHub Actions
+
+```yaml .github/workflows/deploy.yml
+name: Deploy a Olimpia
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npm test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Subir y desplegar
+        env:
+          OLIMPIA_TOKEN: ${{ secrets.OLIMPIA_TOKEN }}
+          APP_ID: ${{ vars.OLIMPIA_APP_ID }}
+        run: |
+          api=https://api.olimpia.dev
+          auth="Authorization: Bearer $OLIMPIA_TOKEN"
+          upload=$(curl -fsS -X POST -H "$auth" "$api/apps/$APP_ID/source")
+          git archive --format=tar.gz --prefix=src/ -o /tmp/src.tar.gz HEAD
+          curl -fsS -X PUT -T /tmp/src.tar.gz "$(echo "$upload" | jq -r .upload_url)"
+          curl -fsS -X POST -H "$auth" -H 'content-type: application/json' \
+            -d "{\"source\": \"$(echo "$upload" | jq -r .key)\", \"message\": \"$GITHUB_SHA\"}" \
+            "$api/apps/$APP_ID/deployments" > /dev/null
+```
+
+## GitLab CI
+
+```yaml .gitlab-ci.yml
+deploy:
+  stage: deploy
+  image: alpine:3.22
+  only: [main]
+  script:
+    - apk add --no-cache curl jq git
+    - api=https://api.olimpia.dev
+    - auth="Authorization: Bearer $OLIMPIA_TOKEN"
+    - upload=$(curl -fsS -X POST -H "$auth" "$api/apps/$OLIMPIA_APP_ID/source")
+    - git archive --format=tar.gz --prefix=src/ -o /tmp/src.tar.gz HEAD
+    - curl -fsS -X PUT -T /tmp/src.tar.gz "$(echo "$upload" | jq -r .upload_url)"
+    - >
+      curl -fsS -X POST -H "$auth" -H 'content-type: application/json'
+      -d "{\"source\": \"$(echo "$upload" | jq -r .key)\", \"message\": \"$CI_COMMIT_SHA\"}"
+      "$api/apps/$OLIMPIA_APP_ID/deployments"
+```
+
+## Esperar el resultado
+
+El `POST` de deployments responde enseguida. Para que el pipeline falle si el deploy falla, consultá el último deploy hasta que termine:
+
+```bash
+until status=$(curl -fsS -H "$auth" "$api/apps/$APP_ID/deployments" | jq -r '.[0].status'); \
+  [ "$status" = active ] || [ "$status" = failed ] || [ "$status" = canceled ]; do sleep 10; done
+[ "$status" = active ]
+```
+
+:::note
+Las apps conectadas a GitHub se despliegan solas en cada push y no necesitan esto.
+:::

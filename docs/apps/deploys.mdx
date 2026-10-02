@@ -1,0 +1,44 @@
+---
+title: Deploys y rollbacks
+description: Los estados de un deploy, cómo publica Olimpia sin cortes y cómo volver a una versión anterior en segundos.
+sidebar:
+  icon: history
+---
+
+## Estados
+
+| Estado | Qué pasa |
+| --- | --- |
+| **En cola** | El deploy espera su turno. |
+| **Construyendo** | Se está construyendo la imagen. Ves el log en vivo. |
+| **Deployando** | La imagen está lista y se está levantando el contenedor nuevo. |
+| **Online** | El contenedor arrancó y recibe tráfico. |
+| **Falló** | El build o el arranque fallaron. El log muestra el motivo. |
+| **Cancelado** | Lo cancelaste vos o lo reemplazó un deploy más nuevo antes de empezar. |
+| **Reemplazado** | Estuvo online y lo reemplazó un deploy posterior. |
+
+Cada deploy muestra su origen: **Primer deploy**, **Push**, **Manual** o **Rollback**.
+
+## Sin cortes
+
+Olimpia arranca el contenedor nuevo antes de bajar el anterior. Si el nuevo no levanta, el anterior sigue atendiendo y el deploy queda como **Falló**. Tus usuarios no ven un error mientras desplegás.
+
+:::note
+**Online** significa que el contenedor arrancó. Si tu app arranca pero falla al atender pedidos, mirá los [logs](/apps/logs-y-metricas).
+:::
+
+## Rollback
+
+En **Deploys**, abrí un deploy anterior que haya estado online y tocá **Volver a esta versión**. Olimpia reusa la imagen ya construida, sin build, así que el rollback tarda segundos.
+
+Olimpia guarda la imagen activa y las 5 más recientes de cada app. Las más viejas se borran solas.
+
+## Cancelar
+
+Un deploy **En cola** o **Construyendo** se puede cancelar. La versión online no se toca.
+
+## Concurrencia
+
+- Un solo deploy en curso por app.
+- Si llega un deploy nuevo, los que seguían en cola para esa app se cancelan.
+- Los builds de distintas apps corren en paralelo.

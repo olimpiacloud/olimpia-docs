@@ -1,0 +1,33 @@
+---
+title: Explorador de datos
+description: Mirá tus tablas, vistas y filas desde la consola, con búsqueda y filtros, sin instalar un cliente.
+sidebar:
+  icon: table
+---
+
+La pestaña **Datos** de cada base lista sus tablas y vistas con la cantidad de filas, y te deja recorrer, buscar y filtrar filas sin salir de la consola.
+
+## Tablas
+
+Ves cada objeto con su tipo: **Tabla**, **Vista**, **Vista materializada** o **Externa**, y cuántas filas tiene. Las tablas nuevas aparecen solas: creá tu esquema con tu ORM o tu cliente y tocá **Actualizar**.
+
+## Filas
+
+Al abrir una tabla ves sus filas, con la clave primaria destacada. Podés:
+
+- buscar en toda la tabla,
+- filtrar por columna,
+- abrir una fila para ver todos sus valores. Los valores largos se recortan a 2000 caracteres.
+
+## Solo lectura
+
+El explorador se conecta con el mismo usuario `app` de tu base, en transacciones de solo lectura y con tiempo máximo por consulta. No puede modificar datos ni ver nada que tu usuario no vea.
+
+## SQL desde tu agente
+
+Para correr SQL, usá tu cliente favorito con el [acceso externo](/postgres/conexion#acceso-externo), o pedíselo a tu agente:
+
+- `list_tables` lista tablas y vistas con filas y tamaño.
+- `query_postgres` corre una consulta de lectura y devuelve hasta 200 filas en JSON. Con `write: true` corre cualquier sentencia en una transacción, con 30 segundos como máximo.
+
+Ver [Herramientas](/agentes/herramientas).

@@ -1,0 +1,72 @@
+---
+title: Redis
+description: Redis 8 persistente para caché, sesiones, colas y rate limiting, al lado de tus apps y sin perder claves por falta de memoria.
+sidebar:
+  label: Introducción
+  icon: zap
+---
+
+Una instancia de Redis de Olimpia es un Redis 8 propio, persistido en disco y conectado a tus apps por la [red interna](/plataforma/red-interna). Usala para caché, sesiones, colas de trabajos, pub/sub o rate limiting.
+
+## Crear una instancia
+
+<Steps>
+  <Step title="Abrí Redis">
+    En la consola, entrá a **Redis → Crear instancia** y elegí un nombre.
+  </Step>
+  <Step title="Conectala a tu app">
+    En la app, abrí **Variables** y agregá la instancia: Olimpia carga `REDIS_URL`. Desplegá para aplicarlo.
+  </Step>
+</Steps>
+
+## Qué incluye
+
+- **Redis 8**, listo en segundos.
+- **Persistencia en disco** (AOF): si la instancia se reinicia, tus datos siguen ahí.
+- **Sin desalojo de claves.** No hay `maxmemory`: Redis nunca borra claves para hacer lugar. Es lo que necesitan las colas como BullMQ, Sidekiq o Celery.
+- **Sin límite fijo de memoria.** Usa lo que necesita y pagás por uso.
+- **Acceso externo opcional** por TLS. Ver [Conexión](/redis/conexion).
+- **Métricas**: memoria usada, operaciones por segundo, clientes conectados y bloqueados, cantidad de claves y aciertos de caché.
+
+## Ejemplos
+
+<Tabs>
+  <Tab title="ioredis">
+    ```js
+    import Redis from "ioredis";
+
+    const redis = new Redis(process.env.REDIS_URL);
+    await redis.set("saludo", "hola", "EX", 60);
+    ```
+  </Tab>
+  <Tab title="BullMQ">
+    ```js
+    import { Queue, Worker } from "bullmq";
+    import Redis from "ioredis";
+
+    const connection = new Redis(process.env.REDIS_URL, { maxRetriesPerRequest: null });
+    const emails = new Queue("emails", { connection });
+    new Worker("emails", async (job) => enviar(job.data), { connection });
+    ```
+  </Tab>
+  <Tab title="redis-py">
+    ```python
+    import os
+    import redis
+
+    r = redis.from_url(os.environ["REDIS_URL"])
+    r.set("saludo", "hola", ex=60)
+    ```
+  </Tab>
+  <Tab title="go-redis">
+    ```go
+    opt, _ := redis.ParseURL(os.Getenv("REDIS_URL"))
+    rdb := redis.NewClient(opt)
+    rdb.Set(ctx, "saludo", "hola", time.Minute)
+    ```
+  </Tab>
+</Tabs>
+
+## Comandos permitidos
+
+Te conectás con el usuario `default`, que puede usar todos los comandos de datos. Los de administración (`CONFIG`, `ACL`, `SHUTDOWN`, `DEBUG` y similares) están deshabilitados.

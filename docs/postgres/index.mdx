@@ -1,0 +1,62 @@
+---
+title: Postgres
+description: Postgres 18 administrado, listo en segundos, conectado a tus apps por la red interna y con backups en tu propio S3.
+sidebar:
+  label: Introducción
+  icon: database
+---
+
+Una base Postgres de Olimpia es un Postgres 18 completo, con su propio usuario y su propia contraseña. Se crea en segundos y tus apps se conectan por la [red interna](/plataforma/red-interna), sin configurar TLS.
+
+## Crear una base
+
+<Steps>
+  <Step title="Abrí Postgres">
+    En la consola, entrá a **Postgres → Crear base**.
+  </Step>
+  <Step title="Elegí un nombre">
+    Entre 3 y 63 caracteres: minúsculas, números y guiones. El usuario y la contraseña se generan solos.
+  </Step>
+  <Step title="Conectala a tu app">
+    En la app, abrí **Variables** y agregá la base: Olimpia carga `DATABASE_URL`. Desplegá para aplicarlo.
+  </Step>
+</Steps>
+
+## Qué incluye
+
+- **Postgres 18**, con la base `app` y el usuario `app`, dueño de la base.
+- **Conexión interna** para tus apps y [acceso externo opcional](/postgres/conexion#acceso-externo) por TLS.
+- **[Explorador de datos](/postgres/explorador)** para ver tablas y filas desde la consola.
+- **[Backups en tu S3](/postgres/backups)**, programados, además de las copias diarias que guarda Olimpia.
+- **[Logs y métricas](/postgres/logs-y-metricas)**: errores, consultas lentas, CPU, memoria, conexiones y transacciones por segundo.
+- **Sin límite de tamaño.** Olimpia mide el almacenamiento cada minuto y cobra por uso.
+
+## Lo que podés y no podés hacer
+
+El usuario `app` es dueño de su base pero no es superusuario:
+
+| Podés | No podés |
+| --- | --- |
+| Crear tablas, índices, vistas, funciones y esquemas | `ALTER SYSTEM` ni cambiar la configuración del servidor |
+| Usar extensiones confiables: `pgcrypto`, `citext`, `pg_trgm` y otras | Instalar extensiones no confiables |
+| Correr migraciones con cualquier ORM | Crear otros superusuarios |
+
+## Con tu ORM
+
+`DATABASE_URL` funciona tal cual con Prisma, Drizzle, Knex, TypeORM, SQLAlchemy, Django, Ecto, sqlx y cualquier driver de Postgres.
+
+:::warning[Migraciones al arrancar]
+El build corre en otras máquinas y no llega a tu base. Corré las migraciones cuando arranca la app:
+
+```json package.json
+{
+  "scripts": {
+    "start": "prisma migrate deploy && node server.js"
+  }
+}
+```
+:::
+
+## Borrar una base
+
+Desde el menú de acciones de la base. Se borran la base y todos sus datos, y no se puede deshacer: la consola te pide escribir el nombre para confirmar. Los backups que ya estaban en tu S3 no se tocan.

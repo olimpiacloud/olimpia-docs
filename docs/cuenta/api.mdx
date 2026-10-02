@@ -1,0 +1,114 @@
+---
+title: API REST
+description: La API de Olimpia en api.olimpia.dev, con autenticación por token, para automatizar proyectos, apps, deploys y bases.
+sidebar:
+  icon: braces
+---
+
+La consola de Olimpia usa la misma API que podés usar vos. Base URL:
+
+```txt
+https://api.olimpia.dev
+```
+
+:::note[Acceso anticipado]
+La API puede cambiar mientras Olimpia está en acceso anticipado. Para automatizar con estabilidad, preferí el [servidor MCP](/agentes), que mantiene sus herramientas compatibles.
+:::
+
+## Autenticación
+
+Mandá un [token personal](/cuenta/tokens) en cada pedido:
+
+```bash
+curl -H "Authorization: Bearer $OLIMPIA_TOKEN" https://api.olimpia.dev/projects
+```
+
+Los cuerpos van en JSON (`content-type: application/json`). Los errores responden con un código HTTP y un cuerpo como `{"error": "invalid_name"}`.
+
+## Proyectos
+
+| Método | Ruta | Qué hace |
+| --- | --- | --- |
+| `GET` | `/projects` | Lista tus proyectos. |
+| `POST` | `/projects` | Crea un proyecto: `{"name": "staging"}`. |
+| `POST` | `/projects/{id}/move` | Mueve un recurso a este proyecto: `{"kind": "apps", "id": "..."}` (`apps`, `postgres`, `redis` o `buckets`). |
+
+## Apps
+
+| Método | Ruta | Qué hace |
+| --- | --- | --- |
+| `GET` | `/apps?project={id}` | Lista las apps de un proyecto. |
+| `POST` | `/apps` | Crea una app. Ver abajo. |
+| `GET` | `/apps/{id}` | Detalle de la app. |
+| `PATCH` | `/apps/{id}` | Cambia `slug`, `branch`, `root_dir`, `dockerfile`, `image`, `port` o `auto_deploy`. |
+| `DELETE` | `/apps/{id}` | Borra la app. |
+| `GET` | `/apps/{id}/env` | Lee las variables. |
+| `PUT` | `/apps/{id}/env` | Reemplaza todas las variables: `{"vars": [{"key": "K", "value": "V"}]}`. |
+| `POST` | `/apps/{id}/source` | Devuelve `{key, upload_url}` para subir código. |
+| `GET` | `/apps/{id}/deployments` | Últimos 50 deploys, del más nuevo al más viejo. |
+| `POST` | `/apps/{id}/deployments` | Despliega. Ver abajo. |
+| `POST` | `/apps/{id}/deployments/{deployment}/cancel` | Cancela un deploy en cola o construyendo. |
+| `GET` | `/apps/{id}/deployments/{deployment}/log` | Log del build. |
+| `GET` | `/apps/{id}/logs` | Logs de la app. |
+| `GET` | `/apps/{id}/metrics` | Métricas de CPU, memoria y disco. |
+| `GET` | `/apps/{id}/domains` | Dominios propios. |
+| `POST` | `/apps/{id}/domains/{domain}/check` | Verifica un dominio ahora. |
+
+### Crear una app
+
+```json
+{
+  "project_id": "<id del proyecto>",
+  "name": "mi-api",
+  "source": "upload",
+  "port": 3000,
+  "root_dir": "",
+  "env": [{ "key": "LOG_LEVEL", "value": "info" }]
+}
+```
+
+`source` es `upload` (código subido), `image` (con `"image": "nginx:1.29"`) o `github`. Las apps de GitHub conviene crearlas desde la consola, que resuelve la instalación y el repositorio.
+
+### Desplegar
+
+| Cuerpo | Qué despliega |
+| --- | --- |
+| `{"source": "<key>", "message": "..."}` | Una subida nueva. |
+| `{}` | Reconstruye: la última subida, el último commit de la rama o la imagen otra vez. |
+| `{"from": "<id de un deploy>"}` | Rollback a ese deploy, sin build. |
+
+## Postgres
+
+| Método | Ruta | Qué hace |
+| --- | --- | --- |
+| `GET` | `/postgres?project={id}` | Lista las bases. |
+| `POST` | `/postgres` | Crea una base: `{"project_id": "...", "name": "main"}`. |
+| `GET` | `/postgres/{id}` | Detalle y credenciales. |
+| `PATCH` | `/postgres/{id}` | Acceso externo: `{"public": true}`. |
+| `DELETE` | `/postgres/{id}` | Borra la base y sus datos. |
+| `POST` | `/postgres/{id}/password` | Rota la contraseña. |
+| `GET` | `/postgres/{id}/tables` | Tablas y vistas. |
+| `POST` | `/postgres/{id}/query` | Corre SQL: `{"sql": "select 1"}`, o `{"sql": "...", "write": true}`. |
+| `POST` | `/postgres/{id}/backups/run` | Hace un backup ahora. |
+
+## Redis
+
+| Método | Ruta | Qué hace |
+| --- | --- | --- |
+| `GET` | `/redis?project={id}` | Lista las instancias. |
+| `POST` | `/redis` | Crea una instancia: `{"project_id": "...", "name": "cache"}`. |
+| `GET` | `/redis/{id}` | Detalle y credenciales. |
+| `PATCH` | `/redis/{id}` | Acceso externo: `{"public": true}`. |
+| `DELETE` | `/redis/{id}` | Borra la instancia. |
+| `POST` | `/redis/{id}/password` | Rota la contraseña. |
+
+## Buckets
+
+| Método | Ruta | Qué hace |
+| --- | --- | --- |
+| `GET` | `/buckets?project={id}` | Lista los buckets. |
+| `POST` | `/buckets` | Crea un bucket: `{"project_id": "...", "name": "uploads"}`. |
+| `GET` | `/buckets/{id}` | Detalle y credenciales. |
+| `PATCH` | `/buckets/{id}` | Acceso público: `{"public": true}`. |
+| `DELETE` | `/buckets/{id}` | Borra el bucket y sus objetos. |
+| `POST` | `/buckets/{id}/keys` | Rota la access key. |

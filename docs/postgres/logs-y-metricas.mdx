@@ -1,0 +1,35 @@
+---
+title: Logs y métricas
+description: Errores, advertencias y consultas lentas de tu base, y métricas de CPU, memoria, disco, conexiones y transacciones.
+sidebar:
+  icon: activity
+---
+
+## Logs
+
+La pestaña **Logs** muestra lo que Postgres registra de tu base:
+
+- **errores** (una consulta que falla, una restricción violada),
+- **advertencias**,
+- **consultas de más de un segundo**, con su texto.
+
+Filtrás por nivel, buscás por texto y podés dejarlo **En vivo**. Cada registro abre su detalle: la consulta, el detalle y la sugerencia de Postgres, el cliente y la aplicación que la mandó.
+
+:::tip
+Poné `application_name` en tu cadena de conexión (`?application_name=api`) para saber qué app mandó cada consulta.
+:::
+
+## Métricas
+
+La pestaña **Métricas** mide la base cada minuto:
+
+| Métrica | Qué muestra |
+| --- | --- |
+| **CPU** | Uso de CPU; 100 % equivale a 1 vCPU. |
+| **Memoria** | RSS y caché. |
+| **IOPS** | Lecturas y escrituras de disco. |
+| **Almacenamiento** | Tamaño de la base. |
+| **Transacciones por segundo** | Cuánto trabajo está haciendo la base. |
+| **Conexiones** | Activas, inactivas y en transacción. |
+
+Elegí el período: última hora, 24 horas o 7 días.

@@ -1,0 +1,106 @@
+---
+title: Builds
+description: Cómo construye Olimpia tu app con Railpack o con tu Dockerfile, qué lenguajes detecta y cómo resolver los casos raros.
+sidebar:
+  icon: hammer
+---
+
+Cada build corre en su propia máquina aislada, separada de donde corren las apps. Si tu repositorio tiene un `Dockerfile` en la ruta configurada, Olimpia lo usa. Si no, [Railpack](https://railpack.com) detecta el lenguaje y arma una imagen optimizada.
+
+## Lenguajes detectados
+
+| Lenguaje | Cómo se detecta | Cómo arranca |
+| --- | --- | --- |
+| Node | `package.json` y el lockfile (npm, pnpm, yarn) | Script `start` |
+| Bun | `bun.lock` | Script `start` |
+| Deno | `deno.json` | Tarea `start` o el archivo principal |
+| Python | `requirements.txt`, `pyproject.toml` (uv, poetry) o `Pipfile` | `Procfile` o `main.py` |
+| Go | `go.mod` | El binario compilado |
+| Rust | `Cargo.toml` | El binario en release |
+| PHP | `composer.json` o `index.php` | Servidor PHP |
+| Ruby | `Gemfile` | `Procfile` o Rails |
+| Java | `pom.xml` o `build.gradle` | El jar compilado |
+| Elixir | `mix.exs` | Release de Mix |
+| Sitio estático | Solo `index.html`, o el `dist` de un build | Servidor de archivos |
+
+## Ejemplos por stack
+
+<Tabs>
+  <Tab title="Node">
+    ```json package.json
+    {
+      "scripts": {
+        "build": "tsc",
+        "start": "node dist/server.js"
+      },
+      "engines": { "node": "22" }
+    }
+    ```
+
+    Next.js: `"start": "next start"` lee `PORT` solo.
+  </Tab>
+  <Tab title="Python">
+    ```txt Procfile
+    web: uvicorn main:app --host 0.0.0.0 --port $PORT
+    ```
+
+    Django: `gunicorn proyecto.wsgi --bind 0.0.0.0:$PORT`, con `collectstatic` en el build.
+  </Tab>
+  <Tab title="Go">
+    ```go main.go
+    port := os.Getenv("PORT")
+    if port == "" {
+        port = "3000"
+    }
+    http.ListenAndServe("0.0.0.0:"+port, mux)
+    ```
+  </Tab>
+  <Tab title="Rust">
+    ```rust main.rs
+    let port = std::env::var("PORT").unwrap_or_else(|_| "3000".into());
+    let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{port}")).await?;
+    ```
+  </Tab>
+</Tabs>
+
+## Cuando la detección no alcanza
+
+Si Railpack elige un comando equivocado, el log del build muestra su plan. Corregilo con:
+
+- un script `start` en `package.json`,
+- un `Procfile` con la línea `web:`,
+- un `railpack.json`:
+
+  ```json railpack.json
+  {
+    "deploy": { "startCommand": "node dist/server.js" }
+  }
+  ```
+
+- o un `Dockerfile`.
+
+## Dockerfile
+
+Configurá **Dockerfile** con la ruta relativa a la carpeta raíz (`Dockerfile` o `docker/Dockerfile.prod`). Los builds multi-stage funcionan. La imagen tiene que escuchar en `$PORT`.
+
+## Variables en el build
+
+Todas las variables de la app llegan al build como build args y como secretos de BuildKit, y también al contenedor cuando corre. Dos cosas a tener en cuenta:
+
+- **El build no llega a tus bases.** Corre en otras máquinas, fuera de la red interna. Corré las migraciones al arrancar, no en el build:
+
+  ```json package.json
+  {
+    "scripts": {
+      "start": "prisma migrate deploy && node server.js"
+    }
+  }
+  ```
+
+- **Las variables públicas se hornean.** Frameworks como Next.js (`NEXT_PUBLIC_*`) o Vite (`VITE_*`) las copian al bundle durante el build. Si las cambiás, hace falta un build nuevo.
+
+## Límites
+
+- Cada build tiene **30 minutos** como máximo.
+- Los builds de distintas apps corren en paralelo, cada uno en su máquina.
+- El disco del contenedor no persiste entre deploys: guardá los datos en Postgres, Redis o un bucket.

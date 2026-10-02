@@ -1,0 +1,18 @@
+---
+title: Réplicas de lectura
+description: Réplicas de Postgres para repartir las consultas de lectura y escalar sin tocar la base principal.
+sidebar:
+  label: Réplicas de lectura
+  icon: copy
+  badge: Pronto
+---
+
+:::note[Próximamente]
+Todavía no está disponible. Si lo necesitás, escribinos a [hola@olimpia.dev](mailto:hola@olimpia.dev) y contanos tu caso.
+:::
+
+Las réplicas de lectura van a copiar tu base Postgres en tiempo real para que puedas mandarles consultas de solo lectura: reportes, búsquedas y dashboards, sin cargar la base principal.
+
+## Mientras tanto
+
+Tu base [no tiene topes fijos de CPU ni memoria](/postgres): usa lo que necesita. Si tenés consultas pesadas, mirá las [consultas lentas en los logs](/postgres/logs-y-metricas) y agregá índices.

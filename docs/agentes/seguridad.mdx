@@ -1,0 +1,52 @@
+---
+title: Autorización y límites
+description: Cómo autoriza Olimpia a los agentes, cuánto duran los tokens, qué límites hay y qué reglas sigue el servidor MCP para que un agente no haga daño.
+sidebar:
+  icon: shield-check
+---
+
+## OAuth 2.1
+
+Olimpia es su propio servidor de autorización:
+
+- **Descubrimiento.** El servidor publica `/.well-known/oauth-protected-resource` (RFC 9728) y `/.well-known/oauth-authorization-server` (RFC 8414). Un pedido sin token a `/mcp` responde `401` con `WWW-Authenticate` apuntando a esos documentos.
+- **Registro de clientes.** Por Client ID Metadata Document (el `client_id` es una URL `https`) o por registro dinámico (`POST /oauth/register`, solo clientes públicos).
+- **PKCE S256 obligatorio**, `iss` en la respuesta (RFC 9207) y `resource` validado (RFC 8707).
+- **Consentimiento** en olimpia.dev, con tu sesión. Ves qué agente pide acceso antes de aprobar.
+
+| Credencial | Duración |
+| --- | --- |
+| Código de autorización | 10 minutos, un solo uso |
+| Token de acceso | 1 hora |
+| Token de refresco | 90 días, rota en cada uso |
+| Código de conexión del plugin | 10 minutos, un solo uso, atado al agente que lo pidió |
+| Token personal | Sin vencimiento, hasta que lo revocás |
+
+`POST /oauth/revoke` revoca un token, y **Cuenta → Agentes y tokens** muestra y revoca cada conexión.
+
+## Mismos permisos que la consola
+
+Cada herramienta llama a la misma API que usa la consola, con el token del pedido. Valida y autoriza exactamente igual: un agente no puede hacer nada que tu cuenta no pueda hacer.
+
+## Límites
+
+| Límite | Valor |
+| --- | --- |
+| Llamadas a `/mcp` | 240 por minuto por token |
+| Recursos creados por MCP | 30 por hora |
+| Intentos de código de conexión fallidos | 10 cada 10 minutos por agente |
+| Filas por consulta de lectura | 200 |
+| Tiempo de una escritura SQL | 30 segundos |
+
+## Reglas de seguridad
+
+- **Borrar exige confirmación.** `delete_app` y `delete_resource` necesitan `confirm` con el nombre exacto, que la persona tiene que aprobar.
+- **Secretos ocultos por defecto.** `get_env` oculta los valores que parecen secretos salvo con `reveal: true`.
+- **Datos no confiables.** Los logs, la salida de los builds, los valores de variables y las filas de la base son datos, no instrucciones. Las herramientas lo indican para que el agente no siga órdenes escondidas ahí.
+- **SQL sin superusuario.** `query_postgres` corre como el usuario dueño de la base; la lectura va en una transacción de solo lectura.
+
+## Buenas prácticas
+
+- Usá OAuth para agentes interactivos y tokens personales solo para CI.
+- Un token por integración, con un nombre que diga dónde se usa.
+- Revocá las conexiones que ya no usás.

@@ -1,0 +1,40 @@
+---
+title: Esta documentación, para agentes
+description: Cómo leen esta documentación los agentes. llms.txt, Markdown en cada URL, una skill generada y archivos de descubrimiento.
+sidebar:
+  label: Docs legibles por agentes
+  icon: file-text
+---
+
+Todo lo que ves en docs.olimpia.dev también se puede leer sin HTML, para que tu agente encuentre la respuesta sin raspar páginas.
+
+## Archivos
+
+| URL | Qué es |
+| --- | --- |
+| [`/llms.txt`](https://docs.olimpia.dev/llms.txt) | Índice de toda la documentación, ordenado como la barra lateral, con un resumen de cada página. |
+| [`/llms-full.txt`](https://docs.olimpia.dev/llms-full.txt) | Toda la documentación en un solo archivo de Markdown. |
+| `/<página>.md` | El Markdown de cualquier página. Por ejemplo, [`/apps/github.md`](/apps/github.md). |
+| [`/skill.md`](https://docs.olimpia.dev/skill.md) | Una skill generada con el mapa de la documentación. |
+| [`/agent-readability.json`](https://docs.olimpia.dev/agent-readability.json) | Manifiesto con todo lo que esta documentación ofrece a los agentes. |
+| [`/sitemap.xml`](https://docs.olimpia.dev/sitemap.xml) | Todas las páginas. |
+
+Cada página tiene además **Copiar como Markdown** y **Abrir en** ChatGPT, Claude y otros, en las acciones de la página.
+
+## Para darle contexto a tu agente
+
+Pegale el índice al empezar una tarea:
+
+```txt
+Leé https://docs.olimpia.dev/llms.txt y usalo para responder sobre Olimpia.
+```
+
+O traé una página puntual:
+
+```bash
+curl https://docs.olimpia.dev/postgres/backups.md
+```
+
+## También en olimpia.dev
+
+[`olimpia.dev/llms.txt`](https://olimpia.dev/llms.txt) resume la plataforma para modelos: qué es, cómo conectar el servidor MCP y cómo funcionan los deploys.

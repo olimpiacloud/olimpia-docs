@@ -1,0 +1,69 @@
+---
+title: Primeros pasos
+description: Creá tu cuenta, desplegá tu primera app desde GitHub y conectale una base Postgres en cinco minutos.
+sidebar:
+  icon: rocket
+---
+
+Vas a terminar con una app online en `https://<tu-app>.olimpia.cc`, con HTTPS, conectada a una base Postgres por la red interna y redeployándose sola en cada push.
+
+:::tip[¿Preferís que lo haga tu agente?]
+Conectá Claude Code, Codex o Cursor y pedile "desplegá esta carpeta en Olimpia". La guía está en [Conectar tu agente](/agentes/conectar).
+:::
+
+<Steps>
+  <Step title="Creá tu cuenta">
+    Entrá a [olimpia.dev/signup](https://olimpia.dev/signup) y registrate con tu email o con GitHub. Durante el acceso anticipado Olimpia es por invitación y no pide tarjeta.
+
+    Al entrar ya tenés un proyecto llamado `personal`. Podés usarlo o crear otro desde el selector de proyectos.
+  </Step>
+  <Step title="Conectá GitHub">
+    En **Apps → Nueva app**, elegí **Conectar GitHub**. Se abre GitHub para instalar la GitHub App de Olimpia: elegí la cuenta u organización y a qué repositorios puede acceder. Olimpia solo pide lectura del código.
+  </Step>
+  <Step title="Elegí el repositorio">
+    Seleccioná el repositorio y la rama. Si tu app vive en una subcarpeta de un monorepo, completá **Carpeta raíz** (por ejemplo `apps/web`).
+
+    Olimpia detecta el lenguaje con [Railpack](/apps/builds): Node, Bun, Deno, Python, Go, Rust, PHP, Ruby, Java, Elixir o un sitio estático. Si hay un `Dockerfile`, usa ese.
+  </Step>
+  <Step title="Revisá el puerto">
+    Tu app tiene que escuchar en `0.0.0.0` y en el puerto de la variable `PORT` (3000 por defecto). Si escucha en otro puerto, indicalo en **Puerto**.
+
+    ```js server.js
+    app.listen(process.env.PORT || 3000, "0.0.0.0");
+    ```
+  </Step>
+  <Step title="Desplegá">
+    Confirmá y mirá el build en vivo. El primero suele tardar entre uno y cuatro minutos. Cuando el estado pasa a **Online**, tu app responde en `https://<subdominio>.olimpia.cc`.
+  </Step>
+  <Step title="Creá una base Postgres">
+    En **Postgres → Crear base**, elegí un nombre. En unos segundos tenés un Postgres 18 listo, con usuario y contraseña generados.
+  </Step>
+  <Step title="Conectala a tu app">
+    En tu app, abrí **Variables** y agregá la base del proyecto: Olimpia carga `DATABASE_URL` con la URL interna. Guardá y tocá **Deployar** para aplicar el cambio.
+
+    ```js db.js
+    import postgres from "postgres";
+
+    export const sql = postgres(process.env.DATABASE_URL);
+    ```
+  </Step>
+</Steps>
+
+Listo. Desde ahora, cada push a la rama que elegiste dispara un build y un deploy sin cortes.
+
+## Siguientes pasos
+
+<CardGroup cols={2}>
+  <Card title="Usá tu dominio" href="/apps/dominios" icon="globe">
+    Apuntá un CNAME y Olimpia emite el certificado HTTPS.
+  </Card>
+  <Card title="Programá backups" href="/postgres/backups" icon="archive-restore">
+    Copias automáticas de tu base en tu propio bucket S3.
+  </Card>
+  <Card title="Variables de entorno" href="/apps/variables" icon="key-round">
+    Secretos cifrados, disponibles en el build y al correr.
+  </Card>
+  <Card title="Si algo falla" href="/apps/problemas" icon="life-buoy">
+    Los errores más comunes y cómo resolverlos.
+  </Card>
+</CardGroup>

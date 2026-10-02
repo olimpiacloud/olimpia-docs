@@ -1,0 +1,56 @@
+---
+title: Introducción
+description: Qué es Olimpia, qué podés correr hoy y cómo está pensada para personas y para agentes.
+sidebar:
+  icon: compass
+---
+
+![Ruinas clásicas frente al Río de la Plata, en acuarela](/art/banner.webp)
+
+Olimpia es una plataforma cloud para correr tu producto en producción. Subís tu código, conectás una base de datos y en unos minutos tenés tu app online con HTTPS, en infraestructura de primer nivel en Buenos Aires.
+
+Todo vive dentro de **proyectos**: tus apps, tus bases Postgres, tus instancias de Redis y tus buckets. Los manejás desde la [consola](https://olimpia.dev/dashboard) o le pedís a tu agente que lo haga por vos, por MCP.
+
+## Qué podés correr hoy
+
+<CardGroup cols={2}>
+  <Card title="Apps" href="/apps" icon="rocket">
+    Servicios web y APIs desde GitHub, desde una imagen de Docker o desde tu carpeta local. Deploy automático en cada push, sin cortes.
+  </Card>
+  <Card title="Postgres" href="/postgres" icon="database">
+    Postgres 18 administrado, con explorador de datos, logs, métricas y backups programados en tu propio S3.
+  </Card>
+  <Card title="Redis" href="/redis" icon="zap">
+    Redis 8 persistente para caché, sesiones y colas. Nunca borra claves por falta de memoria.
+  </Card>
+  <Card title="Buckets" href="/buckets" icon="archive">
+    Object storage compatible con S3, con credenciales propias por bucket. Tus SDKs de S3 funcionan sin cambios.
+  </Card>
+</CardGroup>
+
+## Por qué Olimpia
+
+- **Corre en Buenos Aires.** La región BUE está acá, sobre infraestructura de primer nivel. Tus datos y tus usuarios en Argentina quedan cerca. [Más sobre la región](/plataforma/buenos-aires).
+- **Red interna.** Tus apps llegan a sus bases por una red privada. Las bases no aceptan conexiones de afuera hasta que vos lo habilitás. [Cómo funciona](/plataforma/red-interna).
+- **CI/CD con GitHub.** Conectás un repositorio y cada push a la rama elegida se construye y se publica solo, sin downtime y con rollback en un clic. [Deploy desde GitHub](/apps/github).
+- **Backups en tu S3.** Programás copias de tus bases en AWS S3, Cloudflare R2, Backblaze B2, MinIO o cualquier servicio compatible. [Configurar backups](/postgres/backups).
+- **Hecha para agentes.** Olimpia tiene un servidor MCP con 27 herramientas. Claude Code, Codex, Cursor y cualquier cliente MCP pueden desplegar, consultar y depurar por vos. [Para agentes](/agentes).
+- **Sin cambiar tu código.** Postgres y Redis son los de siempre y los buckets hablan la API de S3. Tus drivers, ORMs y SDKs funcionan igual.
+
+## Cómo seguir
+
+<Steps>
+  <Step title="Seguí los primeros pasos">
+    En [Primeros pasos](/primeros-pasos) creás tu cuenta, desplegás una app y le conectás una base.
+  </Step>
+  <Step title="Entendé los conceptos">
+    [Conceptos](/conceptos) explica proyectos, recursos, nombres y cómo se cobra.
+  </Step>
+  <Step title="Conectá tu agente">
+    Si trabajás con Claude Code, Codex o Cursor, [conectalo a Olimpia](/agentes/conectar) y pedile que despliegue por vos.
+  </Step>
+</Steps>
+
+:::note[Acceso anticipado]
+Olimpia está sumando a los primeros equipos. Si todavía no tenés cuenta, pedí acceso en [olimpia.dev](https://olimpia.dev) o escribinos a [hola@olimpia.dev](mailto:hola@olimpia.dev).
+:::

@@ -1,0 +1,32 @@
+---
+title: Proyectos
+description: Agrupá apps, bases y buckets por producto, cliente o entorno, y movelos entre proyectos sin recrearlos.
+sidebar:
+  icon: folders
+---
+
+Todo lo que creás en Olimpia vive dentro de un proyecto. La consola recuerda el último que abriste y todo cuelga de su URL: `olimpia.dev/dashboard/<proyecto>/...`.
+
+## Crear un proyecto
+
+Desde el selector de proyectos, en la parte de arriba de la barra lateral, tocá **Nuevo proyecto**. El nombre aparece en la URL de la consola y lo podés cambiar cuando quieras sin afectar tus apps ni tus bases.
+
+## Ideas para organizarte
+
+| Proyecto | Para |
+| --- | --- |
+| `produccion` y `staging` | Separar entornos con las mismas apps. |
+| `tienda`, `backoffice` | Un proyecto por producto. |
+| `cliente-acme` | Un proyecto por cliente, si sos una agencia. |
+
+## Mover recursos
+
+Podés mover una app, una base, una instancia de Redis o un bucket a otro proyecto desde sus acciones. No se recrea nada: las URLs, los datos y las credenciales siguen iguales. El nombre tiene que estar libre en el proyecto de destino.
+
+## Vista del proyecto
+
+La página del proyecto muestra todos sus recursos y su estado: apps online, desplegando o con errores, y el uso de bases y buckets.
+
+## Borrar un proyecto
+
+Solo se puede borrar un proyecto vacío, y nunca el último que tenés. Mové o borrá sus recursos primero.

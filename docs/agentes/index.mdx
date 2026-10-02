@@ -1,0 +1,64 @@
+---
+title: Olimpia para agentes
+description: Olimpia se opera desde tu agente. Un servidor MCP con 27 herramientas para desplegar código, crear bases, correr SQL, configurar dominios y leer logs.
+sidebar:
+  label: Introducción
+  icon: bot
+---
+
+![Un mecanismo de engranajes de bronce junto a un busto de Hermes, frente al Río de la Plata, en acuarela](/art/home-agentes.webp)
+
+Olimpia está pensada para que la operen personas desde la consola **y** agentes desde tu editor o tu terminal. Conectá Claude Code, Codex, Cursor o cualquier cliente MCP y pedile cosas como:
+
+- "Desplegá esta carpeta en Olimpia."
+- "Creale una base Postgres a la app `api` y corré las migraciones."
+- "¿Por qué falló el último deploy de `web`? Arreglalo."
+- "Apuntá `app.miempresa.com` a la app `web`."
+
+El agente usa las mismas reglas y permisos que la consola: no puede hacer nada que vos no puedas hacer, y te pide confirmación antes de borrar.
+
+## En tres pasos
+
+<Steps>
+  <Step title="Conectá el servidor MCP">
+    ```bash
+    claude mcp add --transport http olimpia https://api.olimpia.dev/mcp
+    ```
+
+    Otros clientes en [Conectar tu agente](/agentes/conectar).
+  </Step>
+  <Step title="Autorizá">
+    La primera vez se abre olimpia.dev para que apruebes la conexión con tu sesión. Nunca le pasás tu contraseña al agente.
+  </Step>
+  <Step title="Instalá la skill (opcional)">
+    ```bash
+    bunx skills add olimpiacloud/olimpia-skills
+    ```
+
+    Le enseña al agente el flujo de deploy, cómo preparar cada stack y qué hacer cuando un build falla. Ver [Skill y plugin](/agentes/skill).
+  </Step>
+</Steps>
+
+## Qué puede hacer
+
+| Para | Herramientas |
+| --- | --- |
+| Conectarse | `login` |
+| Descubrir | `list_projects`, `get_project`, `get_app`, `get_usage` |
+| Desplegar | `create_app`, `get_upload_url`, `deploy`, `get_deployment`, `rollback`, `cancel_deployment` |
+| Configurar | `update_app`, `get_env`, `set_env`, `create_project` |
+| Datos | `create_resource`, `connect_resource`, `get_connection`, `set_public_access`, `list_tables`, `query_postgres` |
+| Dominios | `add_domain`, `check_domain`, `remove_domain` |
+| Observar | `get_logs`, `get_deployment` |
+| Borrar | `delete_app`, `delete_resource` |
+
+Referencia completa en [Herramientas](/agentes/herramientas).
+
+## Datos del servidor
+
+| | |
+| --- | --- |
+| URL | `https://api.olimpia.dev/mcp` |
+| Transporte | Streamable HTTP, sin estado |
+| Autorización | OAuth 2.1 con PKCE, registro dinámico y CIMD; o `Authorization: Bearer` con un token personal |
+| Descubrimiento | `/.well-known/oauth-protected-resource` y `/.well-known/oauth-authorization-server` |

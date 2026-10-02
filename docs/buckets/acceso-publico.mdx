@@ -1,0 +1,30 @@
+---
+title: Acceso público
+description: Hacé que los objetos de un bucket se puedan leer por URL, para servir imágenes, descargas o assets estáticos.
+sidebar:
+  icon: earth
+---
+
+Los buckets son privados por defecto: solo se accede con las credenciales o con URLs firmadas. Si querés servir archivos a cualquiera (las imágenes de tu sitio, archivos para descargar), hacé público el bucket.
+
+## Hacer público un bucket
+
+En el bucket, tocá **Hacer público**. Desde ese momento, cualquiera puede leer sus objetos por URL:
+
+```txt
+https://<nombre-del-bucket>.t3.storage.dev/<ruta/del/objeto>
+```
+
+La URL base aparece en las credenciales del bucket como URL pública. Para escribir o borrar siguen haciendo falta las credenciales.
+
+:::warning
+Un bucket público expone **todos** sus objetos. Si solo algunos archivos tienen que ser públicos, usá dos buckets: uno público y otro privado.
+:::
+
+## Si no te deja
+
+Durante el acceso anticipado, hacer público un bucket puede requerir un medio de pago verificado. Si la consola te muestra ese error, escribinos a [hola@olimpia.dev](mailto:hola@olimpia.dev) y lo habilitamos.
+
+## Volver a privado
+
+**Hacer privado** corta el acceso por URL al instante. Las URLs firmadas que hayas generado siguen valiendo hasta que vencen.

@@ -1,0 +1,67 @@
+---
+title: Deploy desde GitHub
+description: CI/CD automático. Conectás un repositorio y cada push a tu rama se construye y se publica solo, sin cortes.
+sidebar:
+  label: Desde GitHub
+  icon: git-branch
+---
+
+Conectá un repositorio de GitHub y Olimpia se encarga del resto: cada push a la rama que elegiste dispara un build y un deploy sin downtime. No hace falta escribir un workflow ni guardar tokens en GitHub.
+
+```txt
+git push ──▶ GitHub avisa a Olimpia ──▶ build ──▶ deploy sin cortes ──▶ online
+```
+
+## Conectar GitHub
+
+<Steps>
+  <Step title="Instalá la GitHub App de Olimpia">
+    En **Apps → Nueva app**, tocá **Conectar GitHub**. GitHub te pide elegir la cuenta u organización y a qué repositorios puede acceder Olimpia. Solo pide permiso de lectura sobre el código.
+  </Step>
+  <Step title="Elegí repositorio y rama">
+    La consola lista los repositorios a los que tenés acceso. Elegí uno y la rama que querés desplegar, por ejemplo `main`.
+  </Step>
+  <Step title="Ajustá el build si hace falta">
+    - **Carpeta raíz**: para monorepos, la carpeta de la app (`apps/web`).
+    - **Dockerfile**: la ruta dentro de la carpeta raíz, si querés construir con Docker.
+    - **Puerto**: el puerto en el que escucha tu app.
+  </Step>
+  <Step title="Creá la app">
+    Olimpia construye el último commit de la rama y lo publica. A partir de ahí, cada push despliega solo.
+  </Step>
+</Steps>
+
+## Cómo funciona el deploy automático
+
+- **Un push, un deploy.** Cada push a la rama configurada encola un deploy de ese commit. En el historial figura con el origen **Push**.
+- **Sin colas largas.** Hay un solo deploy en curso por app. Si llegan varios pushes seguidos, los que seguían en cola se cancelan y se construye el último.
+- **Sin cortes.** La versión nueva arranca antes de bajar la anterior. Si el contenedor nuevo no levanta, sigue corriendo el que estaba.
+- **Repos privados.** Funcionan igual: la GitHub App tiene acceso a los repositorios que elegiste al instalarla.
+
+Podés apagar el deploy automático desde **Configuración**. Con el deploy automático apagado, desplegás cuando quieras con **Deployar**, y Olimpia construye el último commit de la rama.
+
+## Monorepos
+
+Creá una app por cada servicio del repositorio, todas apuntando al mismo repo con distinta **Carpeta raíz**:
+
+| App | Carpeta raíz |
+| --- | --- |
+| `web` | `apps/web` |
+| `api` | `apps/api` |
+| `worker` | `apps/worker` |
+
+Si un servicio necesita archivos de fuera de su carpeta (paquetes compartidos del workspace), dejá la carpeta raíz vacía y usá un `Dockerfile` en la raíz del repositorio.
+
+## Permisos y acceso
+
+- Olimpia solo ve los repositorios que habilitaste en la GitHub App, y de esos, solo los que tu usuario de GitHub puede leer.
+- Para sumar o quitar repositorios, cambiá la instalación desde GitHub (**Settings → Applications → Installed GitHub Apps → Olimpia → Configure**). Los cambios se reflejan solos.
+- Si entrás a Olimpia con email, conectá tu cuenta de GitHub una vez para que la lista de repositorios se mantenga al día.
+
+## Rollback
+
+Si un deploy rompe algo, abrí **Deploys**, elegí una versión anterior y tocá **Volver a esta versión**. Olimpia reusa la imagen ya construida, así que el rollback tarda segundos. Ver [Deploys y rollbacks](/apps/deploys).
+
+:::tip[¿Necesitás tests antes de desplegar?]
+Si querés correr tus tests en GitHub Actions y desplegar solo cuando pasan, usá una app con código subido y disparala desde tu workflow. Ver [Deploy desde tu propio CI](/apps/ci-propio).
+:::

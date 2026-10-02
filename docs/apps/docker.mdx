@@ -1,0 +1,32 @@
+---
+title: Imagen de Docker
+description: Corré cualquier imagen pública de Docker Hub, GitHub Container Registry u otro registry, sin build.
+sidebar:
+  icon: container
+---
+
+Si ya tenés una imagen publicada, Olimpia la corre tal cual, sin construir nada.
+
+<Steps>
+  <Step title="Elegí Imagen de Docker">
+    En **Apps → Nueva app**, elegí **Imagen de Docker**.
+  </Step>
+  <Step title="Indicá la imagen">
+    Usá el nombre completo con su tag, por ejemplo `nginx:1.29` o `ghcr.io/owner/app:latest`.
+  </Step>
+  <Step title="Indicá el puerto">
+    El puerto en el que escucha el contenedor. Olimpia también lo pasa en la variable `PORT`.
+  </Step>
+</Steps>
+
+## Actualizar la imagen
+
+Olimpia descarga la imagen al desplegar. Para traer una versión nueva:
+
+- Si usás un tag fijo (`app:1.4.2`), cambiá la imagen en **Configuración** y desplegá.
+- Si usás un tag móvil (`app:latest`), tocá **Deployar**: Olimpia vuelve a descargar la imagen.
+
+## Límites
+
+- La imagen tiene que ser **pública**. Los registries privados todavía no están soportados.
+- Las imágenes de Docker no tienen deploy automático: Olimpia no se entera cuando publicás un tag nuevo. Para eso, [conectá GitHub](/apps/github) o [desplegá desde tu CI](/apps/ci-propio).

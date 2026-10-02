@@ -1,0 +1,47 @@
+---
+title: Variables de entorno
+description: Configurá secretos y ajustes de tu app. Se guardan cifradas y llegan al build y al contenedor en el próximo deploy.
+sidebar:
+  label: Variables
+  icon: key-round
+---
+
+Las variables de entorno se cargan en la pestaña **Variables** de cada app. Se guardan cifradas y se inyectan en el build y al correr la app.
+
+## Cargar variables
+
+Agregalas de a una, o pegá un `.env` entero en cualquier campo de nombre para importarlo de una vez:
+
+```bash .env
+STRIPE_SECRET_KEY=sk_live_...
+SENTRY_DSN=https://...
+LOG_LEVEL=info
+```
+
+También podés pasar al modo de edición en texto y editar todo como un archivo `.env`.
+
+## Conectar una base
+
+Desde **Variables** podés agregar cualquier Postgres o Redis del proyecto. Olimpia carga la URL interna:
+
+| Recurso | Variable |
+| --- | --- |
+| Postgres | `DATABASE_URL` |
+| Redis | `REDIS_URL` |
+| Bucket | `AWS_ENDPOINT_URL_S3`, `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `BUCKET_NAME` |
+
+Las variables de los buckets se cargan desde tu agente con `connect_resource`, o copiándolas desde las [credenciales del bucket](/buckets/credenciales).
+
+## Cuándo se aplican
+
+Cambiar variables no reinicia tu app. La consola marca la app con **cambios sin aplicar** hasta que tocás **Deployar**. Así podés cambiar varias cosas y aplicarlas juntas.
+
+## `PORT`
+
+Olimpia define `PORT` con el puerto configurado de la app. Si cargás `PORT` a mano, el puerto de la app pasa a ser ese.
+
+## Buenas prácticas
+
+- Nunca subas tus `.env` al repositorio ni los incluyas en una subida de código.
+- Las variables que el framework copia al bundle (`NEXT_PUBLIC_*`, `VITE_*`) son públicas: no pongas secretos ahí.
+- Para mirar valores, usá **Mostrar valores**. Por defecto se ven ocultos.

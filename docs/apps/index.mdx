@@ -1,0 +1,54 @@
+---
+title: Apps
+description: Servicios web y APIs en contenedores, desplegados desde GitHub, desde una imagen de Docker o desde tu carpeta local, con HTTPS y sin cortes.
+sidebar:
+  label: Introducción
+  icon: rocket
+---
+
+Una app de Olimpia es un contenedor que corre tu código y responde en `https://<subdominio>.olimpia.cc`. Vos elegís de dónde sale el código; Olimpia lo construye, lo publica con HTTPS y lo mantiene online.
+
+## Tres formas de desplegar
+
+<CardGroup cols={3}>
+  <Card title="Desde GitHub" href="/apps/github" icon="git-branch">
+    Conectás un repo y cada push se despliega solo.
+  </Card>
+  <Card title="Imagen de Docker" href="/apps/docker" icon="container">
+    Cualquier imagen pública de un registry.
+  </Card>
+  <Card title="Tu carpeta" href="/apps/subir-codigo" icon="folder-up">
+    Subís el código desde tu máquina, tu agente o tu CI.
+  </Card>
+</CardGroup>
+
+## Qué incluye cada app
+
+- **HTTPS automático** en `*.olimpia.cc` y en hasta 10 [dominios propios](/apps/dominios).
+- **Builds sin configuración** con [Railpack](/apps/builds), o con tu `Dockerfile`.
+- **Deploys sin cortes.** La versión nueva arranca antes de bajar la anterior; si no levanta, sigue la que estaba.
+- **Rollback en un clic** a cualquier deploy anterior, sin volver a construir.
+- **[Variables de entorno](/apps/variables) cifradas**, disponibles en el build y al correr.
+- **[Logs y métricas](/apps/logs-y-metricas)**: el log de cada build, los logs de la app en vivo y CPU, memoria y disco de los últimos 7 días.
+- **[Red interna](/plataforma/red-interna)** hacia tus bases Postgres y Redis.
+- **Sin topes de recursos.** Las apps no tienen límite fijo de CPU ni de memoria: usan lo que necesitan y pagás por uso.
+
+## Lo que tu app necesita
+
+- Escuchar en `0.0.0.0` y en el puerto de `PORT` (3000 por defecto).
+- Quedarse corriendo en primer plano.
+- Escribir sus logs en stdout y stderr.
+- Guardar los datos en Postgres, Redis o un bucket: el disco del contenedor se borra en cada deploy.
+
+## La app en la consola
+
+Cada app tiene estas pestañas:
+
+| Pestaña | Para qué |
+| --- | --- |
+| **Deploys** | Historial, estado, log del build y rollback. |
+| **Logs** | Salida de la app en vivo, con búsqueda. |
+| **Métricas** | CPU, memoria y lecturas y escrituras de disco. |
+| **Variables** | Variables de entorno y conexión a las bases del proyecto. |
+| **Dominios** | Tu subdominio de `olimpia.cc` y tus dominios propios. |
+| **Configuración** | Rama, carpeta raíz, Dockerfile, puerto, deploy automático y borrado. |

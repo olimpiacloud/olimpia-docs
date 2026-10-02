@@ -1,0 +1,73 @@
+---
+title: Si algo falla
+description: Los errores más comunes al desplegar en Olimpia, qué significan y cómo resolverlos.
+sidebar:
+  icon: life-buoy
+---
+
+Empezá por el deploy que falló: abrilo en **Deploys** y leé el error y el final del log del build.
+
+## Por tipo de error
+
+| Error | Qué significa | Qué hacer |
+| --- | --- | --- |
+| `source_failed` | No se pudo traer el código. | GitHub: revisá que la rama exista y que la GitHub App siga teniendo acceso al repo. Código subido: la URL venció o la subida no terminó; subilo otra vez. |
+| `build_failed` | Falló Railpack o tu `Dockerfile`. | Leé el log del build. Mirá [Fallas de build](#fallas-de-build). |
+| `import_failed` | La imagen construida no se pudo guardar. | Es un problema de la plataforma. Desplegá de nuevo; si se repite, escribinos. |
+| `release_failed` | El contenedor no arrancó. | Casi siempre el proceso termina apenas arranca. Mirá los **Logs** de la app. |
+| `internal_error` | Error de la plataforma. | Desplegá de nuevo una vez. |
+| `timeout` | El build pasó los 30 minutos. | Revisá pasos lentos o usá un `Dockerfile` multi-stage con caché. |
+
+## Fallas de build
+
+<Accordion>
+  <AccordionItem title="No encuentra cómo arrancar la app">
+    Agregá un script `start`, un `Procfile` o un `railpack.json` con `startCommand`. En monorepos, revisá la **Carpeta raíz**. Ver [Builds](/apps/builds#cuando-la-detección-no-alcanza).
+  </AccordionItem>
+  <AccordionItem title="El lockfile no coincide">
+    `npm ci`, `pnpm install --frozen-lockfile` y `bun install --frozen-lockfile` fallan si el lockfile no está al día con `package.json`. Regeneralo en tu máquina, commitealo y desplegá.
+  </AccordionItem>
+  <AccordionItem title="Errores de TypeScript o lint">
+    El build corre en modo producción. Corregí los errores en el código.
+  </AccordionItem>
+  <AccordionItem title="Falta una variable en el build">
+    Variables como `NEXT_PUBLIC_*`, o código que lee variables mientras construye, necesitan estar cargadas antes del build. Agregala en **Variables** y desplegá.
+  </AccordionItem>
+  <AccordionItem title="El build se queda sin memoria">
+    Bajá el paralelismo del build o pasá a un `Dockerfile` multi-stage.
+  </AccordionItem>
+  <AccordionItem title="Módulos nativos (sharp, bcrypt, canvas)">
+    Suelen andar con Railpack. Si no, usá un `Dockerfile` basado en una imagen Debian completa.
+  </AccordionItem>
+</Accordion>
+
+## La app está Online pero no responde
+
+**Online** solo significa que el contenedor arrancó. Probá la URL y mirá los **Logs**.
+
+<Accordion>
+  <AccordionItem title="Bad gateway o sin respuesta">
+    Tu app escucha en `localhost` o en un puerto fijo. Hacé que escuche en `0.0.0.0` y en `$PORT`, o configurá el **Puerto** real de la app y desplegá.
+  </AccordionItem>
+  <AccordionItem title="Se reinicia una y otra vez">
+    Falta una variable o la base. Revisá **Variables** y que la base esté conectada.
+  </AccordionItem>
+  <AccordionItem title="No conecta con la base">
+    Estás usando `localhost` o la URL pública en lugar de la interna. Usá `DATABASE_URL` tal como la carga Olimpia. Si la base es nueva, corré las migraciones al arrancar.
+  </AccordionItem>
+  <AccordionItem title="404 al recargar una ruta de una SPA">
+    Tu servidor tiene que devolver `index.html` para las rutas que no son archivos.
+  </AccordionItem>
+</Accordion>
+
+## Veo una página de Olimpia en lugar de mi app
+
+Esa página aparece cuando el subdominio no tiene un deploy online: la app todavía no terminó su primer deploy, no existe o cambió de subdominio. Revisá la dirección actual en **Dominios**.
+
+## Dominio propio que no se activa
+
+La consola muestra qué registros espera y qué encuentra. Los cambios de DNS pueden tardar unos minutos en propagarse. Un `CNAME` en la raíz del dominio necesita CNAME flattening o ALIAS. Ver [Dominios](/apps/dominios).
+
+## ¿Seguís trabado?
+
+Escribinos a [hola@olimpia.dev](mailto:hola@olimpia.dev) con el nombre de la app y del deploy.

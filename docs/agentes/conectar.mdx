@@ -1,0 +1,112 @@
+---
+title: Conectar tu agente
+description: Cómo conectar Claude Code, Codex, Cursor, VS Code, Windsurf, Claude y otros clientes al servidor MCP de Olimpia.
+sidebar:
+  icon: plug
+---
+
+El servidor MCP de Olimpia está en:
+
+```txt
+https://api.olimpia.dev/mcp
+```
+
+Cualquier cliente que soporte servidores MCP remotos por HTTP se puede conectar. La primera vez, el cliente abre olimpia.dev para que autorices la conexión con tu sesión.
+
+## Por cliente
+
+<Tabs>
+  <Tab title="Claude Code">
+    ```bash
+    claude mcp add --transport http olimpia https://api.olimpia.dev/mcp
+    ```
+
+    Después, dentro de Claude Code, corré `/mcp`, elegí `olimpia` y autorizá en el navegador.
+
+    También podés instalar el [plugin de Olimpia](/agentes/skill#plugin-de-claude-code), que trae el servidor y la skill juntos.
+  </Tab>
+  <Tab title="Codex">
+    ```bash
+    codex mcp add olimpia --url https://api.olimpia.dev/mcp
+    ```
+
+    Codex abre el navegador para autorizar. Si no lo hace, corré `codex mcp login olimpia`.
+  </Tab>
+  <Tab title="Cursor">
+    Agregá esto en `~/.cursor/mcp.json` (o en `.cursor/mcp.json` del proyecto):
+
+    ```json mcp.json
+    {
+      "mcpServers": {
+        "olimpia": { "url": "https://api.olimpia.dev/mcp" }
+      }
+    }
+    ```
+
+    Cursor muestra **Needs login** en Settings → MCP: tocalo para autorizar.
+  </Tab>
+  <Tab title="VS Code">
+    Agregá esto en `.vscode/mcp.json`:
+
+    ```json .vscode/mcp.json
+    {
+      "servers": {
+        "olimpia": { "type": "http", "url": "https://api.olimpia.dev/mcp" }
+      }
+    }
+    ```
+
+    Al iniciar el servidor, VS Code te pide autorizar en el navegador.
+  </Tab>
+  <Tab title="Windsurf">
+    Agregá esto en `~/.codeium/windsurf/mcp_config.json`:
+
+    ```json mcp_config.json
+    {
+      "mcpServers": {
+        "olimpia": { "serverUrl": "https://api.olimpia.dev/mcp" }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Claude">
+    En Claude (web o escritorio), abrí **Settings → Connectors → Add custom connector**, poné `Olimpia` como nombre y `https://api.olimpia.dev/mcp` como URL, y autorizá.
+  </Tab>
+  <Tab title="Otros">
+    Cualquier cliente MCP con soporte de servidores remotos:
+
+    ```json
+    {
+      "mcpServers": {
+        "olimpia": { "url": "https://api.olimpia.dev/mcp" }
+      }
+    }
+    ```
+
+    Si tu cliente no soporta OAuth, usá un [token personal](/agentes/ci-y-tokens).
+  </Tab>
+</Tabs>
+
+## Qué pasa al autorizar
+
+1. El cliente descubre el servidor de autorización de Olimpia y se registra solo.
+2. Se abre `olimpia.dev` con una pantalla de consentimiento que dice qué agente pide acceso.
+3. Si aprobás, el cliente recibe un token de acceso que dura una hora y se renueva solo.
+
+Ves y revocás cada agente conectado en **Cuenta → Agentes y tokens**.
+
+## En una máquina remota
+
+Si tu agente corre en un servidor por SSH, un contenedor o un devcontainer, no puede abrir tu navegador. Con Claude Code:
+
+```bash
+claude mcp login olimpia --no-browser
+```
+
+Abrí la URL que imprime en tu computadora, aprobá, copiá el código de conexión que te muestra Olimpia y pegalo donde Claude Code pide la URL de retorno.
+
+Con el [plugin de Olimpia](/agentes/skill#plugin-de-claude-code), el agente te da un enlace y te pide un código de 8 caracteres: lo abrís en cualquier dispositivo, autorizás y le pasás el código.
+
+## Probar la conexión
+
+Pedile al agente: "¿Qué proyectos tengo en Olimpia?". Debería llamar a `list_projects` y mostrarte tus proyectos.

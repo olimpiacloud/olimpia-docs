@@ -1,0 +1,36 @@
+---
+title: Seguridad
+description: Cómo protege Olimpia tu tráfico, tus secretos y tus datos, y qué controles tenés vos.
+sidebar:
+  icon: shield-check
+---
+
+## En el borde
+
+- **Todo el tráfico web pasa por Cloudflare.** Tus apps reciben HTTPS automático en `*.olimpia.cc` y en tus dominios propios, con protección contra ataques en el borde. El origen solo acepta conexiones de Cloudflare.
+- **Bases detrás de un proxy.** El acceso externo a Postgres y Redis entra por un proxy TCP con protección anti-DDoS y límites por IP de conexiones abiertas y nuevas. TLS es obligatorio: una conexión sin cifrar se corta.
+- **La dirección de la región no es pública.** Ningún registro DNS apunta directo a los servidores donde corren tus recursos.
+
+## Tus secretos
+
+- **Variables de entorno cifradas.** Los valores se guardan cifrados y se descifran solo para construir y correr tu app.
+- **Credenciales por bucket.** Cada bucket tiene su propia access key, con permisos solo sobre ese bucket. Una key filtrada no sirve para tocar otro.
+- **Credenciales rotables.** Rotás la contraseña de Postgres o Redis, o la key de un bucket, con un clic; la anterior deja de valer al instante.
+- **Tokens que no se guardan.** De tus sesiones y tokens solo guardamos un hash. Revocar uno lo invalida en el momento.
+
+## Tus datos
+
+- **Postgres sin superusuario para vos ni para el explorador.** Tu usuario `app` es dueño de su base pero no superusuario. El explorador de la consola se conecta con ese mismo usuario, en transacciones de solo lectura.
+- **Redis sin comandos de administración.** El usuario `default` no puede usar `CONFIG`, `ACL`, `SHUTDOWN` ni otros comandos de administración.
+- **Backups.** Olimpia guarda sus propias copias diarias, y además podés [programar backups en tu propio S3](/postgres/backups).
+
+## Tu cuenta
+
+- Entrás con email y contraseña o con GitHub.
+- Ves y cerrás tus sesiones abiertas desde la consola.
+- Los intentos de inicio de sesión tienen límites por IP y por cuenta.
+- Los agentes se conectan con [OAuth 2.1 y PKCE](/agentes/seguridad) o con tokens personales que podés revocar cuando quieras.
+
+## Reportar un problema
+
+Si encontrás una vulnerabilidad, escribinos a [hola@olimpia.dev](mailto:hola@olimpia.dev). Respondemos rápido y te mantenemos al tanto del arreglo.

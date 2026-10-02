@@ -1,0 +1,94 @@
+---
+title: Flujos comunes
+description: Las secuencias de herramientas que usa un agente para desplegar, conectar bases, configurar dominios y arreglar un deploy roto.
+sidebar:
+  icon: route
+---
+
+## Desplegar una carpeta local
+
+```txt
+create_app(name: "web", source: "upload", port: 3000)
+  → upload.command_git   (o command_tar si no hay git)
+deploy(app: "web", source_key: "<de create_app>", message: "primer deploy")
+get_deployment(app: "web", wait_seconds: 50)   # repetir mientras esté queued, building o deploying
+get_logs(app: "web", since: "5m")
+```
+
+Para subir código nuevo después: `get_upload_url` → subir → `deploy(source_key)`.
+
+:::tip
+`active` solo significa que el contenedor arrancó. Verificá con `curl -sS -o /dev/null -w '%{http_code}' <url>` y revisá `get_logs`.
+:::
+
+## Desplegar desde GitHub
+
+```txt
+create_app(name: "api", source: "github", repo: "acme/api", branch: "main")
+get_deployment(app: "api", wait_seconds: 50)
+```
+
+Desde ahí, cada push a `main` despliega solo. Si `create_app` devuelve `invalid_repo`, la GitHub App de Olimpia no está instalada en ese repo: la persona tiene que agregarlo desde la consola (**Apps → Nueva app**), o se puede desplegar con `source=upload`.
+
+## Imagen de Docker
+
+```txt
+create_app(name: "uptime", source: "image", image: "louislam/uptime-kuma:2", port: 3001)
+```
+
+## Base de datos para una app
+
+```txt
+create_resource(kind: "postgres", name: "main", connect_to_app: "api")
+deploy(app: "api")
+```
+
+`connect_to_app` carga `DATABASE_URL` en la app. Lo mismo con `kind: "redis"` (`REDIS_URL`) y `kind: "bucket"` (variables `AWS_*` y `BUCKET_NAME`). Para una base que ya existe: `connect_resource(app, kind, name)`.
+
+## Revisar y arreglar datos
+
+```txt
+list_tables(database: "main")
+query_postgres(database: "main", sql: "select id, email from users order by created_at desc limit 20")
+query_postgres(database: "main", sql: "update users set plan = 'pro' where id = 42", write: true)
+```
+
+Antes de cualquier sentencia que borre o reescriba datos, el agente tiene que pedir confirmación.
+
+## Dominio propio
+
+```txt
+add_domain(app: "web", domain: "app.acme.com")   # devuelve los registros DNS
+check_domain(app: "web", domain: "app.acme.com") # repetir hasta active
+```
+
+## Variables de entorno
+
+```txt
+get_env(app: "api")
+set_env(app: "api", set: { "LOG_LEVEL": "debug" }, remove: ["OLD_FLAG"], redeploy: true)
+```
+
+## Arreglar un deploy que falló
+
+```txt
+get_deployment(app: "web")          # leer error y build_log_tail
+# corregir la causa en el código
+get_upload_url(app: "web") → subir → deploy(app: "web", source_key: "...")
+```
+
+| `error` | Qué hacer |
+| --- | --- |
+| `source_failed` | Upload: la subida venció o no terminó. GitHub: revisar acceso al repo y la rama. |
+| `build_failed` | Leer `build_log_tail` y corregir el código o la configuración. |
+| `release_failed` | El proceso termina al arrancar: `get_logs(since: "5m")`. |
+| `import_failed`, `internal_error` | Reintentar una vez con `deploy`. |
+
+No reintentes el mismo build sin cambios, salvo con `internal_error`. Más casos en [Si algo falla](/apps/problemas).
+
+## Volver atrás
+
+```txt
+get_app(app: "web")                              # lista los últimos deploys
+rollback(app: "web", deployment: "<id anterior>")
+```

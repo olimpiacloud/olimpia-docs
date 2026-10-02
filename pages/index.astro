@@ -1,0 +1,410 @@
+---
+import PageLayout from "blume/components/layout/PageLayout.astro";
+import Icon from "blume/components/Icon.astro";
+import data from "blume:data";
+
+const { config } = data;
+
+const guides = [
+  {
+    href: "/primeros-pasos",
+    icon: "rocket",
+    title: "Primeros pasos",
+    body: "De cero a una app online, con su base de datos, en cinco minutos.",
+  },
+  {
+    href: "/apps",
+    icon: "git-branch",
+    title: "Apps",
+    body: "Deploy automático desde GitHub en cada push, una imagen de Docker o tu carpeta local.",
+  },
+  {
+    href: "/postgres",
+    icon: "database",
+    title: "Postgres y Redis",
+    body: "Bases administradas en la red interna, acceso externo por TLS y backups en tu S3.",
+  },
+  {
+    href: "/buckets",
+    icon: "archive",
+    title: "Buckets",
+    body: "Object storage compatible con S3, con una key propia por bucket.",
+  },
+  {
+    href: "/plataforma/buenos-aires",
+    icon: "map-pin",
+    title: "Infraestructura",
+    body: "Dónde corre Olimpia, cómo viaja tu tráfico y cómo aislamos cada app.",
+  },
+];
+
+const clients = [
+  {
+    id: "claude",
+    label: "Claude Code",
+    logo: "/agents/claude.svg",
+    command: "claude mcp add --transport http olimpia https://api.olimpia.dev/mcp",
+  },
+  {
+    id: "codex",
+    label: "Codex",
+    logo: "/agents/codex.svg",
+    command: "codex mcp add olimpia --url https://api.olimpia.dev/mcp",
+  },
+  {
+    id: "skill",
+    label: "Skill",
+    logo: "/agents/mcp.svg",
+    invert: true,
+    command: "bunx skills add olimpiacloud/olimpia-skills",
+  },
+];
+
+const machine = [
+  { href: "/llms.txt", label: "llms.txt" },
+  { href: "/llms-full.txt", label: "llms-full.txt" },
+  { href: "/skill.md", label: "skill.md" },
+  { href: "/introduccion.md", label: "Markdown de cada página" },
+];
+
+const features = [
+  {
+    art: "templo",
+    title: "Corre en Buenos Aires",
+    body: "La región BUE está en Buenos Aires, sobre infraestructura de primer nivel. Tus datos se quedan cerca de tus usuarios.",
+    href: "/plataforma/buenos-aires",
+  },
+  {
+    art: "columna",
+    title: "Red interna",
+    body: "Apps y bases se hablan por una red privada. Nada queda expuesto a internet si no lo pedís.",
+    href: "/plataforma/red-interna",
+  },
+  {
+    art: "anfora",
+    title: "Backups en tu S3",
+    body: "Programá copias de Postgres en AWS S3, Cloudflare R2, Backblaze B2, MinIO o cualquier S3.",
+    href: "/postgres/backups",
+  },
+  {
+    art: "teatro",
+    title: "CI/CD con GitHub",
+    body: "Cada push a tu rama se construye y se publica solo, sin cortes y con rollback en un clic.",
+    href: "/apps/github",
+  },
+  {
+    art: "olivo",
+    title: "Dominios propios",
+    body: "Apuntá un CNAME y listo: verificamos el dominio y emitimos el certificado por vos.",
+    href: "/apps/dominios",
+  },
+  {
+    art: "busto",
+    title: "Hecha para agentes",
+    body: "Un servidor MCP con 27 herramientas para que tu agente despliegue, consulte y depure.",
+    href: "/agentes",
+  },
+];
+
+const soon = ["Stream", "CDN", "Email", "Facturación", "Equipos", "Réplicas de lectura"];
+---
+
+<PageLayout
+  site={{ title: config.title, description: config.description }}
+  logo={config.logo}
+  banner={config.banner}
+  analytics={config.analytics}
+  navigation={data.navigation}
+  favicon={config.favicon}
+  appleIcon={config.appleIcon}
+  fontCssVars={data.fontCssVars}
+  themeMode={config.theme.mode}
+  searchEnabled={config.search.enabled}
+  siteUrl={config.site}
+  ogEnabled={config.og.enabled}
+  ogImage="/art/og.jpg"
+  ogImageAlt="Olimpia Docs: ruinas clásicas frente al Río de la Plata, en acuarela"
+  ogImageSize={{ width: 1200, height: 630 }}
+  structuredDataEnabled={config.structuredData}
+  page={{ title: "Olimpia Docs: el cloud de Buenos Aires", description: config.description, route: "/" }}
+>
+  <div class="home" data-home data-mode="humanos">
+    <section class="mx-auto grid w-full max-w-[1400px] gap-6 px-4 pt-6 pb-16 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-10 lg:px-8">
+      <div class="flex flex-col justify-center py-8 lg:py-16 lg:pl-8">
+        <div class="home-enter relative mb-10 h-56 overflow-hidden rounded-xl ring-1 ring-[color-mix(in_oklab,var(--blume-foreground)_8%,transparent)] sm:h-72 lg:hidden">
+          <img src="/art/banner.webp" alt="" class="absolute inset-0 size-full object-cover" />
+          <div class="pointer-events-none absolute inset-2 rounded-lg border border-[color-mix(in_oklab,var(--olimpia-pergamino)_45%,transparent)]"></div>
+        </div>
+        <p class="home-enter flex items-center gap-3 text-xs tracking-[0.24em] text-muted-foreground uppercase">
+          <span aria-hidden="true" class="h-px w-8 bg-current opacity-60"></span>
+          Documentación · Región BUE
+        </p>
+        <h1 class="home-enter mt-6 max-w-xl font-display text-5xl leading-[1.05] text-balance sm:text-6xl" style="animation-delay: 60ms">
+          Tu producto en producción, desde Buenos Aires.
+        </h1>
+        <p class="home-enter mt-6 max-w-lg text-lg leading-relaxed text-pretty text-muted-foreground" style="animation-delay: 120ms">
+          Olimpia corre tus apps, tus bases Postgres y Redis y tus buckets en infraestructura de primer nivel en Buenos Aires. Esta documentación tiene dos puertas: una para vos y otra para tu agente.
+        </p>
+
+        <div class="home-enter mt-10" style="animation-delay: 180ms">
+          <div role="tablist" aria-label="Elegí para quién es la documentación" class="relative inline-grid grid-cols-2 rounded-full border border-border bg-[var(--olimpia-card)] p-1 text-sm shadow-[0_1px_0_rgb(43_36_32/0.04)]">
+            <span aria-hidden="true" class="home-pill absolute top-1 bottom-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-foreground"></span>
+            <button type="button" role="tab" id="tab-humanos" aria-controls="panel-humanos" aria-selected="true" data-tab="humanos" class="home-tab relative z-10 flex items-center justify-center gap-2 rounded-full px-5 py-2">
+              <Icon icon="book-open" size={15} />
+              Para humanos
+            </button>
+            <button type="button" role="tab" id="tab-agentes" aria-controls="panel-agentes" aria-selected="false" tabindex="-1" data-tab="agentes" class="home-tab relative z-10 flex items-center justify-center gap-2 rounded-full px-5 py-2">
+              <Icon icon="bot" size={15} />
+              Para agentes
+            </button>
+          </div>
+
+          <div id="panel-humanos" role="tabpanel" aria-labelledby="tab-humanos" data-panel="humanos" class="home-panel mt-8 max-w-xl">
+            <ul class="divide-y divide-border border-y border-border">
+              {
+                guides.map((guide) => (
+                  <li>
+                    <a href={guide.href} class="group flex items-start gap-4 py-4 transition-colors duration-150 hover:text-foreground">
+                      <span class="mt-0.5 grid size-9 shrink-0 place-items-center rounded-blume border border-border bg-[var(--olimpia-card)] text-accent">
+                        <Icon icon={guide.icon} size={17} />
+                      </span>
+                      <span class="min-w-0 flex-1">
+                        <span class="block font-medium">{guide.title}</span>
+                        <span class="mt-0.5 block text-sm text-muted-foreground">{guide.body}</span>
+                      </span>
+                      <span aria-hidden="true" class="mt-2 text-muted-foreground transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:translate-x-1 group-hover:text-foreground">→</span>
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+            <a href="/introduccion" class="mt-8 inline-flex items-center gap-2 rounded-full bg-action px-5 py-2.5 text-sm font-medium text-action-foreground transition-transform duration-150 active:scale-[0.97]">
+              Leer la introducción
+              <span aria-hidden="true">→</span>
+            </a>
+          </div>
+
+          <div id="panel-agentes" role="tabpanel" aria-labelledby="tab-agentes" data-panel="agentes" class="home-panel mt-8 max-w-xl" hidden>
+            <p class="text-pretty text-muted-foreground">
+              Olimpia tiene un servidor MCP. Conectá tu agente una vez y despliega código, crea bases, lee logs y configura dominios por vos, siempre con tu permiso.
+            </p>
+            <ul class="mt-6 space-y-2.5">
+              {
+                clients.map((client) => (
+                  <li class="flex items-center gap-3 rounded-blume border border-border bg-[var(--olimpia-card)] py-2 pr-2 pl-3">
+                    <img src={client.logo} alt="" width="18" height="18" class:list={["size-[18px] shrink-0", client.invert && "dark:invert"]} />
+                    <span class="w-24 shrink-0 text-sm font-medium">{client.label}</span>
+                    <code class="min-w-0 flex-1 truncate font-mono text-[12.5px] text-muted-foreground">{client.command}</code>
+                    <button type="button" data-copy={client.command} class="home-copy grid size-8 shrink-0 place-items-center rounded-blume text-muted-foreground transition-colors duration-150 hover:bg-[var(--blume-muted)] hover:text-foreground" aria-label={`Copiar el comando de ${client.label}`}>
+                      <span class="home-copy-idle"><Icon icon="copy" size={15} /></span>
+                      <span class="home-copy-done"><Icon icon="check" size={15} /></span>
+                    </button>
+                  </li>
+                ))
+              }
+            </ul>
+            <p class="mt-6 text-sm text-muted-foreground">
+              Esta documentación también se lee sin HTML:
+              {
+                machine.map((item, index) => (
+                  <>
+                    {index > 0 && <span aria-hidden="true"> · </span>}
+                    <a href={item.href} class="font-mono text-[12.5px] text-foreground underline decoration-border underline-offset-4 hover:decoration-current">{item.label}</a>
+                  </>
+                ))
+              }
+            </p>
+            <a href="/agentes" class="mt-8 inline-flex items-center gap-2 rounded-full bg-action px-5 py-2.5 text-sm font-medium text-action-foreground transition-transform duration-150 active:scale-[0.97]">
+              Guía para agentes
+              <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <aside class="home-art relative hidden min-h-[640px] overflow-hidden rounded-xl bg-[var(--olimpia-card)] shadow-[0_24px_60px_-24px_rgb(43_36_32/0.35)] ring-1 ring-[color-mix(in_oklab,var(--blume-foreground)_8%,transparent)] lg:block lg:h-[calc(100dvh-7rem)] lg:max-h-[920px]">
+        <img src="/art/home-humanos.webp" alt="Acuarela: una cariátide de mármol mira el Río de la Plata, con el Obelisco y el Puente de la Mujer de fondo" class="home-image absolute inset-0 size-full origin-top object-cover object-top" data-art="humanos" />
+        <img src="/art/home-agentes.webp" alt="Acuarela: un mecanismo de engranajes de bronce junto a un busto de Hermes, frente al Río de la Plata" class="home-image absolute inset-0 size-full origin-top object-cover object-top" data-art="agentes" loading="lazy" />
+        <div class="pointer-events-none absolute inset-3 rounded-lg border border-[color-mix(in_oklab,var(--olimpia-pergamino)_40%,transparent)]"></div>
+        <div class="absolute inset-x-0 bottom-0 bg-linear-to-t from-[rgb(43_36_32/0.78)] via-[rgb(43_36_32/0.35)] to-transparent px-12 pt-40 pb-12 text-[var(--olimpia-pergamino)]">
+          <div class="home-quote" data-art="humanos">
+            <p class="max-w-md font-display text-4xl leading-[1.1] text-balance">“Lo que se construye sobre piedra, dura.”</p>
+            <p class="mt-5 flex items-center gap-3 text-sm tracking-[0.18em] uppercase opacity-85">
+              <span aria-hidden="true" class="h-px w-8 bg-current opacity-70"></span>
+              Hecho en Buenos Aires · 34°36′S 58°22′O
+            </p>
+          </div>
+          <div class="home-quote" data-art="agentes">
+            <p class="max-w-md font-display text-4xl leading-[1.1] text-balance">“Tu agente despliega. Vos decidís.”</p>
+            <p class="mt-5 flex items-center gap-3 text-sm tracking-[0.18em] uppercase opacity-85">
+              <span aria-hidden="true" class="h-px w-8 bg-current opacity-70"></span>
+              Servidor MCP · OAuth 2.1
+            </p>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="mx-auto w-full max-w-[1400px] px-4 pb-24 sm:px-6 lg:px-8">
+      <div class="border-t border-border pt-14 lg:px-8">
+        <div class="flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <p class="text-xs tracking-[0.24em] text-muted-foreground uppercase">La plataforma</p>
+            <h2 class="mt-3 font-display text-3xl sm:text-4xl">Lo que ya podés usar</h2>
+          </div>
+          <a href="/introduccion" class="group text-sm text-muted-foreground transition-colors duration-150 hover:text-foreground">
+            Ver todo lo que incluye
+            <span aria-hidden="true" class="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
+          </a>
+        </div>
+        <ul class="mt-10 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
+          {
+            features.map((feature) => (
+              <li class="bg-[var(--olimpia-card)]">
+                <a href={feature.href} class="group flex h-full gap-5 p-6 transition-colors duration-200 hover:bg-background">
+                  <img src={`/art/${feature.art}.webp`} alt="" width="72" height="72" loading="lazy" class="size-[72px] shrink-0 object-contain transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:-translate-y-1" />
+                  <span>
+                    <span class="block font-display text-xl">{feature.title}</span>
+                    <span class="mt-2 block text-sm leading-relaxed text-pretty text-muted-foreground">{feature.body}</span>
+                  </span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <div class="mt-10 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+          <a href="/proximamente" class="mr-2 hover:text-foreground">Próximamente:</a>
+          {soon.map((item) => <span class="rounded-full border border-dashed border-border px-3 py-1">{item}</span>)}
+        </div>
+      </div>
+    </section>
+  </div>
+</PageLayout>
+
+<style>
+  .home-enter {
+    animation: olimpia-enter 0.9s cubic-bezier(0.23, 1, 0.32, 1) both;
+  }
+
+  .home-tab {
+    color: var(--blume-muted-foreground);
+    transition: color 200ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .home-tab[aria-selected="true"] {
+    color: var(--blume-background);
+  }
+
+  .home-tab:focus-visible {
+    outline: 2px solid var(--olimpia-egeo);
+    outline-offset: 2px;
+  }
+
+  .home-pill {
+    transition: transform 380ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  [data-mode="agentes"] .home-pill {
+    transform: translateX(100%);
+  }
+
+  .home-panel:not([hidden]) {
+    animation: olimpia-enter 0.5s cubic-bezier(0.23, 1, 0.32, 1) both;
+  }
+
+  .home-image {
+    animation: olimpia-drift 40s ease-in-out infinite alternate;
+    transition: opacity 700ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .home-quote {
+    transition:
+      opacity 500ms cubic-bezier(0.23, 1, 0.32, 1),
+      transform 500ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .home-quote[data-art="agentes"] {
+    position: absolute;
+    inset-inline: 3rem;
+    bottom: 3rem;
+  }
+
+  [data-mode="humanos"] [data-art="agentes"],
+  [data-mode="agentes"] [data-art="humanos"] {
+    opacity: 0;
+  }
+
+  [data-mode="humanos"] .home-quote[data-art="agentes"],
+  [data-mode="agentes"] .home-quote[data-art="humanos"] {
+    transform: translateY(8px);
+  }
+
+  .home-copy-done,
+  .home-copy[data-copied] .home-copy-idle {
+    display: none;
+  }
+
+  .home-copy[data-copied] .home-copy-done {
+    display: inline;
+    color: var(--olimpia-olivo);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-image {
+      animation: none;
+    }
+
+    .home-pill,
+    .home-quote {
+      transition-duration: 0ms;
+    }
+  }
+</style>
+
+<script>
+  function setup() {
+    const root = document.querySelector<HTMLElement>("[data-home]");
+    if (!root || root.dataset.ready) return;
+    root.dataset.ready = "true";
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>("[data-tab]")];
+
+    const select = (mode: string, focus = false) => {
+      root.dataset.mode = mode;
+      for (const tab of tabs) {
+        const active = tab.dataset.tab === mode;
+        tab.setAttribute("aria-selected", String(active));
+        tab.tabIndex = active ? 0 : -1;
+        if (active && focus) tab.focus();
+      }
+      for (const panel of root.querySelectorAll<HTMLElement>("[data-panel]")) {
+        panel.hidden = panel.dataset.panel !== mode;
+      }
+    };
+
+    for (const tab of tabs) {
+      tab.addEventListener("click", () => {
+        select(tab.dataset.tab!);
+        history.replaceState(null, "", tab.dataset.tab === "agentes" ? "#agentes" : location.pathname);
+      });
+      tab.addEventListener("keydown", (event) => {
+        if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+        event.preventDefault();
+        const next = tabs[(tabs.indexOf(tab) + 1) % tabs.length];
+        select(next.dataset.tab!, true);
+      });
+    }
+
+    for (const button of root.querySelectorAll<HTMLButtonElement>("[data-copy]")) {
+      button.addEventListener("click", async () => {
+        await navigator.clipboard.writeText(button.dataset.copy!);
+        button.dataset.copied = "";
+        setTimeout(() => delete button.dataset.copied, 1600);
+      });
+    }
+
+    if (location.hash === "#agentes") select("agentes");
+  }
+
+  document.addEventListener("astro:page-load", setup);
+  setup();
+</script>

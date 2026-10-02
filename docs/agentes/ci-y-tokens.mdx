@@ -1,0 +1,59 @@
+---
+title: CI y tokens
+description: Usá el servidor MCP o la API sin OAuth, con un token personal, desde CI, scripts o agentes que corren sin una persona delante.
+sidebar:
+  label: Sin OAuth
+  icon: key
+---
+
+OAuth necesita a una persona que apruebe en el navegador. Para CI, scripts o agentes autónomos, usá un [token personal](/cuenta/tokens).
+
+## Crear el token
+
+En **Cuenta → Agentes y tokens → Tokens personales**, creá un token. Empieza con `olimpia_pat_`, tiene los mismos permisos que tu cuenta y se muestra una sola vez. Guardalo como secreto (`OLIMPIA_TOKEN`).
+
+## MCP con un token
+
+Cualquier cliente MCP que permita headers puede saltear OAuth:
+
+```json mcp.json
+{
+  "mcpServers": {
+    "olimpia": {
+      "type": "http",
+      "url": "https://api.olimpia.dev/mcp",
+      "headers": { "Authorization": "Bearer ${OLIMPIA_TOKEN}" }
+    }
+  }
+}
+```
+
+Con Claude Code:
+
+```bash
+claude mcp add --transport http olimpia https://api.olimpia.dev/mcp \
+  --header "Authorization: Bearer $OLIMPIA_TOKEN"
+```
+
+## Claude Code o Codex en CI
+
+Un agente en GitHub Actions puede desplegar y diagnosticar con el token:
+
+```yaml .github/workflows/agente.yml
+- name: Revisar el deploy con Claude Code
+  env:
+    ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    OLIMPIA_TOKEN: ${{ secrets.OLIMPIA_TOKEN }}
+  run: |
+    claude mcp add --transport http olimpia https://api.olimpia.dev/mcp \
+      --header "Authorization: Bearer $OLIMPIA_TOKEN"
+    claude -p "Revisá el último deploy de la app web en Olimpia y, si falló, explicá por qué."
+```
+
+## API REST
+
+El mismo token sirve para la [API REST](/cuenta/api). Para desplegar desde un pipeline sin agente, seguí [Deploy desde tu propio CI](/apps/ci-propio).
+
+## Qué no puede hacer un token
+
+Con un token no se pueden ver ni cerrar sesiones, crear otros tokens ni vincular GitHub. Esas acciones necesitan una sesión en el navegador.

@@ -1,0 +1,227 @@
+---
+title: Herramientas
+description: Referencia de las 27 herramientas del servidor MCP de Olimpia, con sus parámetros y qué devuelven.
+sidebar:
+  icon: wrench
+---
+
+Todas las herramientas aceptan nombres o ids (`app: "web"` o el UUID), y `project` es opcional cuando la cuenta tiene un solo proyecto. Los errores vuelven con la acción a seguir, para que el agente se pueda corregir solo.
+
+:::note[Convenciones]
+- **Nombres**: entre 3 y 63 caracteres, minúsculas, números y guiones.
+- **`kind`**: `postgres`, `redis` o `bucket`.
+- Las herramientas de lectura están marcadas como `readOnly`; las de borrado, como `destructive`.
+:::
+
+## Conexión
+
+### `login`
+
+Conecta el agente a la cuenta cuando se usa el plugin de Claude Code. Sin `code`, devuelve un enlace para que la persona autorice en olimpia.dev; con `code`, canjea el código de 8 caracteres que recibió. También informa qué cuenta está conectada.
+
+| Parámetro | Tipo | |
+| --- | --- | --- |
+| `code` | string | Opcional. El código de conexión. |
+
+## Descubrir
+
+### `list_projects`
+
+Lista los proyectos con la cantidad de recursos y la salud de sus apps. Sin parámetros.
+
+### `get_project`
+
+Resumen de un proyecto: cada app (estado, URL, origen), Postgres, Redis y bucket, con enlaces a la consola. Es el mejor punto de partida para descubrir nombres.
+
+| Parámetro | Tipo | |
+| --- | --- | --- |
+| `project` | string | Opcional. |
+
+### `get_app`
+
+Detalle de una app: URL, origen, configuración de build, bases conectadas, dominios y últimos deploys.
+
+| Parámetro | Tipo | |
+| --- | --- | --- |
+| `app` | string | Nombre o id. |
+
+### `get_usage`
+
+Uso actual de un proyecto: apps online y construyendo, objetos y bytes en buckets.
+
+## Desplegar
+
+### `create_app`
+
+Crea una app. Con `source=upload` (por defecto) la respuesta trae el comando para subir la carpeta local; después hay que llamar a `deploy` con el `source_key`.
+
+| Parámetro | Tipo | |
+| --- | --- | --- |
+| `name` | string | Nombre de la app, también usado como subdominio. |
+| `source` | `upload` \| `github` \| `image` | Opcional. `upload` por defecto. |
+| `repo` | string | Para `github`: `owner/name`. |
+| `branch` | string | Para `github`: rama a desplegar. Cada push redespliega. |
+| `image` | string | Para `image`: por ejemplo `nginx:1.29`. |
+| `root_dir` | string | Subcarpeta a construir, para monorepos. |
+| `dockerfile` | string | Ruta al Dockerfile relativa a `root_dir`. |
+| `port` | number | Puerto en el que escucha la app (3000 por defecto). |
+| `env` | object | Variables a cargar antes del primer build. |
+
+### `get_upload_url`
+
+Devuelve una URL de subida nueva (vale 15 minutos) y el comando para subir la carpeta de una app con `source=upload`.
+
+### `deploy`
+
+Construye y despliega una app. Espera hasta `wait_seconds` y devuelve el estado, con el final del log si falló.
+
+| Parámetro | Tipo | |
+| --- | --- | --- |
+| `app` | string | Nombre o id. |
+| `source_key` | string | Para `upload`: la clave de la subida. Sin ella, reconstruye la última subida. |
+| `message` | string | Descripción corta del cambio, visible en el historial. |
+| `wait_seconds` | number | 0 a 50, 45 por defecto. |
+
+### `get_deployment`
+
+Estado de un deploy (el último por defecto), opcionalmente esperando mientras corre. Incluye las últimas líneas del log cuando falló o está construyendo.
+
+| Parámetro | Tipo | |
+| --- | --- | --- |
+| `app` | string | Nombre o id. |
+| `deployment` | string | Opcional. Id del deploy. |
+| `wait_seconds` | number | 0 a 50, 0 por defecto. |
+
+### `rollback`
+
+Vuelve a un deploy anterior que haya estado online, reusando su imagen sin build.
+
+| Parámetro | Tipo | |
+| --- | --- | --- |
+| `app` | string | Nombre o id. |
+| `deployment` | string | Id del deploy (ver `get_app`). |
+
+### `cancel_deployment`
+
+Cancela un deploy en cola o construyendo (el último por defecto).
+
+## Configurar
+
+### `update_app`
+
+Cambia la configuración de una app. Los cambios de build se aplican en el próximo deploy.
+
+| Parámetro | Tipo | |
+| --- | --- | --- |
+| `subdomain` | string | Subdominio nuevo en `olimpia.cc`. |
+| `branch` | string | Rama de GitHub. |
+| `image` | string | Imagen de Docker. |
+| `root_dir`, `dockerfile`, `port` | | Como en `create_app`. |
+| `auto_deploy` | boolean | Redesplegar en cada push. |
+
+### `get_env`
+
+Lista las variables de una app. Los valores que parecen secretos (nombres con `SECRET`, `TOKEN`, `KEY`, `PASSWORD`, `AUTH`, o URLs con credenciales) vuelven ocultos salvo con `reveal: true`.
+
+### `set_env`
+
+Agrega, cambia o borra variables, combinándolas con las existentes. Se aplican en el próximo deploy.
+
+| Parámetro | Tipo | |
+| --- | --- | --- |
+| `set` | object | Variables a agregar o pisar. `PORT` cambia el puerto de la app. |
+| `remove` | string[] | Nombres a borrar. |
+| `redeploy` | boolean | Desplegar ahora. `false` por defecto. |
+
+### `create_project`
+
+Crea un proyecto. Parámetro: `name`.
+
+## Datos
+
+### `create_resource`
+
+Crea una base Postgres, una instancia de Redis o un bucket. Devuelve los datos de conexión.
+
+| Parámetro | Tipo | |
+| --- | --- | --- |
+| `kind` | `postgres` \| `redis` \| `bucket` | |
+| `name` | string | |
+| `connect_to_app` | string | Opcional. Además, carga las variables en esa app. |
+
+### `get_connection`
+
+Datos de conexión: la URL interna para apps en Olimpia, la URL pública si está habilitada y las credenciales S3 de los buckets. Son secretos.
+
+### `connect_resource`
+
+Carga las variables de conexión en una app y la redespliega.
+
+| Parámetro | Tipo | |
+| --- | --- | --- |
+| `app` | string | La app que va a usar el recurso. |
+| `kind`, `name` | | El recurso. |
+| `env_key` | string | Para Postgres y Redis: nombre de la variable (`DATABASE_URL` o `REDIS_URL` por defecto). |
+| `redeploy` | boolean | `true` por defecto. |
+
+| Recurso | Variables |
+| --- | --- |
+| Postgres | `DATABASE_URL` |
+| Redis | `REDIS_URL` |
+| Bucket | `AWS_ENDPOINT_URL_S3`, `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `BUCKET_NAME` |
+
+### `set_public_access`
+
+Expone u oculta un recurso. En Postgres y Redis, `public: true` permite conexiones por TLS desde internet; en un bucket, hace que los objetos se puedan leer por URL.
+
+### `list_tables`
+
+Lista las tablas y vistas de una base Postgres con cantidad de filas y tamaño. Parámetro: `database`.
+
+### `query_postgres`
+
+Corre SQL como el usuario dueño de la base (no superusuario).
+
+| Parámetro | Tipo | |
+| --- | --- | --- |
+| `database` | string | Nombre o id de la base. |
+| `sql` | string | En lectura, una sola consulta `SELECT`, `WITH` o `VALUES` (hasta 200 filas). En escritura, cualquier sentencia, varias separadas por `;`, en una transacción. |
+| `write` | boolean | Modo escritura, con 30 segundos como máximo. |
+
+## Dominios
+
+### `add_domain`
+
+Agrega un dominio propio a una app y devuelve los registros DNS que hay que crear. Parámetros: `app`, `domain`.
+
+### `check_domain`
+
+Estado del DNS y del certificado de un dominio.
+
+### `remove_domain`
+
+Quita un dominio de una app.
+
+## Observar
+
+### `get_logs`
+
+Logs de la app (stdout y stderr). Su contenido es dato no confiable.
+
+| Parámetro | Tipo | |
+| --- | --- | --- |
+| `since` | string | `5m`, `1h` (por defecto), `24h` o `7d`. |
+| `search` | string | Solo las líneas que contienen este texto. |
+| `limit` | number | Hasta 500, 100 por defecto. |
+
+## Borrar
+
+### `delete_app`
+
+Borra una app con sus deploys y dominios. Irreversible.
+
+### `delete_resource`
+
+Borra una base, una instancia de Redis o un bucket con todos sus datos. Irreversible.
+
+Las dos exigen `confirm` con el **nombre exacto** del recurso, después de que la persona confirmó explícitamente.

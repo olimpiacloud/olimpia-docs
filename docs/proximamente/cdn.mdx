@@ -1,0 +1,24 @@
+---
+title: CDN
+description: Caché en el edge para servir assets estáticos y respuestas de tus apps desde el punto más cercano a cada usuario.
+sidebar:
+  label: CDN
+  icon: earth
+  badge: Pronto
+---
+
+:::note[Próximamente]
+Este módulo todavía no está habilitado. Lo vas a ver en la consola marcado como **Pronto**. Si lo necesitás, escribinos a [hola@olimpia.dev](mailto:hola@olimpia.dev) y contanos tu caso.
+:::
+
+La CDN de Olimpia va a cachear en el edge los assets estáticos y las respuestas de tus apps, para servirlos desde el punto más cercano a cada usuario.
+
+## Para qué
+
+- Servir imágenes, JS y CSS sin que cada pedido llegue a tu app.
+- Cachear respuestas de APIs públicas con las cabeceras `Cache-Control` de siempre.
+- Bajar la latencia para usuarios fuera de Argentina.
+
+## Mientras tanto
+
+Todo el tráfico de tus apps ya entra por la red de Cloudflare, con HTTPS terminado en el borde. Para archivos estáticos, un [bucket público](/buckets/acceso-publico) sirve objetos desde almacenamiento global.

@@ -1,0 +1,67 @@
+---
+title: Conexión
+description: Conectate a tu base desde tus apps por la red interna, o desde cualquier lado por TLS con el acceso externo.
+sidebar:
+  icon: plug
+---
+
+La pestaña **Conexión** de cada base tiene todo lo que necesitás: la URL de conexión, la URL interna, host, puerto, base, usuario y contraseña. **Copiar como .env** copia todo listo para pegar.
+
+## Desde tus apps
+
+Usá la URL interna. Es la que Olimpia carga en `DATABASE_URL` cuando conectás la base a una app:
+
+```txt
+postgresql://app:<contraseña>@<host-interno>:5432/app
+```
+
+No necesita TLS ni parámetros extra, y no sale a internet.
+
+## Acceso externo
+
+Por defecto la base solo acepta conexiones de tus apps en Olimpia. Para conectarte desde tu compu, una herramienta de BI o una app en otra nube, tocá **Permitir conexiones externas**. La URL pública queda así:
+
+```txt
+postgresql://app:<contraseña>@pg-<id>.db.olimpia.cc:5432/app?sslmode=require
+```
+
+<Tabs>
+  <Tab title="psql">
+    ```bash
+    psql "postgresql://app:<contraseña>@pg-<id>.db.olimpia.cc:5432/app?sslmode=require"
+    ```
+  </Tab>
+  <Tab title="Node">
+    ```js
+    import postgres from "postgres";
+
+    const sql = postgres(process.env.DATABASE_URL, { ssl: "require" });
+    ```
+  </Tab>
+  <Tab title="Python">
+    ```python
+    import os
+    import psycopg
+
+    conn = psycopg.connect(os.environ["DATABASE_URL"])
+    ```
+  </Tab>
+</Tabs>
+
+### Requisitos
+
+- **TLS obligatorio**, con `sslmode=require`. Una conexión sin TLS se corta.
+- **SNI.** Olimpia enruta cada conexión por el nombre del host, así que tu cliente tiene que mandar SNI: libpq 14 o más nuevo (`psql`, `pg_dump`) y los drivers actuales de Node, Python, Go, Java y Rust lo hacen.
+- Una conexión que no se autentica en 10 segundos se corta.
+
+:::tip
+Cuando ya no lo necesites, tocá **Bloquear conexiones externas**. Tus apps siguen conectadas por la red interna.
+:::
+
+## Rotar la contraseña
+
+**Rotar contraseña** genera una nueva y la anterior deja de funcionar al instante. Actualizá `DATABASE_URL` en tus apps (desde **Variables**, volviendo a agregar la base) y desplegá.
+
+## Desde tu agente
+
+`get_connection` devuelve la URL interna y la pública; `set_public_access` prende o apaga el acceso externo. Ver [Herramientas](/agentes/herramientas).

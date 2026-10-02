@@ -1,0 +1,50 @@
+---
+title: Dominios
+description: Tu app responde en un subdominio de olimpia.cc y en hasta 10 dominios propios, con certificado HTTPS automático.
+sidebar:
+  icon: globe
+---
+
+## Tu subdominio de Olimpia
+
+Cada app responde en `https://<subdominio>.olimpia.cc`, con HTTPS incluido. Por defecto el subdominio es el nombre de la app; lo cambiás en **Dominios** o en **Configuración**.
+
+:::warning
+Al cambiar el subdominio, la dirección anterior deja de responder en el momento.
+:::
+
+## Agregar un dominio propio
+
+<Steps>
+  <Step title="Agregá el dominio">
+    En **Dominios → Agregar dominio**, escribí el dominio o subdominio, por ejemplo `app.tuempresa.com`.
+  </Step>
+  <Step title="Cargá los registros DNS">
+    La consola te muestra los registros a crear en tu proveedor de DNS:
+
+    | Tipo | Nombre | Valor |
+    | --- | --- | --- |
+    | `CNAME` | `app` | `domains.olimpia.cc` |
+    | `TXT` | (el que indique la consola) | (el que indique la consola) |
+
+    El `TXT` es opcional: sirve para validar el dominio antes de apuntar el `CNAME`, útil si estás migrando un dominio que ya tiene tráfico.
+  </Step>
+  <Step title="Esperá la verificación">
+    Olimpia revisa el DNS cada 30 segundos, aunque cierres la página. Cuando el DNS apunta bien, emite el certificado HTTPS; suele tardar unos minutos. El dominio pasa por **Esperando DNS → Emitiendo certificado → Activo**.
+  </Step>
+</Steps>
+
+## Dominios raíz
+
+Para usar un dominio raíz (`tuempresa.com`), tu proveedor de DNS tiene que permitir un `CNAME` en la raíz, con **CNAME flattening** o un registro **ALIAS**. Cloudflare, DNSimple y otros lo soportan. Si tu proveedor no, usá `www.tuempresa.com` y redirigí la raíz hacia ahí.
+
+## Reglas
+
+- Hasta **10 dominios** por app.
+- Un dominio no puede estar en dos apps a la vez.
+- Un dominio que no se verifica en **7 días** se quita solo, para que nadie reserve dominios ajenos.
+- Si la app todavía no tiene un deploy online, el dominio queda en **Espera el primer deploy**.
+
+## Quitar un dominio
+
+**Quitar dominio** deja de servir la app en ese dominio al instante. Podés volver a agregarlo cuando quieras. Acordate de borrar también el registro DNS.

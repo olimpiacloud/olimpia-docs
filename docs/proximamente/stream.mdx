@@ -1,0 +1,25 @@
+---
+title: Stream
+description: "Streaming de eventos en tiempo real entre servicios: pagos, notificaciones, logs y pipelines de datos."
+sidebar:
+  label: Stream
+  icon: radio-tower
+  badge: Pronto
+---
+
+:::note[Próximamente]
+Este módulo todavía no está habilitado. Lo vas a ver en la consola marcado como **Pronto**. Si lo necesitás, escribinos a [hola@olimpia.dev](mailto:hola@olimpia.dev) y contanos tu caso.
+:::
+
+Stream va a permitir publicar y consumir eventos en tiempo real entre tus servicios, dentro de la misma región que tus apps.
+
+## Para qué
+
+- **Pagos y pedidos.** Publicá un evento cuando entra un pago y que cada servicio reaccione a su ritmo.
+- **Notificaciones.** Desacoplá el envío de emails, push y webhooks del pedido original.
+- **Logs y auditoría.** Juntá eventos de varias apps en un solo flujo ordenado.
+- **Pipelines de datos.** Alimentá procesos de análisis sin cargar tu base principal.
+
+## Mientras tanto
+
+Para colas de trabajos, usá [Redis](/redis) con BullMQ, Sidekiq o Celery: Olimpia nunca borra claves por falta de memoria, así que tus colas no pierden trabajos.

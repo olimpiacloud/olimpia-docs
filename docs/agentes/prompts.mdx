@@ -1,0 +1,40 @@
+---
+title: Prompts listos
+description: Pedidos para copiar y pegar en tu agente, desde el primer deploy hasta migrar una app de otra nube.
+sidebar:
+  icon: message-square-text
+---
+
+Copiá cualquiera de estos prompts en Claude Code, Codex o Cursor con Olimpia [conectado](/agentes/conectar).
+
+<Prompt description="**Desplegar** la carpeta actual" actions={["copy"]}>
+Desplegá esta carpeta en Olimpia como una app nueva. Revisá primero el stack, el comando de inicio y el puerto, y asegurate de que la app escuche en 0.0.0.0 y en $PORT. Cuando termine, verificá la URL con curl y revisá los logs.
+</Prompt>
+
+<Prompt description="**Base de datos** para una app" actions={["copy"]}>
+Creá una base Postgres en Olimpia, conectala a mi app y configurá las migraciones para que corran al arrancar la app. Después desplegá y verificá que las tablas existan con list_tables.
+</Prompt>
+
+<Prompt description="**Cola de trabajos** con Redis" actions={["copy"]}>
+Agregá una cola de trabajos con BullMQ a esta app usando un Redis de Olimpia. Creá la instancia, conectala a la app con REDIS_URL y desplegá un worker separado que procese los trabajos.
+</Prompt>
+
+<Prompt description="**Subidas de archivos** con un bucket" actions={["copy"]}>
+Creá un bucket en Olimpia para esta app y conectalo. Implementá subidas desde el navegador con URLs firmadas generadas en el backend, usando el AWS SDK con las variables AWS_* y BUCKET_NAME.
+</Prompt>
+
+<Prompt description="**Arreglar** el último deploy" actions={["copy"]}>
+El último deploy de mi app en Olimpia falló. Leé el error y el log del build con get_deployment, encontrá la causa en el código, corregila y volvé a desplegar. No reintentes sin cambios.
+</Prompt>
+
+<Prompt description="**Dominio propio**" actions={["copy"]}>
+Apuntá el dominio app.miempresa.com a mi app en Olimpia. Decime exactamente qué registros DNS tengo que crear y después verificá con check_domain hasta que esté activo.
+</Prompt>
+
+<Prompt description="**Migrar** desde otra nube" actions={["copy"]}>
+Quiero mover esta app a Olimpia. Mirá cómo está configurada hoy (variables de entorno, base de datos, puerto, comando de inicio), creá la app y los recursos equivalentes en Olimpia, y armame un plan para migrar los datos de Postgres con pg_dump y psql usando el acceso externo temporal. No borres nada sin preguntarme.
+</Prompt>
+
+<Prompt description="**Auditoría** de un proyecto" actions={["copy"]}>
+Revisá mi proyecto en Olimpia: listá apps, bases y buckets, decime cuáles tienen acceso público habilitado, qué apps tienen deploys fallidos y si hay recursos que no usa ninguna app. No cambies nada, solo reportá.
+</Prompt>

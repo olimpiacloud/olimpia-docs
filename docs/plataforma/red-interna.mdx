@@ -1,0 +1,38 @@
+---
+title: Red interna
+description: Tus apps llegan a Postgres y Redis por una red privada, sin TLS que configurar y sin exponer nada a internet.
+sidebar:
+  icon: network
+---
+
+Cada app, base e instancia de Redis de Olimpia está conectada a una red privada de la región. Tus apps usan esa red para hablar con sus bases: el tráfico no sale a internet, no pasa por el proxy público y no necesita certificados.
+
+## URL interna y URL pública
+
+Cada base tiene dos formas de conectarse:
+
+| | URL interna | URL pública |
+| --- | --- | --- |
+| Desde | Apps en Olimpia | Tu compu, otra nube, una herramienta de BI |
+| Por defecto | Siempre activa | Apagada |
+| TLS | No hace falta | Obligatorio, con SNI |
+| Postgres | `postgresql://app:…@<host-interno>:5432/app` | `postgresql://app:…@pg-<id>.db.olimpia.cc:5432/app?sslmode=require` |
+| Redis | `redis://default:…@<host-interno>:6379` | `rediss://default:…@rd-<id>.db.olimpia.cc:6379` |
+
+Cuando conectás una base a una app desde la consola o desde tu agente, Olimpia carga la URL interna en `DATABASE_URL` o `REDIS_URL`. Es la que tenés que usar desde tus apps.
+
+:::warning
+La URL interna no funciona desde tu máquina: solo resuelve dentro de Olimpia. Para conectarte desde afuera, [habilitá el acceso externo](/postgres/conexion#acceso-externo) y usá la URL pública.
+:::
+
+## Privado por defecto
+
+Una base nueva no acepta conexiones de internet. Solo tus apps en Olimpia pueden llegar a ella. El acceso externo se prende y se apaga por base, cuando lo necesitás: para una migración desde tu compu, una herramienta de análisis o una app que todavía corre en otra nube.
+
+## Aislamiento entre apps
+
+Las apps corren en una red separada de los servicios internos de la plataforma. Una app puede llegar a las bases y a Redis, pero no ve los paneles de administración, las bases internas de Olimpia ni el resto de la infraestructura.
+
+## Buckets
+
+Los buckets no usan la red interna: se acceden por HTTPS con la API de S3, desde tus apps o desde cualquier lado, con [credenciales que solo sirven para ese bucket](/buckets/credenciales).

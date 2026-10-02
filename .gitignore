@@ -1,0 +1,8 @@
+node_modules
+dist
+.blume
+.astro
+.DS_Store
+art-src
+.blume-verify/
+.blume-verify

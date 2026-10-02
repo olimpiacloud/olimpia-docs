@@ -1,0 +1,82 @@
+---
+title: Backups en tu S3
+description: Programá copias automáticas de tu base en AWS S3, Cloudflare R2, Backblaze B2, MinIO o cualquier servicio compatible con S3.
+sidebar:
+  label: Backups
+  icon: archive-restore
+---
+
+Olimpia guarda sus propias copias diarias de cada base. Además, podés programar backups en **tu propio bucket**, para tener los datos bajo tu control, en tu proveedor y con tu retención.
+
+## Configurar
+
+<Steps>
+  <Step title="Prepará un bucket">
+    Creá un bucket en tu proveedor y una access key con permisos solo sobre ese bucket. Necesita poder listar, leer y escribir objetos.
+  </Step>
+  <Step title="Abrí Backups">
+    En tu base, abrí **Backups → Configurar backups**.
+  </Step>
+  <Step title="Cargá el destino">
+    | Campo | Ejemplo |
+    | --- | --- |
+    | **Endpoint** | `https://s3.us-east-1.amazonaws.com` o `https://<cuenta>.r2.cloudflarestorage.com` |
+    | **Región** | `us-east-1`, o `auto` si tu proveedor no usa regiones |
+    | **Bucket** | `mi-empresa-backups` |
+    | **Access key ID** y **Secret access key** | Las de la key que creaste |
+  </Step>
+  <Step title="Elegí frecuencia y retención">
+    | Frecuencia | Cuándo |
+    | --- | --- |
+    | Cada hora | Al minuto cero de cada hora |
+    | Cada 6 horas | Cuatro veces por día |
+    | Todos los días | 03:00 UTC |
+    | Los domingos | 03:00 UTC |
+    | Personalizada | Una expresión cron en UTC |
+
+    En **Conservar** indicás cuántos backups guardar, entre 1 y 90. Los más viejos se borran solos.
+  </Step>
+  <Step title="Guardá">
+    Olimpia prueba el acceso a tu bucket antes de guardar. Si algo falla, te dice qué revisar.
+  </Step>
+</Steps>
+
+## Frecuencia personalizada
+
+La expresión cron tiene cinco campos (minuto, hora, día, mes y día de la semana), en UTC, con el minuto fijo: como mucho un backup por hora. La consola te muestra los próximos horarios antes de guardar.
+
+```txt
+30 */4 * * *    cada 4 horas, a los 30 minutos
+0 6 * * 1-5     de lunes a viernes, 06:00 UTC (03:00 en Buenos Aires)
+```
+
+## Qué se guarda
+
+Cada backup es un dump comprimido de la base (`.sql.gz`), con la fecha en el nombre. En **Backups recientes** ves los archivos de tu bucket y los podés descargar directo desde la consola.
+
+Para restaurar uno en otra base:
+
+```bash
+gunzip -c backup.sql.gz | psql "postgresql://app:<contraseña>@pg-<id>.db.olimpia.cc:5432/app?sslmode=require"
+```
+
+## Hacer un backup ahora
+
+**Hacer backup ahora** corre uno en el momento, sin esperar al próximo horario. Útil antes de una migración grande.
+
+## Desactivar
+
+**Desactivar** deja de hacer backups de esa base. Los archivos que ya están en tu bucket no se borran.
+
+## Ejemplos por proveedor
+
+| Proveedor | Endpoint | Región |
+| --- | --- | --- |
+| AWS S3 | `https://s3.<región>.amazonaws.com` | La del bucket |
+| Cloudflare R2 | `https://<cuenta>.r2.cloudflarestorage.com` | `auto` |
+| Backblaze B2 | `https://s3.<región>.backblazeb2.com` | La del bucket |
+| MinIO | `https://minio.tuempresa.com` | La que configuraste |
+
+:::warning[Requisitos del endpoint]
+El endpoint tiene que ser `https://host` (con puerto opcional, sin ruta) y apuntar a una dirección pública. Olimpia rechaza direcciones privadas o locales. El bucket lleva minúsculas, números, puntos y guiones.
+:::

@@ -1,0 +1,12 @@
+{
+  "name": "olimpia-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "blume dev",
+    "build": "blume build"
+  },
+  "dependencies": {
+    "blume": "^2.1.0"
+  }
+}

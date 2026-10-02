@@ -1,0 +1,38 @@
+---
+title: Buckets
+description: Object storage compatible con S3 para archivos, imágenes, videos y backups, con una access key propia por bucket.
+sidebar:
+  label: Introducción
+  icon: archive
+---
+
+Un bucket de Olimpia es object storage compatible con la API de S3. Guardás archivos de cualquier tamaño y los leés con los SDKs y herramientas de S3 que ya usás: el AWS SDK, `boto3`, `rclone`, la AWS CLI.
+
+## Crear un bucket
+
+En la consola, entrá a **Buckets → Crear bucket** y elegí un nombre. Las credenciales se generan al crearlo.
+
+## Qué incluye
+
+- **Compatible con S3.** Subidas, descargas, multipart, URLs firmadas y listados, con cualquier SDK.
+- **Una key por bucket.** Cada bucket tiene su propia access key, con permisos solo sobre ese bucket. Ver [Credenciales](/buckets/credenciales).
+- **Sin límite de espacio.** Pagás por lo que guardás.
+- **Almacenamiento global.** Los objetos se sirven rápido desde cualquier parte del mundo.
+- **Explorador en la consola.** Navegá carpetas, buscá por nombre, previsualizá, subí, renombrá y borrá archivos sin escribir código.
+- **Privado por defecto**, con [acceso público](/buckets/acceso-publico) opcional para servir archivos por URL.
+
+## Explorador
+
+Desde la consola podés:
+
+- navegar por carpetas y ordenar por nombre, tamaño o fecha,
+- buscar archivos por nombre, aunque no escribas el nombre exacto,
+- previsualizar imágenes, videos, PDFs y texto,
+- subir archivos, crear carpetas, renombrar y borrar,
+- compartir un archivo con un enlace que vence en una hora.
+
+Las subidas y descargas van directo de tu navegador al almacenamiento, firmadas con la key del bucket.
+
+## Borrar un bucket
+
+Se borran el bucket, todos sus objetos y sus credenciales. No se puede deshacer: la consola te pide escribir el nombre para confirmar.

@@ -1,0 +1,84 @@
+---
+title: Subir tu carpeta
+description: Desplegá código que no está en GitHub subiendo un .tar.gz de tu carpeta, desde tu agente, un script o tu CI.
+sidebar:
+  icon: folder-up
+---
+
+Una app con código subido no está atada a ningún repositorio: le mandás un `.tar.gz` de tu carpeta y Olimpia lo construye y lo publica. Es la forma que usan los agentes por defecto, y la que conviene cuando desplegás desde tu propio CI.
+
+:::tip
+La manera más simple es pedírselo a tu agente: "desplegá esta carpeta en Olimpia". Ver [Conectar tu agente](/agentes/conectar).
+:::
+
+## El flujo
+
+Los ejemplos usan un [token personal](/cuenta/tokens) en `$OLIMPIA_TOKEN`.
+
+<Steps>
+  <Step title="Creá la app">
+    Las apps con código subido se crean desde tu agente o desde la [API](/cuenta/api). Buscá el `id` de tu proyecto con `GET /projects`.
+
+    ```bash
+    curl -fsS -X POST -H "Authorization: Bearer $OLIMPIA_TOKEN" \
+      -H "content-type: application/json" \
+      -d '{"project_id": "<id del proyecto>", "name": "mi-api", "source": "upload", "port": 3000}' \
+      https://api.olimpia.dev/apps
+    ```
+
+    Guardá el `id` de la respuesta en `$APP_ID`.
+  </Step>
+  <Step title="Pedí una URL de subida">
+    Cada subida usa una URL firmada que vence a los 15 minutos.
+
+    ```bash
+    curl -fsS -X POST -H "Authorization: Bearer $OLIMPIA_TOKEN" \
+      https://api.olimpia.dev/apps/$APP_ID/source
+    ```
+
+    La respuesta trae `upload_url` y `key`.
+  </Step>
+  <Step title="Empaquetá y subí la carpeta">
+    Desde la raíz de tu proyecto, con git:
+
+    ```bash
+    git add -A && ref=$(git stash create)
+    git archive --format=tar.gz --prefix=src/ -o /tmp/src.tar.gz "${ref:-HEAD}"
+    curl -fsS -X PUT -T /tmp/src.tar.gz "$UPLOAD_URL"
+    ```
+
+    Esto incluye los cambios sin commitear, respeta `.gitignore` y no crea commits ni stashes.
+  </Step>
+  <Step title="Desplegá">
+    ```bash
+    curl -fsS -X POST -H "Authorization: Bearer $OLIMPIA_TOKEN" \
+      -H "content-type: application/json" \
+      -d "{\"source\": \"$KEY\", \"message\": \"primer deploy\"}" \
+      https://api.olimpia.dev/apps/$APP_ID/deployments
+    ```
+  </Step>
+</Steps>
+
+## Requisitos del archivo
+
+- Un `.tar.gz` con todos los archivos dentro de **una sola carpeta** de primer nivel (por eso el `--prefix=src/`).
+- Hasta **300 MB**.
+- Sin `node_modules`, carpetas de build, entornos virtuales ni archivos `.env`. Si no usás git, excluilos a mano:
+
+```bash
+tar --exclude=node_modules --exclude=.git --exclude='.env*' --exclude=dist \
+  --exclude=build --exclude=.next --exclude=target --exclude=.venv \
+  -czf /tmp/src.tar.gz --transform 's,^\.,src,' .
+```
+
+## Volver a construir
+
+Un deploy sin `source` reconstruye la última subida. Sirve para aplicar variables de entorno nuevas sin subir el código otra vez.
+
+## Monorepos
+
+Subí el repositorio entero y configurá la **Carpeta raíz** de la app (por ejemplo `apps/web`).
+
+## Retención
+
+Olimpia guarda la última subida de cada app y borra las anteriores al día siguiente. Al borrar la app, se borran todas.

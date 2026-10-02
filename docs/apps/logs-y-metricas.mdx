@@ -1,0 +1,38 @@
+---
+title: Logs y métricas
+description: El log de cada build, los logs de tu app en vivo y las métricas de CPU, memoria y disco de los últimos 7 días.
+sidebar:
+  icon: activity
+---
+
+## Logs del build
+
+Cada deploy guarda su log de build. Mientras construye lo ves en vivo; cuando termina, queda en el historial durante 30 días. Si un build falla, el final del log suele decir por qué: un comando de inicio que falta, un error de TypeScript, un lockfile desactualizado. Ver [Si algo falla](/apps/problemas).
+
+## Logs de la app
+
+La pestaña **Logs** muestra lo que tu app escribe en stdout y stderr, en vivo y con búsqueda. Para que aparezcan, tu app tiene que escribir sus logs ahí, no en archivos.
+
+```js
+console.log(JSON.stringify({ level: "info", msg: "pedido creado", id }));
+```
+
+:::tip
+Logs en una línea de JSON son más fáciles de buscar y filtrar.
+:::
+
+## Métricas
+
+La pestaña **Métricas** mide tu app cada minuto y guarda 7 días:
+
+| Métrica | Qué mide |
+| --- | --- |
+| **CPU** | Uso de CPU. 100 % equivale a 1 vCPU. |
+| **Memoria** | RSS y caché activa e inactiva. |
+| **IOPS** | Lecturas y escrituras de disco. |
+
+Elegí el período: última hora, 24 horas o 7 días.
+
+## Desde tu agente
+
+Tu agente puede leer los logs con `get_logs` y el estado de cada deploy, con el final del log de build, con `get_deployment`. Ver [Herramientas](/agentes/herramientas).

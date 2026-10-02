@@ -1,0 +1,61 @@
+---
+title: Conceptos
+description: Proyectos, recursos, deploys, nombres y cobro por uso. El vocabulario que usa Olimpia en la consola, en la API y en el servidor MCP.
+sidebar:
+  icon: shapes
+---
+
+## Proyectos
+
+Un proyecto agrupa apps, bases y buckets que trabajan juntos. Usalo para separar producción de pruebas, un producto de otro o un cliente de otro.
+
+- Cada cuenta arranca con el proyecto `personal`.
+- Los nombres de los recursos son únicos dentro de cada proyecto: podés tener una base `main` en `produccion` y otra `main` en `staging`.
+- Podés mover un recurso de un proyecto a otro sin recrearlo.
+- Un proyecto solo se puede borrar cuando está vacío, y nunca el último que te queda.
+
+## Recursos
+
+| Recurso | Qué es | Dónde se conecta |
+| --- | --- | --- |
+| **App** | Un contenedor construido desde GitHub, una carpeta subida o una imagen de Docker. | `https://<subdominio>.olimpia.cc` y tus dominios propios. |
+| **Postgres** | Una base Postgres 18 administrada. | `DATABASE_URL` por la red interna; opcionalmente por TLS desde afuera. |
+| **Redis** | Una instancia de Redis 8 persistente. | `REDIS_URL` por la red interna; opcionalmente por TLS desde afuera. |
+| **Bucket** | Object storage compatible con S3. | Las variables `AWS_*` y `BUCKET_NAME`, desde cualquier lado. |
+
+Una app puede usar varios recursos y un recurso puede estar conectado a varias apps.
+
+## Deploys
+
+Un deploy es un build y una publicación de tu app. Pasa por estos estados:
+
+```txt
+En cola → Construyendo → Deployando → Online
+```
+
+Puede terminar como **Falló** o **Cancelado**, y un deploy online pasa a **Reemplazado** cuando entra uno nuevo. Hay un solo deploy en curso por app: si llega otro push, el anterior que seguía en cola se cancela. Más detalle en [Deploys y rollbacks](/apps/deploys).
+
+## Nombres
+
+Apps, bases, buckets y proyectos usan el mismo formato: entre 3 y 63 caracteres, con minúsculas, números y guiones, sin guion al principio ni al final.
+
+```txt
+mi-api        ✓
+api-v2        ✓
+Mi_API        ✗
+-api          ✗
+```
+
+## Dominios
+
+- La consola y la API viven en `olimpia.dev` y `api.olimpia.dev`.
+- Tus apps se publican en subdominios de `olimpia.cc`, por ejemplo `https://mi-api.olimpia.cc`.
+- Las bases con acceso externo usan `*.db.olimpia.cc`.
+
+## Cobro por uso
+
+Olimpia cobra por lo que usás: CPU, memoria y almacenamiento de cada recurso. No hay planes con topes ni límites artificiales de cantidad de apps o bases. Durante el acceso anticipado no se pide tarjeta, y los precios se publican antes de abrir la región.
+
+:::note
+La facturación en la consola está en camino. Mirá [Próximamente](/proximamente/facturacion).
+:::
