@@ -109,16 +109,20 @@ Cancela un deploy en cola o construyendo (el último por defecto).
 
 ### `list_templates`
 
-Lista los templates disponibles (n8n, Centrifugo, Umami, Metabase…): para cada uno, `id`, `name`, `image`, `port`, `postgres` (si crea una base) y `docs`. Sin parámetros.
+Busca en el catálogo de templates (los de Dokploy más los de Olimpia). Devuelve hasta 25 resultados con `id`, `name`, `description` y `available`. Los disponibles traen `image`, `postgres` y `redis` (qué bases crea); los demás, `reason` (`volumes`, `services`, `command`, `files`, `extension`…).
+
+| Parámetro | Tipo | |
+| --- | --- | --- |
+| `search` | string | Opcional. Palabras a buscar en el nombre, la descripción y las etiquetas. Sin búsqueda, lista solo los disponibles. |
 
 ### `deploy_template`
 
-Despliega un template como una app nueva: crea la base Postgres si el template la necesita, genera los secretos y las URLs como variables (se ven con `get_env`) y arranca el primer deploy. Ver [Templates](/apps/templates).
+Despliega un template disponible como una app nueva: crea la base Postgres y el Redis si el template los necesita, genera los secretos y las URLs como variables (se ven con `get_env`) y arranca el primer deploy. Ver [Templates](/apps/templates).
 
 | Parámetro | Tipo | |
 | --- | --- | --- |
 | `template` | string | Id del template, por ejemplo `n8n`. |
-| `name` | string | Opcional. Nombre de la app y subdominio; también el de la base. El id del template por defecto. |
+| `name` | string | Opcional. Nombre de la app y subdominio; también el de sus bases. El id del template por defecto. |
 | `project` | string | Opcional. |
 
 ## Configurar

@@ -39,7 +39,7 @@ create_app(name: "uptime", source: "image", image: "louislam/uptime-kuma:2", por
 ## Template
 
 ```txt
-list_templates()
+list_templates(search: "n8n")
 deploy_template(template: "n8n", name: "flujos")   # crea la app, la base "flujos" y las variables
 get_deployment(app: "flujos", wait_seconds: 50)
 ```
