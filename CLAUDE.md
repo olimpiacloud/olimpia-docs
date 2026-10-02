@@ -6,4 +6,5 @@
 - La fuente de verdad del producto es el repo `olimpia-cloud` (API en Rust, web en TanStack Start) y la skill `olimpiacloud/olimpia-skills`. No documentar nada que no exista ahí; lo que todavía no está habilitado va en `docs/proximamente/` con `badge: Pronto`.
 - Nunca publicar IPs, proveedores ni detalles internos de la infraestructura.
 - Frontmatter: si un `description` lleva `: `, va entre comillas.
+- Deploy: app `docs` en el proyecto `olimpia-internal` de Olimpia; `docs.olimpia.dev` es el Worker de `edge/` (ver README).
 - Validar con `bunx blume build --isolated` (si hay un dev server corriendo) y `bunx blume validate`.
