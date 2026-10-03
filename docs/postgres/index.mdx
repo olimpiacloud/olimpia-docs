@@ -17,6 +17,9 @@ Una base Postgres de Olimpia es un Postgres 18 completo, con su propio usuario y
   <Step title="Elegí un nombre">
     Entre 3 y 63 caracteres: minúsculas, números y guiones. El usuario y la contraseña se generan solos.
   </Step>
+  <Step title="Elegí la imagen">
+    **Postgres 18** sirve para casi todo. Elegí **Postgres 18 + pgvector** si vas a guardar embeddings o buscar por similitud. La imagen no se cambia después.
+  </Step>
   <Step title="Conectala a tu app">
     En la app, abrí **Variables** y agregá la base: Olimpia carga `DATABASE_URL`. Desplegá para aplicarlo.
   </Step>
@@ -24,7 +27,7 @@ Una base Postgres de Olimpia es un Postgres 18 completo, con su propio usuario y
 
 ## Qué incluye
 
-- **Postgres 18**, con la base `app` y el usuario `app`, dueño de la base.
+- **Postgres 18**, con la base `app` y el usuario `app`, dueño de la base. Si la creaste con pgvector, también trae la extensión `vector`.
 - **Conexión interna** para tus apps y [acceso externo opcional](/postgres/conexion#acceso-externo) por TLS.
 - **[Explorador de datos](/postgres/explorador)** para ver tablas y filas desde la consola.
 - **[Backups en tu S3](/postgres/backups)**, programados, además de las copias diarias que guarda Olimpia.
@@ -38,8 +41,19 @@ El usuario `app` es dueño de su base pero no es superusuario:
 | Podés | No podés |
 | --- | --- |
 | Crear tablas, índices, vistas, funciones y esquemas | `ALTER SYSTEM` ni cambiar la configuración del servidor |
-| Usar extensiones confiables: `pgcrypto`, `citext`, `pg_trgm` y otras | Instalar extensiones no confiables |
+| Usar extensiones confiables: `pgcrypto`, `citext`, `pg_trgm`, `unaccent`, `hstore` y otras, y `vector` en las bases con pgvector | Instalar extensiones no confiables |
 | Correr migraciones con cualquier ORM | Crear otros superusuarios |
+
+## Embeddings con pgvector
+
+En una base creada con **Postgres 18 + pgvector**, activá la extensión una vez, en una migración de tu app o pidiéndoselo a tu agente (`query_postgres` con `write: true`):
+
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE TABLE documentos (id bigserial PRIMARY KEY, texto text, embedding vector(1536));
+```
+
+En una base con la imagen de siempre, `CREATE EXTENSION vector` falla: creá otra base con pgvector y pasá los datos.
 
 ## Con tu ORM
 

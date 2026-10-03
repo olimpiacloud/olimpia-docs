@@ -168,6 +168,7 @@ Crea una base Postgres, una instancia de Redis o un bucket. Devuelve los datos d
 | `kind` | `postgres` \| `redis` \| `bucket` | |
 | `name` | string | |
 | `connect_to_app` | string | Opcional. Además, carga las variables en esa app. |
+| `vector` | boolean | Solo Postgres. `true` la crea con pgvector (`CREATE EXTENSION vector`); por defecto, `false`. No se cambia después. |
 
 ### `get_connection`
 
@@ -181,7 +182,7 @@ Carga las variables de conexión en una app y la redespliega.
 | --- | --- | --- |
 | `app` | string | La app que va a usar el recurso. |
 | `kind`, `name` | | El recurso. |
-| `env_key` | string | Para Postgres y Redis: nombre de la variable (`DATABASE_URL` o `REDIS_URL` por defecto). |
+| `env_key` | string | Para Postgres y Redis: nombre de la variable (`DATABASE_URL` o `REDIS_URL` por defecto). Si ya existe una variable con ese nombre, la reemplaza. |
 | `redeploy` | boolean | `true` por defecto. |
 
 | Recurso | Variables |
@@ -189,6 +190,8 @@ Carga las variables de conexión en una app y la redespliega.
 | Postgres | `DATABASE_URL` |
 | Redis | `REDIS_URL` |
 | Bucket | `AWS_ENDPOINT_URL_S3`, `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `BUCKET_NAME` |
+
+Si la app ya tiene una variable con el nombre por defecto, las nuevas llevan el nombre del recurso como sufijo (`DATABASE_URL_MAIN`). `env_keys`, en la respuesta, dice qué nombres se usaron.
 
 ### `set_public_access`
 
