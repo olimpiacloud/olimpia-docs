@@ -1,11 +1,11 @@
 ---
 title: Herramientas
-description: Referencia de las 33 herramientas del servidor MCP de Olimpia, con sus parámetros y qué devuelven.
+description: Referencia de las 35 herramientas del servidor MCP de Olimpia, con sus parámetros y qué devuelven.
 sidebar:
   icon: wrench
 ---
 
-Todas las herramientas aceptan nombres o ids (`app: "web"` o el UUID), y `project` es opcional cuando la cuenta tiene un solo proyecto. Los errores vuelven con la acción a seguir, para que el agente se pueda corregir solo.
+Todas las herramientas aceptan nombres o ids (`app: "web"` o el UUID), y `project` es opcional cuando la cuenta tiene un solo proyecto. Sin sufijo, `project` es producción; `project: "tienda.staging"` apunta al [ambiente](/cuenta/ambientes) staging. Los errores vuelven con la acción a seguir, para que el agente se pueda corregir solo.
 
 :::note[Convenciones]
 - **Nombres**: entre 3 y 63 caracteres, minúsculas, números y guiones.
@@ -27,7 +27,7 @@ Conecta el agente a la cuenta cuando se usa el plugin de Claude Code. Sin `code`
 
 ### `list_projects`
 
-Lista los proyectos con la cantidad de recursos y la salud de sus apps. Sin parámetros.
+Lista los proyectos con sus ambientes (producción primero), y de cada ambiente la cantidad de recursos y la salud de sus apps. Sin parámetros.
 
 ### `get_project`
 
@@ -164,6 +164,16 @@ Crea un proyecto.
 | `name` | string | |
 | `region` | string | Opcional y avanzado. Sin ella, Olimpia elige la región sola (hoy `olimpia-bue1`). Ver [Proyectos](/cuenta/proyectos#región). |
 
+### `create_environment`
+
+Crea un ambiente en un proyecto, hasta cinco contando producción. Por defecto copia todas las apps, bases y buckets del ambiente indicado: bases y buckets vacíos con credenciales nuevas, apps con el mismo origen y configuración, variables que apuntan a las copias y un primer deploy.
+
+| Parámetro | Tipo | |
+| --- | --- | --- |
+| `name` | string | Por ejemplo `staging`. |
+| `project` | string | Opcional. El ambiente a copiar, como `tienda` o `tienda.staging`. |
+| `copy` | boolean | Copiar los servicios. `true` por defecto; `false` lo crea vacío. |
+
 ## Datos
 
 ### `create_resource`
@@ -282,4 +292,8 @@ Borra una app con sus deploys y dominios. Irreversible.
 
 Borra una base, una instancia de Redis o un bucket con todos sus datos. Irreversible.
 
-Las dos exigen `confirm` con el **nombre exacto** del recurso, después de que la persona confirmó explícitamente.
+### `delete_environment`
+
+Borra un ambiente que no sea producción con todas sus apps, bases y buckets. Irreversible. `project` es el ambiente (`tienda.staging`).
+
+Las tres exigen `confirm` con el **nombre exacto** (en `delete_environment`, `<proyecto>.<ambiente>`), después de que la persona confirmó explícitamente.

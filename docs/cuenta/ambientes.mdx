@@ -1,0 +1,39 @@
+---
+title: Ambientes
+description: Producción y hasta cuatro ambientes más por proyecto, como staging, creados copiando los servicios de otro ambiente.
+sidebar:
+  icon: git-branch
+---
+
+Cada proyecto arranca con un ambiente, **producción**, y le podés sumar hasta cuatro más (cinco en total), como `staging` o `preview`. Cada ambiente tiene sus propias apps, bases y buckets: lo que pase en uno no toca a los demás.
+
+La URL de la consola dice en qué ambiente estás: `olimpia.dev/dashboard/tienda` es producción y `olimpia.dev/dashboard/tienda.staging` es staging.
+
+## Cambiar de ambiente
+
+En la barra de arriba, al lado del nombre del proyecto, está el ambiente actual. Tocalo para ver los demás y saltar de uno a otro: si estás en una sección, como Apps o Postgres, vas a la misma sección del otro ambiente.
+
+## Crear un ambiente
+
+Desde ese mismo desplegable, tocá **Nuevo ambiente** y elegí un nombre. Por defecto, Olimpia copia todos los servicios del ambiente en el que estás:
+
+| Servicio | La copia |
+| --- | --- |
+| Apps | Mismo origen (repo y rama, imagen o el último código subido), misma configuración de build y puerto, y su primer deploy. Cada una tiene su propio subdominio, por ejemplo `web-staging.olimpia.cc`. |
+| Postgres y Redis | Una base nueva y **vacía**, con la misma imagen y el mismo acceso público, y credenciales nuevas. |
+| Buckets | Un bucket nuevo y **vacío**, con credenciales nuevas. |
+| Variables | Se copian todas; las que apuntaban a una base, un bucket o el subdominio de otra app del ambiente pasan a apuntar a sus copias. |
+
+No se copian los datos, los dominios propios ni los backups. Si destildás **Copiar todos los servicios**, el ambiente nace vacío.
+
+:::note
+Las apps de GitHub copiadas siguen la misma rama y se despliegan con cada push. Para que staging siga otra rama, cambiala en la configuración de la app.
+:::
+
+## Borrar un ambiente
+
+En el desplegable de un ambiente que no sea producción está **Eliminar**. Borra el ambiente con todas sus apps, bases y buckets, y no se puede deshacer. Producción no se borra: para eso se borra el proyecto.
+
+## Desde un agente
+
+Con el [servidor MCP](/agentes/herramientas), `create_environment` crea un ambiente (copiando por defecto) y `delete_environment` lo borra. Para trabajar en un ambiente, cualquier herramienta acepta `project: "tienda.staging"`; sin el sufijo, es producción.

@@ -1,11 +1,11 @@
 ---
 title: Proyectos
-description: Agrupá apps, bases y buckets por producto, cliente o entorno, y movelos entre proyectos sin recrearlos.
+description: Agrupá apps, bases y buckets por producto o cliente, con sus ambientes, y movelos entre proyectos sin recrearlos.
 sidebar:
   icon: folders
 ---
 
-Todo lo que creás en Olimpia vive dentro de un proyecto. La consola recuerda el último que abriste y todo cuelga de su URL: `olimpia.dev/dashboard/<proyecto>/...`.
+Todo lo que creás en Olimpia vive dentro de un proyecto, en uno de sus [ambientes](/cuenta/ambientes): producción y hasta cuatro más, como staging. La consola recuerda el último que abriste y todo cuelga de su URL: `olimpia.dev/dashboard/<proyecto>/...`, o `<proyecto>.<ambiente>` fuera de producción.
 
 ## Crear un proyecto
 
@@ -19,15 +19,16 @@ Si querés elegirla vos, está en **Configuración avanzada**, al crear el proye
 
 ## Ideas para organizarte
 
+Para separar producción de staging con las mismas apps, no hace falta otro proyecto: usá [ambientes](/cuenta/ambientes).
+
 | Proyecto | Para |
 | --- | --- |
-| `produccion` y `staging` | Separar entornos con las mismas apps. |
 | `tienda`, `backoffice` | Un proyecto por producto. |
 | `cliente-acme` | Un proyecto por cliente, si sos una agencia. |
 
 ## Mover recursos
 
-Podés mover una app, una base, una instancia de Redis o un bucket a otro proyecto desde sus acciones. No se recrea nada: las URLs, los datos y las credenciales siguen iguales. El nombre tiene que estar libre en el proyecto de destino.
+Podés mover una app, una base, una instancia de Redis o un bucket a otro proyecto o ambiente desde sus acciones. No se recrea nada: las URLs, los datos y las credenciales siguen iguales. El nombre tiene que estar libre en el proyecto de destino.
 
 ## Vista del proyecto
 
@@ -35,4 +36,4 @@ La página del proyecto muestra todos sus recursos y su estado: apps online, des
 
 ## Borrar un proyecto
 
-Solo se puede borrar un proyecto vacío, y nunca el último que tenés. Mové o borrá sus recursos primero.
+Solo se puede borrar un proyecto vacío, en todos sus ambientes, y nunca el último que tenés. Mové o borrá sus recursos primero (borrar un ambiente que no sea producción se lleva todo lo suyo).
