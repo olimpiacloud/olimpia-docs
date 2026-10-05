@@ -66,6 +66,7 @@ Crea una app. Con `source=upload` (por defecto) la respuesta trae el comando par
 | `dockerfile` | string | Ruta al Dockerfile relativa a `root_dir`. |
 | `port` | number | Puerto en el que escucha la app (3000 por defecto). |
 | `env` | object | Variables a cargar antes del primer build. |
+| `region` | string | Avanzado, normalmente se omite. Región del proyecto; solo cambia si todavía no tiene apps ni bases. |
 
 ### `get_upload_url`
 
@@ -124,6 +125,7 @@ Despliega un template como una app nueva: crea la base Postgres y el Redis si el
 | `template` | string | Id del template, por ejemplo `n8n`. |
 | `name` | string | Opcional. Nombre de la app y subdominio; también el de sus bases. El id del template por defecto. |
 | `project` | string | Opcional. |
+| `region` | string | Opcional y avanzado. Como en `create_app`. |
 
 ## Configurar
 
@@ -155,7 +157,12 @@ Agrega, cambia o borra variables, combinándolas con las existentes. Se aplican 
 
 ### `create_project`
 
-Crea un proyecto. Parámetro: `name`.
+Crea un proyecto.
+
+| Parámetro | Tipo | |
+| --- | --- | --- |
+| `name` | string | |
+| `region` | string | Opcional y avanzado. Sin ella, Olimpia elige la región sola (hoy `olimpia-bue1`). Ver [Proyectos](/cuenta/proyectos#región). |
 
 ## Datos
 
