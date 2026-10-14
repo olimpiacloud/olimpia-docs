@@ -1,0 +1,64 @@
+---
+title: Email
+description: Emails transaccionales desde tu propio dominio, con DKIM y SPF, enviados por la API de Olimpia.
+sidebar:
+  label: Introducción
+  icon: mail
+---
+
+Olimpia Email manda emails transaccionales desde tu dominio: confirmaciones, avisos, resets de contraseña. Verificás el dominio una vez con registros DNS y tus apps envían con un `POST` a la API de Olimpia, desde cualquier lenguaje.
+
+## Agregar un dominio
+
+En la consola, entrá a **Email → Agregar dominio** y escribí el dominio desde el que vas a mandar. Conviene un subdominio, como `mail.tuempresa.com`: así su reputación queda separada del email de tu equipo.
+
+Un dominio se agrega una sola vez en todo Olimpia y no puede ser `olimpia.dev`, `olimpia.cc` ni un subdominio de ellos.
+
+## Registros DNS
+
+Al crearlo, la consola muestra los registros que tenés que cargar en el proveedor DNS de tu dominio:
+
+| Tipo | Para qué |
+| --- | --- |
+| `TXT` (DKIM) | Firma tus emails para que los proveedores sepan que son tuyos. |
+| `TXT` (SPF) y `MX` | Autorizan el envío y reciben los avisos de rebote. |
+| `TXT` `_dmarc` | Recomendado. Le dice a los proveedores qué hacer con emails que no pasan DKIM o SPF. |
+
+Los nombres son relativos a la raíz de tu dominio: si tu proveedor completa el dominio solo, pegalos tal cual. Después tocá **Verificar**. La verificación puede tardar unos minutos mientras se propagan los registros; la consola se actualiza sola.
+
+Hasta que el dominio no esté **Verificado**, la API rechaza los envíos.
+
+## Conectar una app
+
+En la pestaña **Variables** de la app, elegí el dominio en **Del proyecto**. Olimpia agrega:
+
+| Variable | Valor |
+| --- | --- |
+| `EMAIL_API_KEY` | La key del dominio. Es un secreto. |
+| `EMAIL_API_URL` | `https://api.olimpia.dev` |
+| `EMAIL_DOMAIN` | El dominio, para armar el remitente. |
+
+Redesplegá la app para que tome las variables. Cómo mandar: [Enviar emails](/email/enviar).
+
+## API key
+
+Cada dominio tiene su propia key, que solo manda desde direcciones de ese dominio. Si se filtra, rotala desde el detalle del dominio: la vieja deja de funcionar en el acto y Olimpia actualiza las apps que la usan (redesplegalas para que tomen la nueva).
+
+## Límites
+
+- **3.000 destinatarios por mes** por cuenta, sumando `to`, `cc` y `bcc` de todos tus dominios. Un envío que falla no cuenta.
+- **Hasta 50 destinatarios** por email y **hasta 100 emails** por envío en lote.
+
+## Reputación
+
+Todos los envíos comparten la reputación de la infraestructura de Olimpia, así que la cuidamos por dominio. En el detalle ves los envíos, rebotes y quejas de los últimos 7 días. Con 50 envíos o más en esos 7 días, si los rebotes pasan el **10 %** o las quejas el **0,3 %**, el envío desde ese dominio se suspende y la API responde `403`. Para reactivarlo, escribinos a [hola@olimpia.dev](mailto:hola@olimpia.dev).
+
+Para no llegar ahí: mandá solo a direcciones que se registraron en tu app, validá los emails al registrarlos y no reintentes envíos a direcciones que rebotaron.
+
+## Enviados
+
+El detalle del dominio lista los emails enviados, del más nuevo al más viejo, con su último estado: enviado, entregado, abierto, rebotó, queja, etc.
+
+## Borrar un dominio
+
+Se borran el dominio y su key: las apps que la usan dejan de poder mandar. No se puede deshacer: la consola te pide escribir el nombre para confirmar.

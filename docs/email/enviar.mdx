@@ -1,0 +1,77 @@
+---
+title: Enviar emails
+description: La API de envío de Olimpia Email, con ejemplos en curl y JavaScript.
+sidebar:
+  label: Enviar emails
+  icon: send
+---
+
+Las apps mandan con un `POST` a `https://api.olimpia.dev/v1/emails`, autenticado con la key del dominio. El remitente (`from`) tiene que ser una dirección de ese dominio.
+
+## Un email
+
+```bash
+curl -X POST "$EMAIL_API_URL/v1/emails" \
+  -H "Authorization: Bearer $EMAIL_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "from": "Tienda <hola@mail.tuempresa.com>",
+    "to": "cliente@example.com",
+    "subject": "Tu pedido está en camino",
+    "html": "<p>Llega mañana.</p>"
+  }'
+```
+
+```js
+const response = await fetch(`${process.env.EMAIL_API_URL}/v1/emails`, {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${process.env.EMAIL_API_KEY}`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    from: `Tienda <hola@${process.env.EMAIL_DOMAIN}>`,
+    to: "cliente@example.com",
+    subject: "Tu pedido está en camino",
+    html: "<p>Llega mañana.</p>",
+  }),
+});
+const { emailId } = await response.json();
+```
+
+| Campo | Tipo | |
+| --- | --- | --- |
+| `from` | string | Remitente, con nombre opcional: `Tienda <hola@mail.tuempresa.com>`. |
+| `to` | string \| string[] | Destinatarios. |
+| `subject` | string | Asunto. |
+| `html`, `text` | string | Cuerpo. Mandá al menos uno; los dos mejoran la entrega. |
+| `cc`, `bcc` | string \| string[] | Opcionales. |
+| `replyTo` | string \| string[] | Opcional. |
+| `headers` | object | Cabeceras extra, opcionales. |
+| `attachments` | `{ filename, content }[]` | Opcional. `content` en base64. |
+
+Entre `to`, `cc` y `bcc` van de 1 a 50 destinatarios. La respuesta es `{ "emailId": "..." }`.
+
+## En lote
+
+`POST /v1/emails/batch` recibe un array de hasta 100 emails con los mismos campos y responde `{ "data": [{ "emailId": "..." }] }`. Todos tienen que salir del dominio de la key.
+
+## Estado de un email
+
+`GET /v1/emails/<emailId>` devuelve el email con sus eventos (`SENT`, `DELIVERED`, `OPENED`, `BOUNCED`, `COMPLAINED`…), con la misma key.
+
+## Errores
+
+Los errores responden `{ "error": { "code", "message" } }`:
+
+| Estado | Cuándo |
+| --- | --- |
+| `400` | El cuerpo no es válido o tiene campos desconocidos, o la cantidad de destinatarios está fuera de rango. |
+| `401` | Falta la key o no es válida (por ejemplo, después de rotarla). |
+| `403` | El `from` no es del dominio de la key, el dominio todavía no está verificado o está suspendido. |
+| `429` | Se alcanzó el cupo de destinatarios del mes. |
+| `502` | El servicio de envío no respondió. Reintentá más tarde. |
+
+## Desde un agente
+
+Con el [MCP de Olimpia](/agentes), el agente crea el dominio con `create_resource(kind: "email", name: "mail.tuempresa.com")`, te pasa los registros DNS, revisa la verificación con `get_connection(kind: "email", ...)` y conecta la app con `connect_resource`.

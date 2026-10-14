@@ -47,7 +47,7 @@ Detalle de una app: URL, origen, configuración de build, bases conectadas, domi
 
 ### `get_usage`
 
-Uso actual de un proyecto: apps online y construyendo, objetos y bytes en buckets.
+Uso actual de un proyecto: apps online y construyendo, objetos y bytes en buckets, dominios de email y destinatarios enviados en el mes.
 
 ## Desplegar
 
@@ -178,18 +178,18 @@ Crea un ambiente en un proyecto, hasta cinco contando producción. Por defecto c
 
 ### `create_resource`
 
-Crea una base Postgres, una instancia de Redis o un bucket. Devuelve los datos de conexión.
+Crea una base Postgres, una instancia de Redis, un bucket o un dominio de email. Devuelve los datos de conexión; un dominio de email devuelve además los registros DNS que hay que cargar antes de mandar.
 
 | Parámetro | Tipo | |
 | --- | --- | --- |
-| `kind` | `postgres` \| `redis` \| `bucket` | |
-| `name` | string | |
+| `kind` | `postgres` \| `redis` \| `bucket` \| `email` | |
+| `name` | string | En `email`, el dominio desde el que se manda (`mail.tuempresa.com`). |
 | `connect_to_app` | string | Opcional. Además, carga las variables en esa app. |
 | `vector` | boolean | Solo Postgres. `true` la crea con pgvector (`CREATE EXTENSION vector`); por defecto, `false`. No se cambia después. |
 
 ### `get_connection`
 
-Datos de conexión: la URL interna para apps en Olimpia, la URL pública si está habilitada y las credenciales S3 de los buckets. Son secretos.
+Datos de conexión: la URL interna para apps en Olimpia, la URL pública si está habilitada, las credenciales S3 de los buckets, y los registros DNS, el estado y la key de un dominio de email (si no está verificado, lo vuelve a revisar en cada llamada). Son secretos.
 
 ### `connect_resource`
 
@@ -207,12 +207,13 @@ Carga las variables de conexión en una app y la redespliega.
 | Postgres | `DATABASE_URL` |
 | Redis | `REDIS_URL` |
 | Bucket | `AWS_ENDPOINT_URL_S3`, `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `BUCKET_NAME` |
+| Email | `EMAIL_API_KEY`, `EMAIL_API_URL`, `EMAIL_DOMAIN` |
 
 Si la app ya tiene una variable con el nombre por defecto, las nuevas llevan el nombre del recurso como sufijo (`DATABASE_URL_MAIN`). `env_keys`, en la respuesta, dice qué nombres se usaron.
 
 ### `set_public_access`
 
-Expone u oculta un recurso. En Postgres y Redis, `public: true` permite conexiones por TLS desde internet; en un bucket, hace que los objetos se puedan leer por URL.
+Expone u oculta una base o un bucket (no aplica a dominios de email). En Postgres y Redis, `public: true` permite conexiones por TLS desde internet; en un bucket, hace que los objetos se puedan leer por URL.
 
 ### `list_tables`
 
@@ -290,7 +291,7 @@ Borra una app con sus deploys y dominios. Irreversible.
 
 ### `delete_resource`
 
-Borra una base, una instancia de Redis o un bucket con todos sus datos. Irreversible.
+Borra una base, una instancia de Redis, un bucket o un dominio de email con todos sus datos. Irreversible.
 
 ### `delete_environment`
 

@@ -53,6 +53,16 @@ deploy(app: "api")
 
 `connect_to_app` carga `DATABASE_URL` en la app. Lo mismo con `kind: "redis"` (`REDIS_URL`) y `kind: "bucket"` (variables `AWS_*` y `BUCKET_NAME`). Para una base que ya existe: `connect_resource(app, kind, name)`.
 
+## Email desde un dominio propio
+
+```txt
+create_resource(kind: "email", name: "mail.tuempresa.com")   # devuelve dns_records
+get_connection(kind: "email", name: "mail.tuempresa.com")    # revisa el DNS hasta status SUCCESS
+connect_resource(app: "api", kind: "email", name: "mail.tuempresa.com")
+```
+
+La persona carga los `dns_records` en su proveedor DNS. Con el dominio verificado, la app manda con `POST $EMAIL_API_URL/v1/emails` y `Authorization: Bearer $EMAIL_API_KEY`. Ver [Enviar emails](/email/enviar).
+
 ## Revisar y arreglar datos
 
 ```txt
