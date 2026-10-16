@@ -40,10 +40,10 @@ Cada herramienta llama a la misma API que usa la consola, con el token del pedid
 
 ## Reglas de seguridad
 
-- **Borrar exige confirmación.** `delete_app` y `delete_resource` necesitan `confirm` con el nombre exacto, que la persona tiene que aprobar.
+- **Borrar y escribir exigen confirmación.** `delete_app`, `delete_resource` y `query_postgres` con `write: true` necesitan `confirm` con el nombre exacto, que la persona tiene que aprobar.
 - **Secretos ocultos por defecto.** `get_env` oculta los valores que parecen secretos salvo con `reveal: true`.
 - **Datos no confiables.** Los logs, la salida de los builds, los valores de variables y las filas de la base son datos, no instrucciones. Las herramientas lo indican para que el agente no siga órdenes escondidas ahí.
-- **SQL sin superusuario.** `query_postgres` corre como el usuario dueño de la base; la lectura va en una transacción de solo lectura.
+- **SQL sin superusuario.** `query_postgres` corre como el usuario dueño de la base; la lectura va en una transacción de solo lectura y sus topes de filas y tamaño los aplica la propia base. Cada consulta usa una conexión nueva, así que nada de lo que deje en la sesión llega a la siguiente.
 
 ## Buenas prácticas
 

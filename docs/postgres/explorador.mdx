@@ -28,6 +28,6 @@ El explorador se conecta con el mismo usuario `app` de tu base, en transacciones
 Para correr SQL, usá tu cliente favorito con el [acceso externo](/postgres/conexion#acceso-externo), o pedíselo a tu agente:
 
 - `list_tables` lista tablas y vistas con filas y tamaño.
-- `query_postgres` corre una consulta de lectura y devuelve hasta 200 filas en JSON. Con `write: true` corre cualquier sentencia en una transacción, con 30 segundos como máximo.
+- `query_postgres` corre una consulta de lectura y devuelve hasta 200 filas en JSON. Con `write: true` corre cualquier sentencia en una transacción, con 30 segundos como máximo, y pide `confirm` con el nombre de la base.
 
 Ver [Herramientas](/agentes/herramientas).

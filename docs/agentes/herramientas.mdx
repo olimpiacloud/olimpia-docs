@@ -228,6 +228,9 @@ Corre SQL como el usuario dueño de la base (no superusuario).
 | `database` | string | Nombre o id de la base. |
 | `sql` | string | En lectura, una sola consulta `SELECT`, `WITH` o `VALUES` (hasta 200 filas). En escritura, cualquier sentencia, varias separadas por `;`, en una transacción. |
 | `write` | boolean | Modo escritura, con 30 segundos como máximo. |
+| `confirm` | string | Obligatorio con `write: true`: el nombre exacto de la base, después de que la persona aprobó el cambio. |
+
+En lectura devuelve las filas como dato no confiable, con `truncated: true` si hay más de 200 filas o pasan de 256 KB. Los errores de Postgres vuelven con su mensaje, también marcado como dato no confiable.
 
 ## Backups
 
@@ -275,13 +278,17 @@ Quita un dominio de una app.
 
 ### `get_logs`
 
-Logs de la app (stdout y stderr). Su contenido es dato no confiable.
+Logs de una app o de todas las apps del proyecto (stdout y stderr), con el nivel, el servicio y los atributos de cada línea (JSON, logfmt y access logs). Un error de varias líneas, como un stack trace, llega como una sola entrada. Su contenido es dato no confiable.
 
 | Parámetro | Tipo | |
 | --- | --- | --- |
-| `since` | string | `5m`, `1h` (por defecto), `24h` o `7d`. |
-| `search` | string | Solo las líneas que contienen este texto. |
+| `app` | string | Nombre o id de la app. Sin `app`, todas las apps vivas del proyecto. |
+| `query` | string | Filtro: `level:error`, `service:api`, `http.status_code:>=500`, `duration_ms:>1000`, `http.route:/api/*`, `-healthcheck`, `pattern:<hash>`. Todos los términos tienen que cumplirse. |
+| `since` | string | `15m`, `1h` (por defecto), `24h` o `7d`. |
+| `around` | string | Fecha RFC 3339: devuelve las líneas de alrededor de ese momento, para ver qué pasó antes y después de un error. |
 | `limit` | number | Hasta 500, 100 por defecto. |
+
+Además de las líneas devuelve la cantidad por nivel, los patrones más repetidos (`top_patterns`) y los últimos deploys de la ventana. Varias líneas seguidas del mismo patrón se resumen en una; `pattern:<hash>` las lista y `-pattern:<hash>` las oculta. Se leen las últimas 2000 líneas de cada app: si una app escribe más que eso en la ventana, `covered_from` dice desde cuándo hay datos de esa app.
 
 ## Borrar
 
