@@ -290,6 +290,15 @@ Logs de una app o de todas las apps del proyecto (stdout y stderr), con el nivel
 
 Además de las líneas devuelve la cantidad por nivel, los patrones más repetidos (`top_patterns`) y los últimos deploys de la ventana. Varias líneas seguidas del mismo patrón se resumen en una; `pattern:<hash>` las lista y `-pattern:<hash>` las oculta. Se leen las últimas 2000 líneas de cada app: si una app escribe más que eso en la ventana, `covered_from` dice desde cuándo hay datos de esa app.
 
+### `get_analytics`
+
+Visitas reales de una app, medidas en el navegador de sus visitantes en todas las páginas HTML de su subdominio y sus dominios propios: visitas, páginas vistas, una serie en el tiempo, páginas más vistas, orígenes (un nombre vacío es tráfico directo), países (códigos ISO), dispositivos, navegadores y Core Web Vitals al percentil 75 (`lcp_ms`, `inp_ms`, `cls`). Ver [Analytics](/apps/logs-y-metricas#analytics).
+
+| Parámetro | Tipo | |
+| --- | --- | --- |
+| `app` | string | Nombre o id de la app. |
+| `period` | string | `day` (24 horas, por hora), `week` (por defecto, por día) o `month` (30 días, por día). |
+
 ## Borrar
 
 ### `delete_app`

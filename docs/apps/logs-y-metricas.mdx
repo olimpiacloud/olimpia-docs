@@ -1,6 +1,6 @@
 ---
 title: Logs y métricas
-description: El log de cada build, los logs de tu app en vivo y las métricas de CPU, memoria y disco de los últimos 7 días.
+description: El log de cada build, los logs de tu app en vivo, las métricas de CPU, memoria y disco de los últimos 7 días y las visitas reales de tu web.
 sidebar:
   icon: activity
 ---
@@ -33,6 +33,19 @@ La pestaña **Métricas** mide tu app cada minuto y guarda 7 días:
 
 Elegí el período: última hora, 24 horas o 7 días.
 
+## Analytics
+
+La pestaña **Analytics** muestra las visitas reales de tu web, medidas en el navegador de cada visitante en todas las páginas HTML de tu subdominio y tus dominios propios. No hace falta instalar nada ni agregar un script: se mide sola, sin cookies.
+
+| Dato | Qué es |
+| --- | --- |
+| **Visitas** | Entradas a tu web desde otro sitio o escribiendo la dirección. |
+| **Páginas vistas** | Cada página cargada, también al navegar dentro de tu web. |
+| **Páginas, orígenes, países, dispositivos y navegadores** | Lo más visto, de dónde llegan (*Directo* es sin referencia), desde qué países y con qué equipos. |
+| **LCP, INP y CLS** | Core Web Vitals (percentil 75): cuánto tarda en verse lo principal, cuánto tarda en responder a un clic y cuánto se mueve la página al cargar. En verde, bien; en amarillo, mejorable; en rojo, malo. |
+
+Elegí el período: 24 horas, 7 días o 30 días. Los datos llegan con unos minutos de demora. Solo se miden las respuestas HTML que carga un navegador: una API o un webhook no suman visitas.
+
 ## Desde tu agente
 
-Tu agente puede leer los logs con `get_logs` y el estado de cada deploy, con el final del log de build, con `get_deployment`. Ver [Herramientas](/agentes/herramientas).
+Tu agente puede leer los logs con `get_logs`, las visitas y los Web Vitals con `get_analytics`, y el estado de cada deploy, con el final del log de build, con `get_deployment`. Ver [Herramientas](/agentes/herramientas).
