@@ -49,6 +49,8 @@ export default defineConfig({
     links: [
       { label: "olimpia.dev", href: "https://olimpia.dev" },
       { label: "Consola", href: "https://olimpia.dev/dashboard" },
+      { label: "Agora", href: "https://agora.olimpia.dev" },
+      { label: "Acropolis", href: "https://acropolis.olimpia.dev" },
       { label: "hola@olimpia.dev", href: "mailto:hola@olimpia.dev" },
     ],
   },

@@ -1,0 +1,32 @@
+---
+title: Acropolis
+description: El builder de Olimpia. Convierte el código de tu app en una imagen OCI lista para correr, sin Dockerfile y sin daemon.
+sidebar:
+  icon: layers
+  badge: Experimental
+---
+
+:::caution[Experimental]
+Acropolis es experimental: sus comandos, su salida y sus valores por defecto pueden cambiar entre versiones. Si lo usás por tu cuenta, fijá una versión y leé el [changelog](https://github.com/olimpiacloud/acropolis/blob/main/CHANGELOG.md) antes de actualizar.
+:::
+
+Acropolis toma el código de una app y devuelve una imagen OCI lista para correr. Detecta el lenguaje y el framework, descarga toolchains y dependencias verificadas, compila y arma la imagen. Es un único binario en Rust, open source (Apache-2.0 o MIT). Documentación completa en [acropolis.olimpia.dev](https://acropolis.olimpia.dev).
+
+## En Olimpia
+
+Elegilo en **Configuración → Builder** de tu app (o con `builder: "acropolis"` desde el MCP). Detecta el stack e ignora el Dockerfile, con builds más rápidos e imágenes más chicas. Si no puede construir la app, el build sigue con el builder de siempre: tu Dockerfile o [Railpack](/apps/builds). Además, un push solo redespliega si toca los archivos de los que depende la imagen.
+
+## Por tu cuenta
+
+```bash
+acropolis build ./mi-app -t registry.example.com/equipo/mi-app:latest
+acropolis plan ./mi-app
+```
+
+## Por qué es más rápido
+
+- **Builds en frío rápidos.** No baja una imagen de builder: Node, Go y Rust vienen de sus fuentes oficiales con checksum, y las dependencias se instalan directo desde los lockfiles.
+- **Imágenes chicas.** Runtimes distroless cuando se puede y Next en modo standalone; nada de devDependencies ni cachés en la imagen.
+- **Cachés que sobreviven.** La caché de cada app se exporta e importa como un archivo, para no empezar de cero en cada build.
+
+Corre en Linux x86_64 y arm64. El código está en [github.com/olimpiacloud/acropolis](https://github.com/olimpiacloud/acropolis).
