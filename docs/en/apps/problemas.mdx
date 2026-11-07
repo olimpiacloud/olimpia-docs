@@ -1,0 +1,74 @@
+---
+title: If something fails
+description: >-
+  The most common errors when deploying on Olimpia, what they mean, and how to
+  fix them.
+sidebar:
+  icon: life-buoy
+---
+Start with the deploy that failed: open it in **Deploys** and read the error and the end of the build log.
+
+## By error type [#por-tipo-de-error]
+
+| Error | What it means | What to do |
+| --- | --- | --- |
+| `source_failed` | The code could not be fetched. | GitHub: check that the branch exists and that the GitHub App still has access to the repo. Uploaded code: the URL expired or the upload did not finish. Upload it again. |
+| `build_failed` | Railpack or your `Dockerfile` failed. | Read the build log. See [Build failures](#fallas-de-build). |
+| `import_failed` | The built image could not be saved. | This is a platform problem. Deploy again. If it happens again, contact us. |
+| `release_failed` | The container did not start. | The process almost always exits right after it starts. Check the app's **Logs**. |
+| `internal_error` | Platform error. | Deploy again once. |
+| `timeout` | The build took longer than 30 minutes. | Look for slow steps or use a multi-stage `Dockerfile` with caching. |
+
+## Build failures [#fallas-de-build]
+
+<Accordion>
+  <AccordionItem title="It can't find how to start the app">
+    Add a `start` script, a `Procfile`, or a `railpack.json` with `startCommand`. In monorepos, check the **Root directory**. See [Builds](/apps/builds#cuando-la-detección-no-alcanza).
+  </AccordionItem>
+  <AccordionItem title="The lockfile doesn't match">
+    `npm ci`, `pnpm install --frozen-lockfile`, and `bun install --frozen-lockfile` fail if the lockfile is out of sync with `package.json`. Regenerate it on your machine, commit it, and deploy.
+  </AccordionItem>
+  <AccordionItem title="TypeScript or lint errors">
+    The build runs in production mode. Fix the errors in your code.
+  </AccordionItem>
+  <AccordionItem title="A variable is missing during the build">
+    Variables like `NEXT_PUBLIC_*`, or code that reads variables during the build, must be set before the build runs. Add the variable in **Variables** and deploy.
+  </AccordionItem>
+  <AccordionItem title="The build runs out of memory">
+    Reduce build parallelism or switch to a multi-stage `Dockerfile`.
+  </AccordionItem>
+  <AccordionItem title="Native modules (sharp, bcrypt, canvas)">
+    These usually work with Railpack. If they don't, use a `Dockerfile` based on a full Debian image.
+  </AccordionItem>
+</Accordion>
+
+## The app is Online but doesn't respond [#la-app-está-online-pero-no-responde]
+
+**Online** only means the container started. Try the URL and check the **Logs**.
+
+<Accordion>
+  <AccordionItem title="Bad gateway or no response">
+    Your app listens on `localhost` or on a fixed port. Make it listen on `0.0.0.0` and on `$PORT`, or set the app's actual **Port** and deploy.
+  </AccordionItem>
+  <AccordionItem title="It keeps restarting">
+    A variable or the database is missing. Check **Variables** and make sure the database is connected.
+  </AccordionItem>
+  <AccordionItem title="It can't connect to the database">
+    You are using `localhost` or the public URL instead of the internal one. Use `DATABASE_URL` exactly as Olimpia sets it. If the database is new, run your migrations on startup.
+  </AccordionItem>
+  <AccordionItem title="404 when reloading a route in a SPA">
+    Your server must return `index.html` for routes that are not files.
+  </AccordionItem>
+</Accordion>
+
+## I see an Olimpia page instead of my app [#veo-una-página-de-olimpia-en-lugar-de-mi-app]
+
+This page appears when the subdomain has no online deploy: the app hasn't finished its first deploy yet, doesn't exist, or changed its subdomain. Check the current address in **Domains**.
+
+## Custom domain doesn't activate [#dominio-propio-que-no-se-activa]
+
+The console shows which records it expects and which it finds. DNS changes can take a few minutes to propagate. A `CNAME` at the root of the domain needs CNAME flattening or ALIAS. See [Domains](/apps/dominios).
+
+## Still stuck? [#seguís-trabado]
+
+Email us at [hola@olimpia.dev](mailto:hola@olimpia.dev) with the name of the app and the deploy.

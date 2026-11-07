@@ -1,0 +1,58 @@
+---
+title: Apps
+description: >-
+  Containerized web services and APIs, deployed from GitHub, a Docker image, a
+  template, or your local folder, with HTTPS and zero downtime.
+sidebar:
+  label: Introduction
+  icon: rocket
+---
+An Olimpia app is a container that runs your code and responds at `https://<subdominio>.olimpia.cc`. You choose where the code comes from; Olimpia builds it, publishes it with HTTPS, and keeps it online.
+
+## Four ways to deploy [#cuatro-formas-de-desplegar]
+
+<CardGroup cols={2}>
+  <Card title="Desde GitHub" href="/apps/github" icon="git-branch">
+    Connect a repo and every push deploys automatically.
+  </Card>
+  <Card title="Imagen de Docker" href="/apps/docker" icon="container">
+    Any public image from a registry.
+  </Card>
+  <Card title="Templates" href="/apps/templates" icon="layout-grid">
+    Open source tools like n8n or cal.com, with their database and secrets ready to go.
+  </Card>
+  <Card title="Tu carpeta" href="/apps/subir-codigo" icon="folder-up">
+    Upload your code from your machine, your agent, or your CI.
+  </Card>
+</CardGroup>
+
+## What every app includes [#qué-incluye-cada-app]
+
+- **Automatic HTTPS** on `*.olimpia.cc` and on up to 10 [custom domains](/apps/dominios).
+- **Zero-config builds** with [Railpack](/apps/builds), or with your `Dockerfile`.
+- **Zero-downtime deploys.** The new version starts before the old one shuts down; if it fails to start, the previous one keeps running.
+- **One-click rollback** to any previous deploy, without rebuilding.
+- **Encrypted [environment variables](/apps/variables)**, available at build time and at runtime.
+- **[Logs and metrics](/apps/logs-y-metricas)**: the log for each build, live app logs, and CPU, memory, and disk usage for the last 7 days.
+- **[Private network](/plataforma/red-interna)** access to your Postgres and Redis databases.
+- **No resource caps.** Apps have no fixed CPU or memory limit: they use what they need and you pay for usage.
+
+## What your app needs [#lo-que-tu-app-necesita]
+
+- Listen on `0.0.0.0` and on the port in `PORT` (3000 by default).
+- Keep running in the foreground.
+- Write its logs to stdout and stderr.
+- Store data in Postgres, Redis, or a bucket: the container's disk is wiped on every deploy.
+
+## The app in the console [#la-app-en-la-consola]
+
+Each app has these tabs:
+
+| Tab | Purpose |
+| --- | --- |
+| **Deploys** | History, status, build log, and rollback. |
+| **Logs** | Live app output, with search. |
+| **Metrics** | CPU, memory, and disk reads and writes. |
+| **Variables** | Environment variables and connections to the project's databases. |
+| **Domains** | Your `olimpia.cc` subdomain and your custom domains. |
+| **Settings** | Branch, root folder, Dockerfile, port, automatic deploys, and deletion. |

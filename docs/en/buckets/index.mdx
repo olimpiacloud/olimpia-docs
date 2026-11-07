@@ -1,0 +1,39 @@
+---
+title: Buckets
+description: >-
+  S3-compatible object storage for files, images, videos, and backups, with a
+  dedicated access key for each bucket.
+sidebar:
+  label: Introduction
+  icon: archive
+---
+An Olimpia bucket is object storage compatible with the S3 API. You can store files of any size and read them with the S3 SDKs and tools you already use: the AWS SDK, `boto3`, `rclone`, and the AWS CLI.
+
+## Create a bucket [#crear-un-bucket]
+
+In the console, go to **Buckets → Create bucket** and choose a name. The credentials are generated when the bucket is created.
+
+## What's included [#qué-incluye]
+
+- **S3-compatible.** Uploads, downloads, multipart, signed URLs, and listings, with any SDK.
+- **One key per bucket.** Each bucket has its own access key, with permissions only on that bucket. See [Credentials](/buckets/credenciales).
+- **No storage limit.** You pay for what you store.
+- **Global storage.** Objects are served quickly from anywhere in the world.
+- **Console file browser.** Browse folders, search by name, preview, upload, rename, and delete files without writing code.
+- **Private by default**, with optional [public access](/buckets/acceso-publico) to serve files by URL.
+
+## File browser [#explorador]
+
+From the console, you can:
+
+- browse folders and sort by name, size, or date,
+- search for files by name, even if you don't type the exact name,
+- preview images, videos, PDFs, and text,
+- upload files, create folders, rename, and delete,
+- share a file with a link that expires in one hour.
+
+Uploads and downloads go directly from your browser to storage, signed with the bucket's key.
+
+## Delete a bucket [#borrar-un-bucket]
+
+This deletes the bucket, all its objects, and its credentials. This cannot be undone: the console asks you to type the bucket name to confirm.

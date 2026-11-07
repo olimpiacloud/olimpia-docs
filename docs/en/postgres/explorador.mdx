@@ -1,0 +1,34 @@
+---
+title: Data explorer
+description: >-
+  View your tables, views, and rows from the console, with search and filters,
+  without installing a client.
+sidebar:
+  icon: table
+---
+The **Data** tab of each database lists its tables and views with their row counts, and lets you browse, search, and filter rows without leaving the console.
+
+## Tables [#tablas]
+
+You see each object with its type (**Table**, **View**, **Materialized view**, or **External**) and how many rows it has. New tables show up automatically: create your schema with your ORM or your client, then click **Refresh**.
+
+## Rows [#filas]
+
+When you open a table, you see its rows, with the primary key highlighted. You can:
+
+- search the entire table,
+- filter by column,
+- open a row to see all its values. Long values are truncated to 2000 characters.
+
+## Read-only [#solo-lectura]
+
+The explorer connects as your database's `app` user, uses read-only transactions, and applies a maximum time per query. It can't modify data or see anything your user can't see.
+
+## SQL from your agent [#sql-desde-tu-agente]
+
+To run SQL, use your favorite client with [external access](/postgres/conexion#acceso-externo), or ask your agent:
+
+- `list_tables` lists tables and views with their row counts and sizes.
+- `query_postgres` runs a read query and returns up to 200 rows as JSON. With `write: true`, it runs any statement in a transaction with a 30-second limit, and requires `confirm` with the database name.
+
+See [Tools](/agentes/herramientas).

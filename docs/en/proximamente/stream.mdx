@@ -1,0 +1,26 @@
+---
+title: Stream
+description: >-
+  Real-time event streaming between services: payments, notifications, logs, and
+  data pipelines.
+sidebar:
+  label: Stream
+  icon: radio-tower
+  badge: Soon
+---
+:::note[Coming soon]
+This module is not available yet. In the console, it is marked as **Soon**. If you need it, email us at [hola@olimpia.dev](mailto:hola@olimpia.dev) and tell us about your use case.
+:::
+
+Stream will let you publish and consume real-time events between your services, in the same region as your apps.
+
+## What it's for [#para-qué]
+
+- **Payments and orders.** Publish an event when a payment comes in, and let each service react at its own pace.
+- **Notifications.** Decouple sending emails, push notifications, and webhooks from the original request.
+- **Logs and auditing.** Combine events from multiple apps into a single ordered stream.
+- **Data pipelines.** Feed analytics processes without adding load to your main database.
+
+## In the meantime [#mientras-tanto]
+
+For job queues, use [Redis](/redis) with BullMQ, Sidekiq, or Celery. Olimpia never evicts keys when memory runs low, so your queues never lose jobs.

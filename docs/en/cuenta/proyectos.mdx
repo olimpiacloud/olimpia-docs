@@ -1,0 +1,40 @@
+---
+title: Projects
+description: >-
+  Group apps, databases, and buckets by product or client, with their
+  environments, and move them between projects without recreating them.
+sidebar:
+  icon: folders
+---
+Everything you create in Olimpia lives inside a project, in one of its [environments](/cuenta/ambientes): production and up to four more, such as staging. The console remembers the last one you opened, and everything hangs off its URL: `olimpia.dev/dashboard/<proyecto>/...`, or `<proyecto>.<ambiente>` outside production.
+
+## Create a project [#crear-un-proyecto]
+
+From the project selector at the top of the sidebar, click **New project**. The name appears in the console URL, and you can change it at any time without affecting your apps or databases.
+
+## Server [#servidor]
+
+Each project runs on a server in the [Buenos Aires region](/plataforma/buenos-aires), and its apps and databases stay together there. You don't need to do anything: Olimpia picks it for you. Today the main one is `olimpia-bue1`.
+
+If you want to choose it yourself, it's under **Advanced settings** when you create the project or an app. You can only change it while the project has no apps or databases. After that, to use a different server, create a new project. Buckets don't count: their storage is global.
+
+## Ideas for organizing [#ideas-para-organizarte]
+
+To separate production from staging with the same apps, you don't need another project: use [environments](/cuenta/ambientes).
+
+| Project | For |
+| --- | --- |
+| `tienda`, `backoffice` | One project per product. |
+| `cliente-acme` | One project per client, if you're an agency. |
+
+## Move resources [#mover-recursos]
+
+You can move an app, a database, a Redis instance, or a bucket to another project or environment from its actions. Nothing is recreated: URLs, data, and credentials stay the same. The name must be available in the destination project.
+
+## Project view [#vista-del-proyecto]
+
+The project page shows all its resources and their status: apps that are online, deploying, or failing, and database and bucket usage.
+
+## Delete a project [#borrar-un-proyecto]
+
+You can only delete a project that is empty in all its environments, and never your last one. Move or delete its resources first (deleting a non-production environment deletes everything in it).

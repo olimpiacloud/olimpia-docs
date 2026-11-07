@@ -1,0 +1,36 @@
+---
+title: Logs and metrics
+description: >-
+  Errors, warnings, and slow queries from your database, plus CPU, memory, disk,
+  connection, and transaction metrics.
+sidebar:
+  icon: activity
+---
+## Logs
+
+The **Logs** tab shows what Postgres records about your database:
+
+- **errors** (a failed query, a violated constraint),
+- **warnings**,
+- **queries that take longer than one second**, with their text.
+
+You can filter by level, search by text, and turn on **Live** mode. Open any entry to see its details: the query, the detail and hint from Postgres, and the client and application that sent it.
+
+:::tip
+Add `application_name` to your connection string (`?application_name=api`) to see which app sent each query.
+:::
+
+## Metrics [#métricas]
+
+The **Metrics** tab measures your database every minute:
+
+| Metric | What it shows |
+| --- | --- |
+| **CPU** | CPU usage; 100% equals 1 vCPU. |
+| **Memory** | RSS and cache. |
+| **IOPS** | Disk reads and writes. |
+| **Storage** | Database size. |
+| **Transactions per second** | How much work the database is doing. |
+| **Connections** | Active, idle, and in transaction. |
+
+Choose a time range: last hour, 24 hours, or 7 days.

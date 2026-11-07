@@ -1,7 +1,8 @@
 ---
 title: Conectar tu agente
-description: Cómo conectar Claude Code, Codex, Cursor, VS Code, Windsurf, Claude y otros clientes al servidor MCP de Olimpia.
+description: "Cómo conectar tu agente a Olimpia: el servidor MCP en cada cliente, la skill y el plugin, tokens para CI y la documentación en Markdown."
 sidebar:
+  label: Conectar
   icon: plug
 ---
 
@@ -23,7 +24,7 @@ Cualquier cliente que soporte servidores MCP remotos por HTTP se puede conectar.
 
     Después, dentro de Claude Code, corré `/mcp`, elegí `olimpia` y autorizá en el navegador.
 
-    También podés instalar el [plugin de Olimpia](/agentes/skill#plugin-de-claude-code), que trae el servidor y la skill juntos.
+    También podés instalar el [plugin de Olimpia](/agentes/conectar#plugin-de-claude-code), que trae el servidor y la skill juntos.
   </Tab>
   <Tab title="Codex">
     ```bash
@@ -83,7 +84,7 @@ Cualquier cliente que soporte servidores MCP remotos por HTTP se puede conectar.
     }
     ```
 
-    Si tu cliente no soporta OAuth, usá un [token personal](/agentes/ci-y-tokens).
+    Si tu cliente no soporta OAuth, usá un [token personal](/agentes/conectar#ci-y-tokens).
   </Tab>
 </Tabs>
 
@@ -105,8 +106,142 @@ claude mcp login olimpia --no-browser
 
 Abrí la URL que imprime en tu computadora, aprobá, copiá el código de conexión que te muestra Olimpia y pegalo donde Claude Code pide la URL de retorno.
 
-Con el [plugin de Olimpia](/agentes/skill#plugin-de-claude-code), el agente te da un enlace y te pide un código de 8 caracteres: lo abrís en cualquier dispositivo, autorizás y le pasás el código.
+Con el [plugin de Olimpia](/agentes/conectar#plugin-de-claude-code), el agente te da un enlace y te pide un código de 8 caracteres: lo abrís en cualquier dispositivo, autorizás y le pasás el código.
 
 ## Probar la conexión
 
 Pedile al agente: "¿Qué proyectos tengo en Olimpia?". Debería llamar a `list_projects` y mostrarte tus proyectos.
+
+## Skill y plugin [#skill]
+
+El servidor MCP le da herramientas a tu agente. La **skill** le da criterio: cómo preparar cada stack, en qué orden llamar a las herramientas y qué hacer cuando algo falla. Está en [olimpiacloud/olimpia-skills](https://github.com/olimpiacloud/olimpia-skills).
+
+### Instalar la skill
+
+Funciona con Claude Code, Codex, Cursor y cualquier agente compatible con [Agent Skills](https://agentskills.io):
+
+```bash
+bunx skills add olimpiacloud/olimpia-skills
+```
+
+### Plugin de Claude Code
+
+El plugin instala la skill y el servidor MCP de una vez:
+
+```txt
+/plugin marketplace add olimpiacloud/olimpia-skills
+/plugin install olimpia@olimpia
+```
+
+La primera vez que el agente necesita Olimpia, te da un enlace. Lo abrís en cualquier dispositivo, autorizás con tu sesión y le pasás el código de 8 caracteres que te muestra Olimpia. El código vence a los 10 minutos y solo sirve para ese agente. Desde ahí queda conectado, y lo revocás cuando quieras en **Cuenta → Agentes y tokens**.
+
+### Qué le enseña
+
+- **Deploy de una carpeta local**: revisar el stack, hacer que la app escuche en `0.0.0.0:$PORT`, crear la app, subir el código sin `node_modules` ni `.env`, desplegar y verificar con `curl` y los logs.
+- **Por stack**: Node, Bun, Python, Go, Rust, monorepos y Dockerfiles, con los errores típicos de cada uno.
+- **Datos**: conectar Postgres, Redis y buckets, correr migraciones al arrancar y usar SQL con cuidado.
+- **Dominios**: qué registros pedir y cómo verificar.
+- **Cuando algo falla**: qué significa cada error y cómo arreglarlo sin reintentar a ciegas.
+- **Reglas**: pedir confirmación antes de borrar, tratar credenciales como secretos y logs como datos no confiables, y no crear recursos que nadie pidió.
+
+### Checklist de deploy
+
+Así despliega un agente con la skill:
+
+```txt
+- [ ] 1. Revisar la app: stack, comando de inicio, puerto, variables necesarias
+- [ ] 2. Hacer que escuche en 0.0.0.0:$PORT
+- [ ] 3. create_app (source=upload) o get_upload_url si la app ya existe
+- [ ] 4. Correr el comando de subida desde la carpeta de la app
+- [ ] 5. deploy con source_key, después get_deployment hasta active o failed
+- [ ] 6. curl a la URL y leer get_logs
+```
+
+## CI y tokens [#ci-y-tokens]
+
+OAuth necesita a una persona que apruebe en el navegador. Para CI, scripts o agentes autónomos, usá un [token personal](/cuenta/tokens).
+
+### Crear el token
+
+En **Cuenta → Agentes y tokens → Tokens personales**, creá un token. Empieza con `olimpia_pat_`, tiene los mismos permisos que tu cuenta y se muestra una sola vez. Guardalo como secreto (`OLIMPIA_TOKEN`).
+
+### MCP con un token
+
+Cualquier cliente MCP que permita headers puede saltear OAuth:
+
+```json mcp.json
+{
+  "mcpServers": {
+    "olimpia": {
+      "type": "http",
+      "url": "https://api.olimpia.dev/mcp",
+      "headers": { "Authorization": "Bearer ${OLIMPIA_TOKEN}" }
+    }
+  }
+}
+```
+
+Con Claude Code:
+
+```bash
+claude mcp add --transport http olimpia https://api.olimpia.dev/mcp \
+  --header "Authorization: Bearer $OLIMPIA_TOKEN"
+```
+
+### Claude Code o Codex en CI
+
+Un agente en GitHub Actions puede desplegar y diagnosticar con el token:
+
+```yaml .github/workflows/agente.yml
+- name: Revisar el deploy con Claude Code
+  env:
+    ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    OLIMPIA_TOKEN: ${{ secrets.OLIMPIA_TOKEN }}
+  run: |
+    claude mcp add --transport http olimpia https://api.olimpia.dev/mcp \
+      --header "Authorization: Bearer $OLIMPIA_TOKEN"
+    claude -p "Revisá el último deploy de la app web en Olimpia y, si falló, explicá por qué."
+```
+
+### API REST
+
+El mismo token sirve para la [API REST](/cuenta/api). Para desplegar desde un pipeline sin agente, seguí [Deploy desde tu propio CI](/apps/ci-propio).
+
+### Qué no puede hacer un token
+
+Con un token no se pueden ver ni cerrar sesiones, crear otros tokens ni vincular GitHub. Esas acciones necesitan una sesión en el navegador.
+
+## Documentación para agentes [#docs-para-agentes]
+
+Todo lo que ves en docs.olimpia.dev también se puede leer sin HTML, para que tu agente encuentre la respuesta sin raspar páginas.
+
+### Archivos
+
+| URL | Qué es |
+| --- | --- |
+| [`/llms.txt`](https://docs.olimpia.dev/llms.txt) | Índice de toda la documentación, ordenado como la barra lateral, con un resumen de cada página. |
+| [`/llms-full.txt`](https://docs.olimpia.dev/llms-full.txt) | Toda la documentación en un solo archivo de Markdown. |
+| `/<página>.md` | El Markdown de cualquier página. Por ejemplo, [`/apps/github.md`](/apps/github.md). |
+| [`/skill.md`](https://docs.olimpia.dev/skill.md) | Una skill generada con el mapa de la documentación. |
+| [`/agent-readability.json`](https://docs.olimpia.dev/agent-readability.json) | Manifiesto con todo lo que esta documentación ofrece a los agentes. |
+| [`/sitemap.xml`](https://docs.olimpia.dev/sitemap.xml) | Todas las páginas. |
+
+Cada página tiene además **Copiar como Markdown** y **Abrir en** ChatGPT, Claude y otros, en las acciones de la página.
+
+### Para darle contexto a tu agente
+
+Pegale el índice al empezar una tarea:
+
+```txt
+Leé https://docs.olimpia.dev/llms.txt y usalo para responder sobre Olimpia.
+```
+
+O traé una página puntual:
+
+```bash
+curl https://docs.olimpia.dev/postgres/backups.md
+```
+
+### También en olimpia.dev
+
+[`olimpia.dev/llms.txt`](https://olimpia.dev/llms.txt) resume la plataforma para modelos: qué es, cómo conectar el servidor MCP y cómo funcionan los deploys.

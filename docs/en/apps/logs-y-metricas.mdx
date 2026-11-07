@@ -1,0 +1,52 @@
+---
+title: Logs and metrics
+description: >-
+  The log for every build, your app's live logs, CPU, memory, and disk metrics
+  for the last 7 days, and real visits to your website.
+sidebar:
+  icon: activity
+---
+## Build logs [#logs-del-build]
+
+Every deploy saves its build log. You can watch it live while the build runs. When it finishes, the log stays in the history for 30 days. If a build fails, the end of the log usually tells you why: a missing start command, a TypeScript error, or an outdated lockfile. See [If something fails](/apps/problemas).
+
+## App logs [#logs-de-la-app]
+
+The **Logs** tab shows what your app writes to stdout and stderr, live and searchable. Your app must write its logs there, not to files, for them to show up.
+
+```js
+console.log(JSON.stringify({ level: "info", msg: "pedido creado", id }));
+```
+
+:::tip
+Single-line JSON logs are easier to search and filter.
+:::
+
+## Metrics [#métricas]
+
+The **Metrics** tab measures your app every minute and keeps 7 days of data:
+
+| Metric | What it measures |
+| --- | --- |
+| **CPU** | CPU usage. 100% equals 1 vCPU. |
+| **Memory** | RSS and active and inactive cache. |
+| **IOPS** | Disk reads and writes. |
+
+Choose the time range: last hour, 24 hours, or 7 days.
+
+## Analytics
+
+The **Analytics** tab shows real visits to your website. They are measured in each visitor's browser on every HTML page of your subdomain and your custom domains. You don't need to install anything or add a script: it works on its own, without cookies.
+
+| Data | What it is |
+| --- | --- |
+| **Visits** | Arrivals at your website from another site or by typing the address. |
+| **Page views** | Every page loaded, including when navigating within your website. |
+| **Pages, sources, countries, devices, and browsers** | The most viewed pages, where visitors come from (*Direct* means no referrer), which countries they are in, and what devices they use. |
+| **LCP, INP, and CLS** | Core Web Vitals (75th percentile): how long the main content takes to appear, how long the page takes to respond to a click, and how much the page shifts while loading. Green is good, yellow needs improvement, and red is poor. |
+
+Choose the time range: 24 hours, 7 days, or 30 days. Data arrives with a delay of a few minutes. Only HTML responses loaded by a browser are measured: an API or a webhook does not count as a visit.
+
+## From your agent [#desde-tu-agente]
+
+Your agent can read logs with `get_logs`, visits and Web Vitals with `get_analytics`, and the status of each deploy, including the end of the build log, with `get_deployment`. See [Tools](/agentes/herramientas).

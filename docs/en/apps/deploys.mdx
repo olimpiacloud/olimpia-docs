@@ -1,0 +1,45 @@
+---
+title: Deploys and rollbacks
+description: >-
+  The states of a deploy, how Olimpia publishes with zero downtime, and how to
+  roll back to a previous version in seconds.
+sidebar:
+  icon: history
+---
+## States [#estados]
+
+| State | What happens |
+| --- | --- |
+| **Queued** | The deploy is waiting for its turn. |
+| **Building** | The image is being built. You can watch the log live. |
+| **Deploying** | The image is ready and the new container is starting. |
+| **Online** | The container has started and is receiving traffic. |
+| **Failed** | The build or the startup failed. The log shows the reason. |
+| **Canceled** | You canceled it, or a newer deploy replaced it before it started. |
+| **Replaced** | It was online and a later deploy replaced it. |
+
+Each deploy shows its source: **First deploy**, **Push**, **Manual**, or **Rollback**.
+
+## Zero downtime [#sin-cortes]
+
+Olimpia starts the new container before it stops the previous one. If the new one fails to start, the previous one keeps serving traffic and the deploy is marked **Failed**. Your users don't see an error while you deploy.
+
+:::note
+**Online** means the container has started. If your app starts but fails to handle requests, check the [logs](/apps/logs-y-metricas).
+:::
+
+## Rollback
+
+In **Deploys**, open a previous deploy that was online and click **Roll back to this version**. Olimpia reuses the image it already built and skips the build, so the rollback takes seconds.
+
+Olimpia keeps the active image and the 5 most recent images for each app. Older images are deleted automatically.
+
+## Cancel [#cancelar]
+
+You can cancel a deploy that is **Queued** or **Building**. The online version is not affected.
+
+## Concurrency [#concurrencia]
+
+- Only one deploy can run at a time per app.
+- If a new deploy arrives, any deploys still queued for that app are canceled.
+- Builds for different apps run in parallel.

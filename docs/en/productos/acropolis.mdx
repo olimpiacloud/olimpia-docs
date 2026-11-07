@@ -1,0 +1,33 @@
+---
+title: Acropolis
+description: >-
+  Olimpia's builder. Turns your app's code into a ready-to-run OCI image, with
+  no Dockerfile and no daemon.
+sidebar:
+  icon: layers
+  badge: Experimental
+---
+:::caution[Experimental]
+Acropolis is experimental: its commands, output, and defaults may change between versions. If you use it on your own, pin a version and read the [changelog](https://github.com/olimpiacloud/acropolis/blob/main/CHANGELOG.md) before upgrading.
+:::
+
+Acropolis takes an app's code and returns a ready-to-run OCI image. It detects the language and framework, downloads verified toolchains and dependencies, compiles, and builds the image. It is a single Rust binary, open source (Apache-2.0 or MIT). Full documentation is at [acropolis.olimpia.dev](https://acropolis.olimpia.dev).
+
+## On Olimpia [#en-olimpia]
+
+Select it in your app's **Settings → Builder** (or with `builder: "acropolis"` from the MCP). It detects the stack and ignores the Dockerfile, giving you faster builds and smaller images. If it can't build the app, the build falls back to the usual builder: your Dockerfile or [Railpack](/apps/builds). Also, a push only triggers a redeploy if it changes files the image depends on.
+
+## On your own [#por-tu-cuenta]
+
+```bash
+acropolis build ./mi-app -t registry.example.com/equipo/mi-app:latest
+acropolis plan ./mi-app
+```
+
+## Why it's faster [#por-qué-es-más-rápido]
+
+- **Fast cold builds.** It doesn't pull a builder image: Node, Go, and Rust come from their official sources with checksums, and dependencies are installed directly from the lockfiles.
+- **Small images.** Distroless runtimes when possible and Next in standalone mode; no devDependencies or caches in the image.
+- **Caches that persist.** Each app's cache is exported and imported as a file, so builds don't start from scratch every time.
+
+It runs on Linux x86_64 and arm64. The code is at [github.com/olimpiacloud/acropolis](https://github.com/olimpiacloud/acropolis).

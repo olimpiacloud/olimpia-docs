@@ -1,0 +1,25 @@
+---
+title: CDN
+description: >-
+  Edge caching to serve static assets and app responses from the location
+  closest to each user.
+sidebar:
+  label: CDN
+  icon: earth
+  badge: Soon
+---
+:::note[Coming soon]
+This module is not available yet. You will see it in the console marked as **Soon**. If you need it, email us at [hola@olimpia.dev](mailto:hola@olimpia.dev) and tell us about your use case.
+:::
+
+The Olimpia CDN will cache static assets and app responses at the edge, so they are served from the location closest to each user.
+
+## What it's for [#para-qué]
+
+- Serve images, JS, and CSS without every request reaching your app.
+- Cache public API responses using standard `Cache-Control` headers.
+- Reduce latency for users outside Argentina.
+
+## In the meantime [#mientras-tanto]
+
+All traffic to your apps already goes through the Cloudflare network, with HTTPS terminated at the edge. For static files, a [public bucket](/buckets/acceso-publico) serves objects from global storage.

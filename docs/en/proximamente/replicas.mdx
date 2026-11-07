@@ -1,0 +1,19 @@
+---
+title: Read replicas
+description: >-
+  Postgres replicas that spread out read queries so you can scale without
+  touching the primary database.
+sidebar:
+  label: Read replicas
+  icon: copy
+  badge: Soon
+---
+:::note[Coming soon]
+This is not available yet. If you need it, email us at [hola@olimpia.dev](mailto:hola@olimpia.dev) and tell us about your use case.
+:::
+
+Read replicas will copy your Postgres database in real time so you can send them read-only queries, such as reports, searches, and dashboards, without adding load to the primary database.
+
+## In the meantime [#mientras-tanto]
+
+Your database [has no fixed CPU or memory limits](/postgres): it uses what it needs. If you have heavy queries, check the [slow queries in the logs](/postgres/logs-y-metricas) and add indexes.

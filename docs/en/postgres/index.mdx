@@ -1,0 +1,77 @@
+---
+title: Postgres
+description: >-
+  Managed Postgres 18, ready in seconds, connected to your apps over the
+  internal network, with backups in your own S3.
+sidebar:
+  label: Introduction
+  icon: database
+---
+An Olimpia Postgres database is a full Postgres 18 instance with its own user and password. It is created in seconds, and your apps connect to it over the [internal network](/plataforma/red-interna) without any TLS setup.
+
+## Create a database [#crear-una-base]
+
+<Steps>
+  <Step title="Open Postgres">
+    In the console, go to **Postgres → Create database**.
+  </Step>
+  <Step title="Choose a name">
+    Use 3 to 63 characters: lowercase letters, numbers, and hyphens. The user and password are generated automatically.
+  </Step>
+  <Step title="Choose the image">
+    **Postgres 18** works for almost everything. Choose **Postgres 18 + pgvector** if you plan to store embeddings or run similarity searches. You can't change the image later.
+  </Step>
+  <Step title="Connect it to your app">
+    In the app, open **Variables** and add the database. Olimpia sets `DATABASE_URL`. Deploy to apply the change.
+  </Step>
+</Steps>
+
+## What's included [#qué-incluye]
+
+- **Postgres 18**, with the `app` database and the `app` user, which owns the database. If you created it with pgvector, it also includes the `vector` extension.
+- **Internal connection** for your apps and [optional external access](/postgres/conexion#acceso-externo) over TLS.
+- **[Data explorer](/postgres/explorador)** to view tables and rows from the console.
+- **[Backups to your S3](/postgres/backups)** on a schedule, in addition to the daily copies Olimpia keeps.
+- **[Logs and metrics](/postgres/logs-y-metricas)**: errors, slow queries, CPU, memory, connections, and transactions per second.
+- **No size limit.** Olimpia measures storage every minute and bills by usage.
+
+## What you can and can't do [#lo-que-podés-y-no-podés-hacer]
+
+The `app` user owns its database but is not a superuser:
+
+| You can | You can't |
+| --- | --- |
+| Create tables, indexes, views, functions, and schemas | Use `ALTER SYSTEM` or change the server configuration |
+| Use trusted extensions such as `pgcrypto`, `citext`, `pg_trgm`, `unaccent`, `hstore`, and others, plus `vector` on pgvector databases | Install untrusted extensions |
+| Run migrations with any ORM | Create other superusers |
+
+## Embeddings with pgvector [#embeddings-con-pgvector]
+
+On a database created with **Postgres 18 + pgvector**, enable the extension once, either in one of your app's migrations or by asking your agent to do it (`query_postgres` with `write: true`):
+
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE TABLE documentos (id bigserial PRIMARY KEY, texto text, embedding vector(1536));
+```
+
+On a database with the standard image, `CREATE EXTENSION vector` fails. Create a new database with pgvector and move your data to it.
+
+## With your ORM [#con-tu-orm]
+
+`DATABASE_URL` works as is with Prisma, Drizzle, Knex, TypeORM, SQLAlchemy, Django, Ecto, sqlx, and any Postgres driver.
+
+:::warning[Migrations on startup]
+The build runs on separate machines and can't reach your database. Run migrations when the app starts:
+
+```json package.json
+{
+  "scripts": {
+    "start": "prisma migrate deploy && node server.js"
+  }
+}
+```
+:::
+
+## Delete a database [#borrar-una-base]
+
+Use the database's actions menu. This deletes the database and all its data, and it can't be undone. The console asks you to type the name to confirm. Backups already in your S3 are not affected.

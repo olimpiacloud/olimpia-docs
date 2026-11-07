@@ -1,0 +1,85 @@
+---
+title: Upload your folder
+description: >-
+  Deploy code that isn't on GitHub by uploading a .tar.gz of your folder from
+  your agent, a script, or your CI.
+sidebar:
+  icon: folder-up
+---
+An app with uploaded code isn't tied to any repository. You send a `.tar.gz` of your folder, and Olimpia builds and publishes it. Agents use this method by default. It is also the best option when you deploy from your own CI.
+
+:::tip
+The simplest way is to ask your agent: "deploy this folder to Olimpia". See [Connect your agent](/agentes/conectar).
+:::
+
+## The flow [#el-flujo]
+
+The examples use a [personal token](/cuenta/tokens) stored in `$OLIMPIA_TOKEN`.
+
+<Steps>
+  <Step title="Create the app">
+    You create apps with uploaded code from your agent or through the [API](/cuenta/api). To find your project's `id`, call `GET /projects`.
+
+    ```bash
+    curl -fsS -X POST -H "Authorization: Bearer $OLIMPIA_TOKEN" \
+      -H "content-type: application/json" \
+      -d '{"project_id": "<id del proyecto>", "name": "mi-api", "source": "upload", "port": 3000}' \
+      https://api.olimpia.dev/apps
+    ```
+
+    Save the `id` from the response in `$APP_ID`.
+  </Step>
+  <Step title="Request an upload URL">
+    Each upload uses a signed URL that expires after 15 minutes.
+
+    ```bash
+    curl -fsS -X POST -H "Authorization: Bearer $OLIMPIA_TOKEN" \
+      https://api.olimpia.dev/apps/$APP_ID/source
+    ```
+
+    The response includes `upload_url` and `key`.
+  </Step>
+  <Step title="Package and upload the folder">
+    From your project's root, with git:
+
+    ```bash
+    git add -A && ref=$(git stash create)
+    git archive --format=tar.gz --prefix=src/ -o /tmp/src.tar.gz "${ref:-HEAD}"
+    curl -fsS -X PUT -T /tmp/src.tar.gz "$UPLOAD_URL"
+    ```
+
+    This includes uncommitted changes and respects `.gitignore`. It doesn't create any commits or stashes.
+  </Step>
+  <Step title="Deploy">
+    ```bash
+    curl -fsS -X POST -H "Authorization: Bearer $OLIMPIA_TOKEN" \
+      -H "content-type: application/json" \
+      -d "{\"source\": \"$KEY\", \"message\": \"primer deploy\"}" \
+      https://api.olimpia.dev/apps/$APP_ID/deployments
+    ```
+  </Step>
+</Steps>
+
+## Archive requirements [#requisitos-del-archivo]
+
+- A `.tar.gz` with all files inside **a single** top-level folder. This is why the example uses `--prefix=src/`.
+- Up to **300 MB**.
+- No `node_modules`, build folders, virtual environments, or `.env` files. If you don't use git, exclude them yourself:
+
+```bash
+tar --exclude=node_modules --exclude=.git --exclude='.env*' --exclude=dist \
+  --exclude=build --exclude=.next --exclude=target --exclude=.venv \
+  -czf /tmp/src.tar.gz --transform 's,^\.,src,' .
+```
+
+## Rebuild [#volver-a-construir]
+
+A deploy without `source` rebuilds the most recent upload. Use it to apply new environment variables without uploading the code again.
+
+## Monorepos
+
+Upload the entire repository and set the app's **Root folder** (for example, `apps/web`).
+
+## Retention [#retención]
+
+Olimpia keeps the most recent upload for each app and deletes older uploads the next day. When you delete the app, all of its uploads are deleted.

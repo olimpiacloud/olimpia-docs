@@ -1,0 +1,76 @@
+---
+title: Send emails
+description: The Olimpia Email sending API, with curl and JavaScript examples.
+sidebar:
+  label: Send emails
+  icon: send
+---
+Apps send email with a `POST` to `https://api.olimpia.dev/v1/emails`, authenticated with the domain's key. The sender (`from`) must be an address on that domain.
+
+## A single email [#un-email]
+
+```bash
+curl -X POST "$EMAIL_API_URL/v1/emails" \
+  -H "Authorization: Bearer $EMAIL_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "from": "Tienda <hola@mail.tuempresa.com>",
+    "to": "cliente@example.com",
+    "subject": "Tu pedido está en camino",
+    "html": "<p>Llega mañana.</p>"
+  }'
+```
+
+```js
+const response = await fetch(`${process.env.EMAIL_API_URL}/v1/emails`, {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${process.env.EMAIL_API_KEY}`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    from: `Tienda <hola@${process.env.EMAIL_DOMAIN}>`,
+    to: "cliente@example.com",
+    subject: "Tu pedido está en camino",
+    html: "<p>Llega mañana.</p>",
+  }),
+});
+const { emailId } = await response.json();
+```
+
+| Field | Type | |
+| --- | --- | --- |
+| `from` | string | Sender, with an optional name: `Tienda <hola@mail.tuempresa.com>`. |
+| `to` | string \| string[] | Recipients. |
+| `subject` | string | Subject. |
+| `html`, `text` | string | Body. Send at least one. Sending both improves deliverability. |
+| `cc`, `bcc` | string \| string[] | Optional. |
+| `replyTo` | string \| string[] | Optional. |
+| `headers` | object | Extra headers, optional. |
+| `attachments` | `{ filename, content }[]` | Optional. `content` in base64. |
+
+`to`, `cc`, and `bcc` together must have between 1 and 50 recipients. The response is `{ "emailId": "..." }`.
+
+## In batches [#en-lote]
+
+`POST /v1/emails/batch` accepts an array of up to 100 emails with the same fields and responds with `{ "data": [{ "emailId": "..." }] }`. All of them must be sent from the key's domain.
+
+## Email status [#estado-de-un-email]
+
+`GET /v1/emails/<emailId>` returns the email with its events (`SENT`, `DELIVERED`, `OPENED`, `BOUNCED`, `COMPLAINED`…), using the same key.
+
+## Errors [#errores]
+
+Errors respond with `{ "error": { "code", "message" } }`:
+
+| Status | When |
+| --- | --- |
+| `400` | The body is invalid or has unknown fields, or the number of recipients is out of range. |
+| `401` | The key is missing or invalid (for example, after it was rotated). |
+| `403` | The `from` address is not on the key's domain, or the domain is not verified yet or is suspended. |
+| `429` | The monthly recipient quota was reached. |
+| `502` | The sending service did not respond. Try again later. |
+
+## From an agent [#desde-un-agente]
+
+With the [Olimpia MCP](/agentes), the agent creates the domain with `create_resource(kind: "email", name: "mail.tuempresa.com")`, gives you the DNS records, checks verification with `get_connection(kind: "email", ...)`, and connects the app with `connect_resource`.

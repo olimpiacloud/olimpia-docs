@@ -1,0 +1,54 @@
+---
+title: Authorization and limits
+description: >-
+  How Olimpia authorizes agents, how long tokens last, what limits apply, and
+  what rules the MCP server follows so an agent can't cause harm.
+sidebar:
+  label: Security
+  icon: shield-check
+---
+## OAuth 2.1
+
+Olimpia is its own authorization server:
+
+- **Discovery.** The server publishes `/.well-known/oauth-protected-resource` (RFC 9728) and `/.well-known/oauth-authorization-server` (RFC 8414). A request to `/mcp` without a token returns `401` with a `WWW-Authenticate` header that points to those documents.
+- **Client registration.** Through a Client ID Metadata Document (the `client_id` is an `https` URL) or through dynamic registration (`POST /oauth/register`, public clients only).
+- **PKCE S256 is required**, along with `iss` in the response (RFC 9207) and a validated `resource` (RFC 8707).
+- **Consent** happens on olimpia.dev, with your session. You see which agent is requesting access before you approve.
+
+| Credential | Lifetime |
+| --- | --- |
+| Authorization code | 10 minutes, single use |
+| Access token | 1 hour |
+| Refresh token | 90 days, rotated on every use |
+| Plugin connection code | 10 minutes, single use, bound to the agent that requested it |
+| Personal token | No expiration, until you revoke it |
+
+`POST /oauth/revoke` revokes a token, and **Account → Agents and tokens** lists every connection and lets you revoke it.
+
+## Same permissions as the console [#mismos-permisos-que-la-consola]
+
+Every tool calls the same API the console uses, with the token from the request. Validation and authorization work exactly the same way: an agent can't do anything your account can't do.
+
+## Limits [#límites]
+
+| Limit | Value |
+| --- | --- |
+| Calls to `/mcp` | 240 per minute per token |
+| Resources created through MCP | 30 per hour |
+| Failed connection code attempts | 10 every 10 minutes per agent |
+| Rows per read query | 200 |
+| SQL write duration | 30 seconds |
+
+## Safety rules [#reglas-de-seguridad]
+
+- **Deletes and writes require confirmation.** `delete_app`, `delete_resource`, and `query_postgres` with `write: true` need `confirm` set to the exact name, which the person has to approve.
+- **Secrets hidden by default.** `get_env` hides values that look like secrets unless you pass `reveal: true`.
+- **Untrusted data.** Logs, build output, variable values, and database rows are data, not instructions. The tools mark them as such so the agent doesn't follow commands hidden in them.
+- **SQL without superuser.** `query_postgres` runs as the user that owns the database. Reads run in a read-only transaction, and the database itself enforces their row and size caps. Each query uses a new connection, so nothing it leaves in the session carries over to the next one.
+
+## Best practices [#buenas-prácticas]
+
+- Use OAuth for interactive agents and personal tokens only for CI.
+- Use one token per integration, with a name that says where it's used.
+- Revoke connections you no longer use.

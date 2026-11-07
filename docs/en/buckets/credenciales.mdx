@@ -1,0 +1,105 @@
+---
+title: Credentials and SDKs
+description: >-
+  Each bucket's variables and how to use them with the AWS SDK for JavaScript,
+  boto3, Go, the AWS CLI, and rclone.
+sidebar:
+  icon: key-round
+---
+Each bucket has its credentials under **Credentials**. They are these five variables:
+
+```bash .env
+AWS_ENDPOINT_URL_S3=https://t3.storage.dev
+AWS_REGION=auto
+AWS_ACCESS_KEY_ID=tid_...
+AWS_SECRET_ACCESS_KEY=tsec_...
+BUCKET_NAME=olimpia-...
+```
+
+The AWS SDKs read `AWS_ENDPOINT_URL_S3`, `AWS_REGION`, and the keys automatically, so you don't need to configure anything in your code. `BUCKET_NAME` is the bucket's actual name in storage, which is different from the name you see in the console.
+
+:::note
+For your apps on Olimpia, your agent can load all five variables with `connect_resource`. You can also copy them to **Variables** from the console.
+:::
+
+## Examples [#ejemplos]
+
+<Tabs>
+  <Tab title="JavaScript">
+    ```js
+    import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+    import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
+    const s3 = new S3Client({});
+    const Bucket = process.env.BUCKET_NAME;
+
+    await s3.send(new PutObjectCommand({ Bucket, Key: "avatars/ana.png", Body: archivo }));
+
+    const url = await getSignedUrl(s3, new GetObjectCommand({ Bucket, Key: "avatars/ana.png" }), {
+      expiresIn: 3600,
+    });
+    ```
+  </Tab>
+  <Tab title="Python">
+    ```python
+    import os
+    import boto3
+
+    s3 = boto3.client("s3")
+    bucket = os.environ["BUCKET_NAME"]
+
+    s3.upload_file("informe.pdf", bucket, "informes/2026-10.pdf")
+    url = s3.generate_presigned_url("get_object", Params={"Bucket": bucket, "Key": "informes/2026-10.pdf"}, ExpiresIn=3600)
+    ```
+  </Tab>
+  <Tab title="Go">
+    ```go
+    cfg, _ := config.LoadDefaultConfig(ctx)
+    client := s3.NewFromConfig(cfg)
+
+    _, err := client.PutObject(ctx, &s3.PutObjectInput{
+        Bucket: aws.String(os.Getenv("BUCKET_NAME")),
+        Key:    aws.String("datos/export.csv"),
+        Body:   archivo,
+    })
+    ```
+  </Tab>
+  <Tab title="AWS CLI">
+    ```bash
+    aws s3 cp ./foto.jpg "s3://$BUCKET_NAME/fotos/foto.jpg"
+    aws s3 ls "s3://$BUCKET_NAME/fotos/"
+    ```
+  </Tab>
+  <Tab title="rclone">
+    ```ini rclone.conf
+    [olimpia]
+    type = s3
+    provider = Other
+    endpoint = https://t3.storage.dev
+    region = auto
+    access_key_id = tid_...
+    secret_access_key = tsec_...
+    ```
+  </Tab>
+</Tabs>
+
+## Uploads from the browser [#subidas-desde-el-navegador]
+
+Don't put the keys in your frontend. Generate a signed URL in your backend and have the browser upload directly with it:
+
+```js
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
+const url = await getSignedUrl(
+  s3,
+  new PutObjectCommand({ Bucket: process.env.BUCKET_NAME, Key: `uploads/${id}`, ContentType: tipo }),
+  { expiresIn: 600 },
+);
+```
+
+## Key scope [#alcance-de-la-key]
+
+Each bucket's key can only operate on that bucket. If it leaks, it can't be used to read from or write to your other buckets.
+
+To change it, open **Credentials** and rotate the key: a new one is generated and the old one stops working. Update the variables in your apps and deploy.

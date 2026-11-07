@@ -1,0 +1,39 @@
+---
+title: Internal network
+description: >-
+  Your apps reach Postgres and Redis over a private network, with no TLS to
+  configure and nothing exposed to the internet.
+sidebar:
+  icon: network
+---
+Every Olimpia app, database, and Redis instance is connected to a private network in its region. Your apps use this network to talk to their databases. The traffic never leaves for the internet, never goes through the public proxy, and needs no certificates.
+
+## Internal URL and public URL [#url-interna-y-url-pública]
+
+Each database can be reached in two ways:
+
+| | Internal URL | Public URL |
+| --- | --- | --- |
+| From | Apps on Olimpia | Your computer, another cloud, a BI tool |
+| Default | Always on | Off |
+| TLS | Not needed | Required, with SNI |
+| Postgres | `postgresql://app:…@<host-interno>:5432/app` | `postgresql://app:…@pg-<id>.db.olimpia.cc:5432/app?sslmode=require` |
+| Redis | `redis://default:…@<host-interno>:6379` | `rediss://default:…@rd-<id>.db.olimpia.cc:6379` |
+
+When you connect a database to an app from the console or through your agent, Olimpia puts the internal URL in `DATABASE_URL` or `REDIS_URL`. This is the URL your apps should use.
+
+:::warning
+The internal URL doesn't work from your machine because it only resolves inside Olimpia. To connect from outside, [enable external access](/postgres/conexion#acceso-externo) and use the public URL.
+:::
+
+## Private by default [#privado-por-defecto]
+
+A new database doesn't accept connections from the internet. Only your apps on Olimpia can reach it. You turn external access on and off for each database when you need it: for a migration from your computer, an analytics tool, or an app that still runs on another cloud.
+
+## Isolation between apps [#aislamiento-entre-apps]
+
+Apps run on a network separate from the platform's internal services. An app can reach databases and Redis, but it can't see the admin panels, Olimpia's internal databases, or the rest of the infrastructure.
+
+## Buckets
+
+Buckets don't use the internal network. You access them over HTTPS with the S3 API, from your apps or from anywhere, using [credentials that only work for that bucket](/buckets/credenciales).

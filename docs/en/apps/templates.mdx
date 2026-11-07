@@ -1,0 +1,74 @@
+---
+title: Templates
+description: >-
+  Open source tools like n8n, cal.com, or Infisical, ready to deploy with their
+  database and secrets already configured.
+sidebar:
+  icon: layout-grid
+---
+A template is an open source tool that comes ready for Olimpia: the image, the port, the environment variables, and, if needed, a Postgres database and a Redis instance. You don't need to read the tool's documentation to get it running.
+
+<Steps>
+  <Step title="Find the template">
+    In **Apps → New app**, choose **Templates** and search by name, use case, or tag: `n8n`, `analytics`, `wiki`.
+  </Step>
+  <Step title="Choose the name">
+    The name is also the subdomain: `n8n` is served at `https://n8n.olimpia.cc`. If the template uses Postgres or Redis, they get the same name as the app.
+  </Step>
+  <Step title="Deploy">
+    Olimpia creates the databases, generates the keys, sets the variables, and starts the first deploy. You can follow it live in **Deploys**.
+  </Step>
+</Steps>
+
+## The catalog [#el-catálogo]
+
+The catalog includes the [Dokploy templates](https://github.com/Dokploy/templates) that run as **a single app** on Olimpia (one web container that stores its data in Postgres, in Redis, or nowhere), plus some templates built by Olimpia. Each card shows whether the template uses Postgres or Redis.
+
+If the tool you're looking for isn't there, it probably needs a persistent disk, multiple containers, or mounted configuration files, which Olimpia apps don't support yet.
+
+## What gets created [#qué-se-crea]
+
+- **An app** with the template's image, like any [Docker image](/apps/docker).
+- **A Postgres database and a Redis instance** in the same project, if the template needs them, already connected to the app over the [internal network](/plataforma/red-interna). They replace the ones the tool ships with, so you get backups, a data explorer, and metrics, just like any Olimpia database.
+- **The environment variables**: secret keys are randomly generated for each app, in the format the tool expects, and URLs use the app's subdomain. You can view and change them in [Variables](/apps/variables).
+
+After the first deploy, it's just another app: you can change its variables, add [custom domains](/apps/dominios), view its [logs](/apps/logs-y-metricas), or roll back to a previous deploy.
+
+:::tip
+Some tools run migrations on first startup and take a few minutes to respond. You can follow the progress in **Logs**.
+:::
+
+## Templates built by Olimpia [#templates-preparados-por-olimpia]
+
+### n8n
+
+Open the URL and create the owner account. Workflows, credentials, and the files they process are stored in Postgres, so they persist across deploys. Webhooks use the app's URL (`N8N_WEBHOOK_URL`).
+
+:::warning
+Don't change or delete `N8N_ENCRYPTION_KEY`: n8n uses this key to encrypt saved credentials, and without it, it can't read them again.
+:::
+
+### Centrifugo
+
+The admin panel is at the app's URL, with the password from `CENTRIFUGO_ADMIN_PASSWORD`.
+
+- Your backend publishes through the HTTP API at `/api/*`, sending `CENTRIFUGO_HTTP_API_KEY` in the `X-API-Key` header.
+- Clients connect to `wss://<subdominio>.olimpia.cc/connection/websocket` with a JWT signed with `CENTRIFUGO_CLIENT_TOKEN_HMAC_SECRET_KEY`.
+- `CENTRIFUGO_CLIENT_ALLOWED_ORIGINS` is set to `*` by default. You should change it to your frontend's origin, for example `https://miapp.com` (separate multiple origins with spaces).
+
+It runs with the in-memory engine, designed for a single instance. If you need persistent history, create a [Redis](/redis) instance and set `CENTRIFUGO_ENGINE_TYPE=redis` and `CENTRIFUGO_ENGINE_REDIS_ADDRESS` to its internal URL.
+
+### Umami
+
+The initial user is `admin` with the password `umami`. Change it as soon as you log in.
+
+### Metabase
+
+The first startup runs Metabase's migrations and takes a few minutes. After that, the setup wizard asks you to create the admin account. To query an Olimpia database from Metabase, use its internal host, which you can find in the database's **Connection** tab.
+
+## Things to keep in mind [#para-tener-en-cuenta]
+
+- **Variables are filled in only once**, when the app is created. If you later change the subdomain or switch to a custom domain, manually update the ones that contain the old URL.
+- **Initial users** usually come in variables like `ADMIN_EMAIL` and `ADMIN_PASSWORD`. The generated emails are `admin@example.com`; change them in the tool after you log in.
+- **To update**, click **Deploy**: Olimpia pulls the template's tag again. If you prefer a different version, change the image in **Settings**.
+- **From your agent**, `list_templates` searches the catalog and `deploy_template` does everything described above. See [tools](/agentes/herramientas#templates).

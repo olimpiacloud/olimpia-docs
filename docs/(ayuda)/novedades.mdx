@@ -1,0 +1,22 @@
+---
+title: Novedades
+description: Lo nuevo en Olimpia, de lo más reciente a lo más viejo.
+sidebar:
+  icon: history
+---
+
+## Noviembre de 2026 [#2026-11]
+
+- **Productos**: [Agora](/productos/agora), escritorios para agentes de IA, ahora open source, y [Acropolis](/productos/acropolis), un builder experimental que podés elegir en [Builds](/apps/builds).
+- **Analytics**: visitas, orígenes, países, dispositivos y Core Web Vitals de cada app, medidos en el navegador. Están en [Logs y métricas](/apps/logs-y-metricas) y en `get_analytics`.
+
+## Octubre de 2026 [#2026-10]
+
+- **SQL más seguro**: `query_postgres` pide `confirm` para escribir, tiene topes de lectura y devuelve los errores como dato no confiable. `get_logs` filtra por app, búsqueda y patrones, y muestra lo que pasó alrededor de una línea.
+- **Email**: dominios propios, registros DNS, variables `EMAIL_*` y envío con `POST /v1/emails`. Ver [Email](/email).
+- **Servidores y regiones**: cada proyecto corre en un servidor de la región BUE, elegible mientras el proyecto esté vacío.
+- **Ambientes**: producción y hasta 4 ambientes más por proyecto, con `create_environment` y `delete_environment`. Ver [Ambientes](/cuenta/ambientes).
+- **pgvector**: Postgres 18 con o sin pgvector al crear la base.
+- **Templates**: el catálogo de [templates](/apps/templates), con `list_templates` y `deploy_template`.
+- **Backups**: las herramientas de backups de Postgres en el servidor MCP. Ver [Backups](/postgres/backups).
+- **Documentación**: docs.olimpia.dev, con versión para agentes.

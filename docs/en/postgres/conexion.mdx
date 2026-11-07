@@ -1,0 +1,68 @@
+---
+title: Connection
+description: >-
+  Connect to your database from your apps over the internal network, or from
+  anywhere over TLS with external access.
+sidebar:
+  icon: plug
+---
+The **Connection** tab for each database has everything you need: the connection URL, the internal URL, host, port, database, user, and password. **Copy as .env** copies everything, ready to paste.
+
+## From your apps [#desde-tus-apps]
+
+Use the internal URL. Olimpia puts this URL in `DATABASE_URL` when you connect the database to an app:
+
+```txt
+postgresql://app:<contraseña>@<host-interno>:5432/app
+```
+
+It doesn't need TLS or extra parameters, and its traffic never goes over the internet.
+
+## External access [#acceso-externo]
+
+By default, the database only accepts connections from your apps on Olimpia. To connect from your computer, a BI tool, or an app on another cloud, click **Allow external connections**. The public URL looks like this:
+
+```txt
+postgresql://app:<contraseña>@pg-<id>.db.olimpia.cc:5432/app?sslmode=require
+```
+
+<Tabs>
+  <Tab title="psql">
+    ```bash
+    psql "postgresql://app:<contraseña>@pg-<id>.db.olimpia.cc:5432/app?sslmode=require"
+    ```
+  </Tab>
+  <Tab title="Node">
+    ```js
+    import postgres from "postgres";
+
+    const sql = postgres(process.env.DATABASE_URL, { ssl: "require" });
+    ```
+  </Tab>
+  <Tab title="Python">
+    ```python
+    import os
+    import psycopg
+
+    conn = psycopg.connect(os.environ["DATABASE_URL"])
+    ```
+  </Tab>
+</Tabs>
+
+### Requirements [#requisitos]
+
+- **TLS is required**, with `sslmode=require`. Connections without TLS are dropped.
+- **SNI.** Olimpia routes each connection by its hostname, so your client must send SNI. libpq 14 or newer (`psql`, `pg_dump`) does this, and so do current drivers for Node, Python, Go, Java, and Rust.
+- A connection that doesn't authenticate within 10 seconds is dropped.
+
+:::tip
+When you no longer need it, click **Block external connections**. Your apps stay connected over the internal network.
+:::
+
+## Rotate the password [#rotar-la-contraseña]
+
+**Rotate password** generates a new password, and the old one stops working immediately. Update `DATABASE_URL` in your apps (from **Variables**, by adding the database again) and deploy.
+
+## From your agent [#desde-tu-agente]
+
+`get_connection` returns the internal and public URLs. `set_public_access` turns external access on or off. See [Tools](/agentes/herramientas).

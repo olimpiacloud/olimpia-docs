@@ -1,0 +1,48 @@
+---
+title: Environment variables
+description: >-
+  Configure your app's secrets and settings. They are stored encrypted and reach
+  the build and the container on the next deploy.
+sidebar:
+  label: Variables
+  icon: key-round
+---
+You set environment variables in the **Variables** tab of each app. They are stored encrypted and injected into the build and into the running app.
+
+## Add variables [#cargar-variables]
+
+Add them one at a time, or paste an entire `.env` into any name field to import it all at once:
+
+```bash .env
+STRIPE_SECRET_KEY=sk_live_...
+SENTRY_DSN=https://...
+LOG_LEVEL=info
+```
+
+You can also switch to text editing mode and edit everything as a `.env` file.
+
+## Connect a database [#conectar-una-base]
+
+From **Variables**, you can add any Postgres or Redis in the project. Olimpia sets the internal URL:
+
+| Resource | Variable |
+| --- | --- |
+| Postgres | `DATABASE_URL` |
+| Redis | `REDIS_URL` |
+| Bucket | `AWS_ENDPOINT_URL_S3`, `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `BUCKET_NAME` |
+
+You can add bucket variables from your agent with `connect_resource`, or copy them from the [bucket credentials](/buckets/credenciales).
+
+## When changes apply [#cuándo-se-aplican]
+
+Changing variables does not restart your app. The console marks the app with **unapplied changes** until you click **Deploy**. This lets you make several changes and apply them together.
+
+## `PORT`
+
+Olimpia sets `PORT` to the app's configured port. If you set `PORT` manually, the app's port becomes that value.
+
+## Best practices [#buenas-prácticas]
+
+- Never commit your `.env` files to the repository or include them in a code upload.
+- Variables that the framework copies into the bundle (`NEXT_PUBLIC_*`, `VITE_*`) are public, so don't put secrets there.
+- To view values, use **Show values**. Values are hidden by default.

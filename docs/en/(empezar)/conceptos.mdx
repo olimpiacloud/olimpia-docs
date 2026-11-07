@@ -1,0 +1,62 @@
+---
+title: Concepts
+description: >-
+  Projects, resources, deploys, names, and usage-based billing. The terms
+  Olimpia uses in the console, the API, and the MCP server.
+sidebar:
+  icon: shapes
+---
+## Projects [#proyectos]
+
+A project groups apps, databases, and buckets that work together. Use projects to keep one product or client separate from another. Inside each project, [environments](/cuenta/ambientes) keep production separate from staging. Each project can have up to five environments, and you can create a new one by copying the services of an existing one.
+
+- Every account starts with the `personal` project.
+- Resource names must be unique within each project and each environment. For example, you can have a `main` database in production and another `main` in staging.
+- You can move a resource from one project to another without recreating it.
+- You can only delete a project when it is empty, and you can never delete your last remaining project.
+
+## Resources [#recursos]
+
+| Resource | What it is | How to connect |
+| --- | --- | --- |
+| **App** | A container built from GitHub, an uploaded folder, a Docker image, or a template. | `https://<subdominio>.olimpia.cc` and your custom domains. |
+| **Postgres** | A managed Postgres 18 database. | `DATABASE_URL` over the internal network; optionally over TLS from outside. |
+| **Redis** | A persistent Redis 8 instance. | `REDIS_URL` over the internal network; optionally over TLS from outside. |
+| **Bucket** | S3-compatible object storage. | The `AWS_*` and `BUCKET_NAME` variables, from anywhere. |
+
+An app can use several resources, and a resource can be connected to several apps.
+
+## Deploys
+
+A deploy builds and publishes your app. It moves through these states:
+
+```txt
+En cola → Construyendo → Deployando → Online
+```
+
+A deploy can also end as **Failed** or **Canceled**. An online deploy becomes **Replaced** when a new one goes live. Each app has only one deploy in progress at a time. If another push arrives, the earlier deploy still in the queue is canceled. For more details, see [Deploys and rollbacks](/apps/deploys).
+
+## Names [#nombres]
+
+Apps, databases, buckets, and projects all use the same format: 3 to 63 characters, using lowercase letters, numbers, and hyphens. Names cannot start or end with a hyphen.
+
+```txt
+mi-api        ✓
+api-v2        ✓
+Mi_API        ✗
+-api          ✗
+```
+
+## Domains [#dominios]
+
+- The console and the API live at `olimpia.dev` and `api.olimpia.dev`.
+- Your apps are published on subdomains of `olimpia.cc`, for example `https://mi-api.olimpia.cc`.
+- Databases with external access use `*.db.olimpia.cc`.
+
+## Usage-based billing [#cobro-por-uso]
+
+Olimpia charges for what you use: the CPU, memory, and storage of each resource. There are no capped plans and no artificial limits on how many apps or databases you can have. During early access, no credit card is required, and prices will be published before the region opens.
+
+:::note
+Billing in the console is coming soon. See [Coming soon](/proximamente/facturacion).
+:::

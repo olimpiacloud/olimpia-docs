@@ -1,0 +1,51 @@
+---
+title: Domains
+description: >-
+  Your app is available on an olimpia.cc subdomain and on up to 10 custom
+  domains, with automatic HTTPS certificates.
+sidebar:
+  icon: globe
+---
+## Your Olimpia subdomain [#tu-subdominio-de-olimpia]
+
+Every app is available at `https://<subdominio>.olimpia.cc`, with HTTPS included. By default, the subdomain is the app name. You can change it in **Domains** or in **Settings**.
+
+:::warning
+When you change the subdomain, the old address stops working immediately.
+:::
+
+## Add a custom domain [#agregar-un-dominio-propio]
+
+<Steps>
+  <Step title="Add the domain">
+    In **Domains → Add domain**, enter the domain or subdomain, for example `app.tuempresa.com`.
+  </Step>
+  <Step title="Create the DNS records">
+    The console shows the records to create with your DNS provider:
+
+    | Type | Name | Value |
+    | --- | --- | --- |
+    | `CNAME` | `app` | `domains.olimpia.cc` |
+    | `TXT` | (shown in the console) | (shown in the console) |
+
+    The `TXT` record is optional. It lets you verify the domain before you point the `CNAME`, which is useful if you are migrating a domain that already has traffic.
+  </Step>
+  <Step title="Wait for verification">
+    Olimpia checks DNS every 30 seconds, even if you close the page. Once DNS points to the right place, it issues the HTTPS certificate. This usually takes a few minutes. The domain moves through **Waiting for DNS → Issuing certificate → Active**.
+  </Step>
+</Steps>
+
+## Root domains [#dominios-raíz]
+
+To use a root domain (`tuempresa.com`), your DNS provider must allow a `CNAME` at the root, using **CNAME flattening** or an **ALIAS** record. Cloudflare, DNSimple, and others support this. If your provider doesn't, use `www.tuempresa.com` and redirect the root domain to it.
+
+## Rules [#reglas]
+
+- Up to **10 domains** per app.
+- A domain can't be used by two apps at the same time.
+- A domain that isn't verified within **7 days** is removed automatically, so no one can reserve domains they don't own.
+- If the app doesn't have a live deploy yet, the domain stays in **Waiting for first deploy**.
+
+## Remove a domain [#quitar-un-dominio]
+
+**Remove domain** stops serving the app on that domain immediately. You can add it again at any time. Remember to delete the DNS record too.

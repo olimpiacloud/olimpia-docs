@@ -1,0 +1,23 @@
+---
+title: Agora
+description: >-
+  Real Linux desktops for AI agents. Each agent is a cursor with its own mouse,
+  keyboard, and tabs, and a person can take control when needed.
+sidebar:
+  icon: monitor
+---
+Agora gives each AI agent a real Linux computer, with Chromium, apps, and a terminal, without running a separate desktop or browser for each agent. Full documentation is at [agora.olimpia.dev](https://agora.olimpia.dev).
+
+## What it does [#qué-hace]
+
+- **Agents as cursors.** Each agent has its own pointer, keyboard, and tabs on the same desktop. When an agent delegates to subagents, their permissions can only be narrower.
+- **Browser control through semantics or pixels.** A compact snapshot with references (`[e3] button "Sign in"`) for the web, and a real mouse and keyboard for any other app.
+- **A person when needed.** When the agent hits a CAPTCHA or a login, it asks for help. You take control from the viewer and hand it back without losing the session.
+- **Lightweight streaming.** H.264 video over WebRTC or WebSocket. Nothing is captured or encoded if nobody is watching.
+- **Built for your agent.** MCP server, HTTP API, web dashboard, and Paseo plugin.
+
+It is open source (MIT or Apache-2.0), and the code is at [github.com/olimpiacloud/agora](https://github.com/olimpiacloud/agora). To install it on an Ubuntu or Debian server, run:
+
+```bash
+curl -fsSL https://agora.olimpia.dev/install.sh | sh
+```

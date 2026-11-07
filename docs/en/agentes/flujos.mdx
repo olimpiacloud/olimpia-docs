@@ -1,0 +1,124 @@
+---
+title: Common workflows
+description: >-
+  The tool sequences an agent uses to deploy, connect databases, set up domains,
+  and fix a broken deploy.
+sidebar:
+  label: Workflows
+  icon: route
+---
+## Deploy a local folder [#desplegar-una-carpeta-local]
+
+```txt
+create_app(name: "web", source: "upload", port: 3000)
+  → upload.command_git   (o command_tar si no hay git)
+deploy(app: "web", source_key: "<de create_app>", message: "primer deploy")
+get_deployment(app: "web", wait_seconds: 50)   # repetir mientras esté queued, building o deploying
+get_logs(app: "web", since: "5m")
+```
+
+To upload new code later: `get_upload_url` → upload → `deploy(source_key)`.
+
+:::tip
+`active` only means the container started. Check with `curl -sS -o /dev/null -w '%{http_code}' <url>` and review `get_logs`.
+:::
+
+## Deploy from GitHub [#desplegar-desde-github]
+
+```txt
+create_app(name: "api", source: "github", repo: "acme/api", branch: "main")
+get_deployment(app: "api", wait_seconds: 50)
+```
+
+After that, every push to `main` deploys automatically. If `create_app` returns `invalid_repo`, the Olimpia GitHub App is not installed on that repo. The user has to add it from the console (**Apps → New app**), or you can deploy with `source=upload`.
+
+## Docker image [#imagen-de-docker]
+
+```txt
+create_app(name: "uptime", source: "image", image: "louislam/uptime-kuma:2", port: 3001)
+```
+
+## Template
+
+```txt
+list_templates(search: "n8n")
+deploy_template(template: "n8n", name: "flujos")   # crea la app, la base "flujos" y las variables
+get_deployment(app: "flujos", wait_seconds: 50)
+```
+
+## Database for an app [#base-de-datos-para-una-app]
+
+```txt
+create_resource(kind: "postgres", name: "main", connect_to_app: "api")
+deploy(app: "api")
+```
+
+`connect_to_app` adds `DATABASE_URL` to the app. The same works with `kind: "redis"` (`REDIS_URL`) and `kind: "bucket"` (`AWS_*` and `BUCKET_NAME` variables). For an existing database: `connect_resource(app, kind, name)`.
+
+## Email from your own domain [#email-desde-un-dominio-propio]
+
+```txt
+create_resource(kind: "email", name: "mail.tuempresa.com")   # devuelve dns_records
+get_connection(kind: "email", name: "mail.tuempresa.com")    # revisa el DNS hasta status SUCCESS
+connect_resource(app: "api", kind: "email", name: "mail.tuempresa.com")
+```
+
+The user adds the `dns_records` at their DNS provider. Once the domain is verified, the app sends email with `POST $EMAIL_API_URL/v1/emails` and `Authorization: Bearer $EMAIL_API_KEY`. See [Send emails](/email/enviar).
+
+## Inspect and fix data [#revisar-y-arreglar-datos]
+
+```txt
+list_tables(database: "main")
+query_postgres(database: "main", sql: "select id, email from users order by created_at desc limit 20")
+query_postgres(database: "main", sql: "update users set plan = 'pro' where id = 42", write: true)
+```
+
+Before running any statement that deletes or rewrites data, the agent must ask for confirmation.
+
+## Database backups [#backups-de-una-base]
+
+```txt
+set_backups(database: "main", bucket: "backups")              # un bucket de Olimpia del mismo proyecto
+run_backup(database: "main")                                  # verifica que funcione
+set_backups(database: "main", schedule: "0 */6 * * *")        # después, cambiar solo la frecuencia
+```
+
+To store them in your own S3, pass `endpoint`, `s3_bucket`, `access_key_id`, and `secret_access_key` instead of `bucket`. `get_backups` shows the configuration and the latest files.
+
+## Custom domain [#dominio-propio]
+
+```txt
+add_domain(app: "web", domain: "app.acme.com")   # devuelve los registros DNS
+check_domain(app: "web", domain: "app.acme.com") # repetir hasta active
+```
+
+## Environment variables [#variables-de-entorno]
+
+```txt
+get_env(app: "api")
+set_env(app: "api", set: { "LOG_LEVEL": "debug" }, remove: ["OLD_FLAG"], redeploy: true)
+```
+
+## Fix a failed deploy [#arreglar-un-deploy-que-falló]
+
+```txt
+get_deployment(app: "web")          # leer error y build_log_tail
+# corregir la causa en el código
+get_upload_url(app: "web") → subir → deploy(app: "web", source_key: "...")
+```
+
+| `error` | What to do |
+| --- | --- |
+| `source_failed` | Upload: the upload expired or did not finish. GitHub: check repo access and the branch. |
+| `build_failed` | Read `build_log_tail` and fix the code or the configuration. |
+| `release_failed` | The process exits on startup: `get_logs(since: "5m")`. |
+| `import_failed`, `internal_error` | Retry once with `deploy`. |
+
+Do not retry the same build without changes, except for `internal_error`. More cases in [If something fails](/apps/problemas).
+
+## Roll back [#volver-atrás]
+
+```txt
+get_app(app: "web")                              # lista los últimos deploys
+rollback(app: "web", deployment: "<id anterior>")
+```

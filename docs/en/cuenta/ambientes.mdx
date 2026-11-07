@@ -1,0 +1,40 @@
+---
+title: Environments
+description: >-
+  Production and up to four more environments per project, such as staging,
+  created by copying the services of another environment.
+sidebar:
+  icon: git-branch
+---
+Each project starts with one environment, **production**, and you can add up to four more (five in total), such as `staging` or `preview`. Each environment has its own apps, databases, and buckets: what happens in one doesn't affect the others.
+
+The console URL shows which environment you are in: `olimpia.dev/dashboard/tienda` is production and `olimpia.dev/dashboard/tienda.staging` is staging.
+
+## Switch environments [#cambiar-de-ambiente]
+
+The current environment appears in the top bar, next to the project name. Click it to see the others and jump between them. If you are in a section such as Apps or Postgres, you go to the same section in the other environment.
+
+## Create an environment [#crear-un-ambiente]
+
+From the same dropdown, click **New environment** and choose a name. By default, Olimpia copies all the services from the environment you are in:
+
+| Service | The copy |
+| --- | --- |
+| Apps | Same source (repo and branch, image, or the last uploaded code), same build and port configuration, and its first deploy. Each one gets its own subdomain, for example `web-staging.olimpia.cc`. |
+| Postgres and Redis | A new, **empty** database with the same image, the same public access setting, and new credentials. |
+| Buckets | A new, **empty** bucket with new credentials. |
+| Variables | All of them are copied. Variables that pointed to a database, a bucket, or the subdomain of another app in the environment now point to their copies. |
+
+Data, custom domains, and backups are not copied. If you uncheck **Copy all services**, the environment starts empty.
+
+:::note
+Copied GitHub apps follow the same branch and deploy on every push. To have staging follow a different branch, change it in the app settings.
+:::
+
+## Delete an environment [#borrar-un-ambiente]
+
+In the dropdown for any environment other than production, you'll find **Delete**. It deletes the environment along with all its apps, databases, and buckets, and it can't be undone. Production can't be deleted: to remove it, delete the project.
+
+## From an agent [#desde-un-agente]
+
+With the [MCP server](/agentes/herramientas), `create_environment` creates an environment (copying services by default) and `delete_environment` deletes it. To work in a specific environment, any tool accepts `project: "tienda.staging"`. Without the suffix, it uses production.

@@ -1,0 +1,37 @@
+---
+title: Security
+description: >-
+  How Olimpia protects your traffic, your secrets, and your data, and which
+  controls you have.
+sidebar:
+  icon: shield-check
+---
+## At the edge [#en-el-borde]
+
+- **All web traffic goes through Cloudflare.** Your apps get automatic HTTPS on `*.olimpia.cc` and on your custom domains, with attack protection at the edge. The origin only accepts connections from Cloudflare.
+- **Databases behind a proxy.** External access to Postgres and Redis goes through a TCP proxy with anti-DDoS protection and per-IP limits on open and new connections. TLS is required: unencrypted connections are dropped.
+- **The region's address is not public.** No DNS record points directly to the servers where your resources run.
+
+## Your secrets [#tus-secretos]
+
+- **Encrypted environment variables.** Values are stored encrypted and are decrypted only to build and run your app.
+- **Per-bucket credentials.** Each bucket has its own access key, with permissions only on that bucket. A leaked key can't be used to touch another one.
+- **Rotatable credentials.** You can rotate your Postgres or Redis password, or a bucket's key, with one click. The old one stops working immediately.
+- **Tokens we don't store.** For your sessions and tokens, we store only a hash. Revoking one invalidates it immediately.
+
+## Your data [#tus-datos]
+
+- **Postgres without superuser access for you or the explorer.** Your `app` user owns its database but is not a superuser. The console explorer connects with that same user, in read-only transactions.
+- **Redis without admin commands.** The `default` user can't run `CONFIG`, `ACL`, `SHUTDOWN`, or other admin commands.
+- **Backups.** Olimpia keeps its own daily backups, and you can also [schedule backups to your own S3](/postgres/backups).
+
+## Your account [#tu-cuenta]
+
+- Sign in with email and password or with GitHub.
+- View and end your active sessions from the console.
+- Sign-in attempts are rate-limited per IP and per account.
+- Agents connect with [OAuth 2.1 and PKCE](/agentes/seguridad) or with personal tokens that you can revoke at any time.
+
+## Report a problem [#reportar-un-problema]
+
+If you find a vulnerability, email us at [hola@olimpia.dev](mailto:hola@olimpia.dev). We respond quickly and keep you updated on the fix.

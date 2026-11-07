@@ -1,0 +1,248 @@
+---
+title: Connect your agent
+description: >-
+  How to connect your agent to Olimpia: the MCP server in each client, the skill
+  and the plugin, tokens for CI, and the Markdown documentation.
+sidebar:
+  label: Connect
+  icon: plug
+---
+The Olimpia MCP server is at:
+
+```txt
+https://api.olimpia.dev/mcp
+```
+
+Any client that supports remote MCP servers over HTTP can connect. The first time, the client opens olimpia.dev so you can authorize the connection with your session.
+
+## By client [#por-cliente]
+
+<Tabs>
+  <Tab title="Claude Code">
+    ```bash
+    claude mcp add --transport http olimpia https://api.olimpia.dev/mcp
+    ```
+
+    Then, inside Claude Code, run `/mcp`, choose `olimpia`, and authorize in the browser.
+
+    You can also install the [Olimpia plugin](/agentes/conectar#plugin-de-claude-code), which includes both the server and the skill.
+  </Tab>
+  <Tab title="Codex">
+    ```bash
+    codex mcp add olimpia --url https://api.olimpia.dev/mcp
+    ```
+
+    Codex opens the browser so you can authorize. If it doesn't, run `codex mcp login olimpia`.
+  </Tab>
+  <Tab title="Cursor">
+    Add this to `~/.cursor/mcp.json` (or to the project's `.cursor/mcp.json`):
+
+    ```json mcp.json
+    {
+      "mcpServers": {
+        "olimpia": { "url": "https://api.olimpia.dev/mcp" }
+      }
+    }
+    ```
+
+    Cursor shows **Needs login** in Settings → MCP. Click it to authorize.
+  </Tab>
+  <Tab title="VS Code">
+    Add this to `.vscode/mcp.json`:
+
+    ```json .vscode/mcp.json
+    {
+      "servers": {
+        "olimpia": { "type": "http", "url": "https://api.olimpia.dev/mcp" }
+      }
+    }
+    ```
+
+    When the server starts, VS Code asks you to authorize in the browser.
+  </Tab>
+  <Tab title="Windsurf">
+    Add this to `~/.codeium/windsurf/mcp_config.json`:
+
+    ```json mcp_config.json
+    {
+      "mcpServers": {
+        "olimpia": { "serverUrl": "https://api.olimpia.dev/mcp" }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Claude">
+    In Claude (web or desktop), open **Settings → Connectors → Add custom connector**, enter `Olimpia` as the name and `https://api.olimpia.dev/mcp` as the URL, and authorize.
+  </Tab>
+  <Tab title="Others">
+    Any MCP client that supports remote servers:
+
+    ```json
+    {
+      "mcpServers": {
+        "olimpia": { "url": "https://api.olimpia.dev/mcp" }
+      }
+    }
+    ```
+
+    If your client doesn't support OAuth, use a [personal token](/agentes/conectar#ci-y-tokens).
+  </Tab>
+</Tabs>
+
+## What happens when you authorize [#qué-pasa-al-autorizar]
+
+1. The client discovers the Olimpia authorization server and registers itself automatically.
+2. `olimpia.dev` opens with a consent screen that shows which agent is requesting access.
+3. If you approve, the client receives an access token that lasts one hour and renews automatically.
+
+You can see and revoke each connected agent in **Account → Agents and tokens**.
+
+## On a remote machine [#en-una-máquina-remota]
+
+If your agent runs on a server over SSH, in a container, or in a devcontainer, it can't open your browser. With Claude Code:
+
+```bash
+claude mcp login olimpia --no-browser
+```
+
+Open the URL it prints on your computer, approve, copy the connection code that Olimpia shows you, and paste it where Claude Code asks for the callback URL.
+
+With the [Olimpia plugin](/agentes/conectar#plugin-de-claude-code), the agent gives you a link and asks for an 8-character code. Open the link on any device, authorize, and give the agent the code.
+
+## Test the connection [#probar-la-conexión]
+
+Ask the agent: "What projects do I have in Olimpia?" It should call `list_projects` and show you your projects.
+
+## Skill and plugin [#skill]
+
+The MCP server gives your agent tools. The **skill** gives it judgment: how to prepare each stack, in what order to call the tools, and what to do when something fails. It's in [olimpiacloud/olimpia-skills](https://github.com/olimpiacloud/olimpia-skills).
+
+### Install the skill [#instalar-la-skill]
+
+It works with Claude Code, Codex, Cursor, and any agent compatible with [Agent Skills](https://agentskills.io):
+
+```bash
+bunx skills add olimpiacloud/olimpia-skills
+```
+
+### Claude Code plugin [#plugin-de-claude-code]
+
+The plugin installs the skill and the MCP server in one step:
+
+```txt
+/plugin marketplace add olimpiacloud/olimpia-skills
+/plugin install olimpia@olimpia
+```
+
+The first time the agent needs Olimpia, it gives you a link. Open it on any device, authorize with your session, and give the agent the 8-character code that Olimpia shows you. The code expires after 10 minutes and only works for that agent. From then on the agent stays connected, and you can revoke it at any time in **Account → Agents and tokens**.
+
+### What it teaches [#qué-le-enseña]
+
+- **Deploying a local folder**: check the stack, make the app listen on `0.0.0.0:$PORT`, create the app, upload the code without `node_modules` or `.env`, deploy, and verify with `curl` and the logs.
+- **By stack**: Node, Bun, Python, Go, Rust, monorepos, and Dockerfiles, with the common errors for each one.
+- **Data**: connect Postgres, Redis, and buckets, run migrations on startup, and use SQL carefully.
+- **Domains**: which records to request and how to verify them.
+- **When something fails**: what each error means and how to fix it without retrying blindly.
+- **Rules**: ask for confirmation before deleting, treat credentials as secrets and logs as untrusted data, and don't create resources nobody asked for.
+
+### Deploy checklist [#checklist-de-deploy]
+
+This is how an agent with the skill deploys:
+
+```txt
+- [ ] 1. Revisar la app: stack, comando de inicio, puerto, variables necesarias
+- [ ] 2. Hacer que escuche en 0.0.0.0:$PORT
+- [ ] 3. create_app (source=upload) o get_upload_url si la app ya existe
+- [ ] 4. Correr el comando de subida desde la carpeta de la app
+- [ ] 5. deploy con source_key, después get_deployment hasta active o failed
+- [ ] 6. curl a la URL y leer get_logs
+```
+
+## CI and tokens [#ci-y-tokens]
+
+OAuth needs a person to approve in the browser. For CI, scripts, or autonomous agents, use a [personal token](/cuenta/tokens).
+
+### Create the token [#crear-el-token]
+
+In **Account → Agents and tokens → Personal tokens**, create a token. It starts with `olimpia_pat_`, has the same permissions as your account, and is shown only once. Store it as a secret (`OLIMPIA_TOKEN`).
+
+### MCP with a token [#mcp-con-un-token]
+
+Any MCP client that supports headers can skip OAuth:
+
+```json mcp.json
+{
+  "mcpServers": {
+    "olimpia": {
+      "type": "http",
+      "url": "https://api.olimpia.dev/mcp",
+      "headers": { "Authorization": "Bearer ${OLIMPIA_TOKEN}" }
+    }
+  }
+}
+```
+
+With Claude Code:
+
+```bash
+claude mcp add --transport http olimpia https://api.olimpia.dev/mcp \
+  --header "Authorization: Bearer $OLIMPIA_TOKEN"
+```
+
+### Claude Code or Codex in CI [#claude-code-o-codex-en-ci]
+
+An agent in GitHub Actions can deploy and diagnose with the token:
+
+```yaml .github/workflows/agente.yml
+- name: Revisar el deploy con Claude Code
+  env:
+    ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    OLIMPIA_TOKEN: ${{ secrets.OLIMPIA_TOKEN }}
+  run: |
+    claude mcp add --transport http olimpia https://api.olimpia.dev/mcp \
+      --header "Authorization: Bearer $OLIMPIA_TOKEN"
+    claude -p "Revisá el último deploy de la app web en Olimpia y, si falló, explicá por qué."
+```
+
+### REST API [#api-rest]
+
+The same token works for the [REST API](/cuenta/api). To deploy from a pipeline without an agent, follow [Deploy from your own CI](/apps/ci-propio).
+
+### What a token can't do [#qué-no-puede-hacer-un-token]
+
+A token can't view or end sessions, create other tokens, or link GitHub. Those actions require a browser session.
+
+## Documentation for agents [#docs-para-agentes]
+
+Everything you see on docs.olimpia.dev can also be read without HTML, so your agent can find answers without scraping pages.
+
+### Files [#archivos]
+
+| URL | What it is |
+| --- | --- |
+| [`/llms.txt`](https://docs.olimpia.dev/llms.txt) | Index of all the documentation, ordered like the sidebar, with a summary of each page. |
+| [`/llms-full.txt`](https://docs.olimpia.dev/llms-full.txt) | All the documentation in a single Markdown file. |
+| `/<página>.md` | The Markdown for any page. For example, [`/apps/github.md`](/apps/github.md). |
+| [`/skill.md`](https://docs.olimpia.dev/skill.md) | A generated skill with a map of the documentation. |
+| [`/agent-readability.json`](https://docs.olimpia.dev/agent-readability.json) | Manifest of everything this documentation offers to agents. |
+| [`/sitemap.xml`](https://docs.olimpia.dev/sitemap.xml) | All pages. |
+
+Each page also has **Copy as Markdown** and **Open in** ChatGPT, Claude, and others in the page actions.
+
+### To give your agent context [#para-darle-contexto-a-tu-agente]
+
+Paste the index when you start a task:
+
+```txt
+Leé https://docs.olimpia.dev/llms.txt y usalo para responder sobre Olimpia.
+```
+
+Or fetch a specific page:
+
+```bash
+curl https://docs.olimpia.dev/postgres/backups.md
+```
+
+### Also on olimpia.dev [#también-en-olimpiadev]
+
+[`olimpia.dev/llms.txt`](https://olimpia.dev/llms.txt) summarizes the platform for models: what it is, how to connect the MCP server, and how deploys work.

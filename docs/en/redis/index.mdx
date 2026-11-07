@@ -1,0 +1,73 @@
+---
+title: Redis
+description: >-
+  Persistent Redis 8 for caching, sessions, queues, and rate limiting, right
+  next to your apps, without losing keys when memory runs low.
+sidebar:
+  label: Introduction
+  icon: zap
+---
+An Olimpia Redis instance is your own Redis 8, persisted to disk and connected to your apps over the [internal network](/plataforma/red-interna). Use it for caching, sessions, job queues, pub/sub, or rate limiting.
+
+## Create an instance [#crear-una-instancia]
+
+<Steps>
+  <Step title="Open Redis">
+    In the console, go to **Redis → Create instance** and choose a name.
+  </Step>
+  <Step title="Connect it to your app">
+    In the app, open **Variables** and add the instance. Olimpia sets `REDIS_URL`. Deploy to apply the change.
+  </Step>
+</Steps>
+
+## What's included [#qué-incluye]
+
+- **Redis 8**, ready in seconds.
+- **Disk persistence** (AOF): if the instance restarts, your data is still there.
+- **No key eviction.** There is no `maxmemory`, so Redis never deletes keys to free up space. This is what queues like BullMQ, Sidekiq, or Celery need.
+- **No fixed memory limit.** It uses what it needs, and you pay for what you use.
+- **Optional external access** over TLS. See [Connection](/redis/conexion).
+- **Metrics**: memory used, operations per second, connected and blocked clients, number of keys, and cache hits.
+
+## Examples [#ejemplos]
+
+<Tabs>
+  <Tab title="ioredis">
+    ```js
+    import Redis from "ioredis";
+
+    const redis = new Redis(process.env.REDIS_URL);
+    await redis.set("saludo", "hola", "EX", 60);
+    ```
+  </Tab>
+  <Tab title="BullMQ">
+    ```js
+    import { Queue, Worker } from "bullmq";
+    import Redis from "ioredis";
+
+    const connection = new Redis(process.env.REDIS_URL, { maxRetriesPerRequest: null });
+    const emails = new Queue("emails", { connection });
+    new Worker("emails", async (job) => enviar(job.data), { connection });
+    ```
+  </Tab>
+  <Tab title="redis-py">
+    ```python
+    import os
+    import redis
+
+    r = redis.from_url(os.environ["REDIS_URL"])
+    r.set("saludo", "hola", ex=60)
+    ```
+  </Tab>
+  <Tab title="go-redis">
+    ```go
+    opt, _ := redis.ParseURL(os.Getenv("REDIS_URL"))
+    rdb := redis.NewClient(opt)
+    rdb.Set(ctx, "saludo", "hola", time.Minute)
+    ```
+  </Tab>
+</Tabs>
+
+## Allowed commands [#comandos-permitidos]
+
+You connect as the `default` user, which can run all data commands. Admin commands (`CONFIG`, `ACL`, `SHUTDOWN`, `DEBUG`, and similar) are disabled.

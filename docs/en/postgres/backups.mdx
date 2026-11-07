@@ -1,0 +1,93 @@
+---
+title: Backups to your S3
+description: >-
+  Schedule automatic backups of your database to an Olimpia bucket, AWS S3,
+  Cloudflare R2, Backblaze B2, MinIO, or any S3-compatible service.
+sidebar:
+  label: Backups
+  icon: archive-restore
+---
+Olimpia keeps its own daily backups of every database. You can also schedule backups to **your own bucket**, so your data stays under your control, with your provider and your retention policy.
+
+## Set up [#configurar]
+
+<Steps>
+  <Step title="Prepare a bucket">
+    Create a bucket with your provider and an access key with permissions only on that bucket. The key needs to list, read, and write objects.
+  </Step>
+  <Step title="Open Backups">
+    In your database, open **Backups → Configure backups**.
+  </Step>
+  <Step title="Enter the destination">
+    | Field | Example |
+    | --- | --- |
+    | **Endpoint** | `https://s3.us-east-1.amazonaws.com` or `https://<cuenta>.r2.cloudflarestorage.com` |
+    | **Region** | `us-east-1`, or `auto` if your provider doesn't use regions |
+    | **Bucket** | `mi-empresa-backups` |
+    | **Access key ID** and **Secret access key** | The ones from the key you created |
+  </Step>
+  <Step title="Choose frequency and retention">
+    | Frequency | When |
+    | --- | --- |
+    | Every hour | At minute zero of every hour |
+    | Every 6 hours | Four times a day |
+    | Every day | 03:00 UTC |
+    | Sundays | 03:00 UTC |
+    | Custom | A cron expression in UTC |
+
+    In **Keep**, set how many backups to keep, from 1 to 90. Older ones are deleted automatically.
+  </Step>
+  <Step title="Save">
+    Olimpia tests access to your bucket before saving. If something fails, it tells you what to check.
+  </Step>
+</Steps>
+
+## Custom frequency [#frecuencia-personalizada]
+
+The cron expression has five fields (minute, hour, day, month, and day of week), in UTC, with a fixed minute: at most one backup per hour. The console shows you the next scheduled times before you save.
+
+```txt
+30 */4 * * *    cada 4 horas, a los 30 minutos
+0 6 * * 1-5     de lunes a viernes, 06:00 UTC (03:00 en Buenos Aires)
+```
+
+## What gets saved [#qué-se-guarda]
+
+Each backup is a compressed dump of the database (`.sql.gz`), with the date in the file name. In **Recent backups**, you can see the files in your bucket and download them directly from the console.
+
+To restore one into another database:
+
+```bash
+gunzip -c backup.sql.gz | psql "postgresql://app:<contraseña>@pg-<id>.db.olimpia.cc:5432/app?sslmode=require"
+```
+
+## Back up now [#hacer-un-backup-ahora]
+
+**Back up now** runs a backup immediately, without waiting for the next scheduled time. This is useful before a large migration.
+
+## Disable [#desactivar]
+
+**Disable** stops backups for that database. Files already in your bucket are not deleted.
+
+## From your agent [#desde-tu-agente]
+
+Your agent can set up backups with the [MCP server](/agentes/herramientas#backups) tools. The simplest option is to use an Olimpia bucket in the same project, with no credentials to enter:
+
+```txt
+Programá backups diarios de la base main en el bucket backups y hacé uno ahora para probar.
+```
+
+It can also use your own S3 if you give it the endpoint, the bucket, and the key. It can change the frequency or retention, and run a backup before a migration.
+
+## Examples by provider [#ejemplos-por-proveedor]
+
+| Provider | Endpoint | Region |
+| --- | --- | --- |
+| AWS S3 | `https://s3.<región>.amazonaws.com` | The bucket's region |
+| Cloudflare R2 | `https://<cuenta>.r2.cloudflarestorage.com` | `auto` |
+| Backblaze B2 | `https://s3.<región>.backblazeb2.com` | The bucket's region |
+| MinIO | `https://minio.tuempresa.com` | The one you configured |
+
+:::warning[Endpoint requirements]
+The endpoint must be `https://host` (port optional, no path) and point to a public address. Olimpia rejects private or local addresses. Bucket names can contain lowercase letters, numbers, dots, and hyphens.
+:::

@@ -1,0 +1,65 @@
+---
+title: Email
+description: >-
+  Transactional emails from your own domain, with DKIM and SPF, sent through the
+  Olimpia API.
+sidebar:
+  label: Introduction
+  icon: mail
+---
+Olimpia Email sends transactional emails from your domain: confirmations, notifications, password resets. You verify the domain once with DNS records, and your apps send with a `POST` to the Olimpia API, from any language.
+
+## Add a domain [#agregar-un-dominio]
+
+In the console, go to **Email → Add domain** and enter the domain you'll send from. A subdomain such as `mail.yourcompany.com` is a good choice: it keeps its reputation separate from your team's email.
+
+A domain can be added only once across all of Olimpia, and it can't be `olimpia.dev`, `olimpia.cc`, or a subdomain of either.
+
+## DNS records [#registros-dns]
+
+When you create it, the console shows the records you need to add at your domain's DNS provider:
+
+| Type | Purpose |
+| --- | --- |
+| `TXT` (DKIM) | Signs your emails so providers know they come from you. |
+| `TXT` (SPF) and `MX` | Authorize sending and receive bounce notifications. |
+| `TXT` `_dmarc` | Recommended. Tells providers what to do with emails that fail DKIM or SPF. |
+
+The names are relative to your domain's root: if your provider fills in the domain automatically, paste them as they are. Then click **Verify**. Verification can take a few minutes while the records propagate; the console updates automatically.
+
+Until the domain is **Verified**, the API rejects sends.
+
+## Connect an app [#conectar-una-app]
+
+In the app's **Variables** tab, select the domain under **From project**. Olimpia adds:
+
+| Variable | Value |
+| --- | --- |
+| `EMAIL_API_KEY` | The domain's key. It's a secret. |
+| `EMAIL_API_URL` | `https://api.olimpia.dev` |
+| `EMAIL_DOMAIN` | The domain, for building the sender address. |
+
+Redeploy the app so it picks up the variables. How to send: [Send emails](/email/enviar).
+
+## API key
+
+Each domain has its own key, which can only send from addresses on that domain. If it leaks, rotate it from the domain details: the old key stops working immediately, and Olimpia updates the apps that use it (redeploy them so they pick up the new one).
+
+## Limits [#límites]
+
+- **3,000 recipients per month** per account, counting `to`, `cc`, and `bcc` across all your domains. A failed send doesn't count.
+- **Up to 50 recipients** per email and **up to 100 emails** per batch send.
+
+## Reputation [#reputación]
+
+All sends share the reputation of Olimpia's infrastructure, so we protect it per domain. In the domain details you can see sends, bounces, and complaints from the last 7 days. With 50 or more sends in those 7 days, if bounces exceed **10%** or complaints exceed **0.3%**, sending from that domain is suspended and the API responds with `403`. To reactivate it, email us at [hola@olimpia.dev](mailto:hola@olimpia.dev).
+
+To avoid getting there: send only to addresses that signed up in your app, validate emails when they sign up, and don't retry sends to addresses that bounced.
+
+## Sent [#enviados]
+
+The domain details list sent emails, newest first, with their latest status: sent, delivered, opened, bounced, complaint, and so on.
+
+## Delete a domain [#borrar-un-dominio]
+
+This deletes the domain and its key: apps that use it can no longer send. It can't be undone: the console asks you to type the name to confirm.

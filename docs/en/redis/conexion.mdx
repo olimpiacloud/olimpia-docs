@@ -1,0 +1,35 @@
+---
+title: Connection
+description: >-
+  Connect to Redis over the internal network from your apps, or from anywhere
+  over TLS with rediss://.
+sidebar:
+  icon: plug
+---
+## From your apps [#desde-tus-apps]
+
+Use the internal URL, the one Olimpia sets in `REDIS_URL`:
+
+```txt
+redis://default:<contraseña>@<host-interno>:6379
+```
+
+No TLS, and no traffic leaves for the internet.
+
+## External access [#acceso-externo]
+
+To connect from your computer or another cloud, enable external connections in the **Connection** tab. The public URL uses TLS:
+
+```txt
+rediss://default:<contraseña>@rd-<id>.db.olimpia.cc:6379
+```
+
+```bash
+redis-cli -u "rediss://default:<contraseña>@rd-<id>.db.olimpia.cc:6379" ping
+```
+
+Note the double `s` in `rediss://`: TLS is required and the client must send SNI. ioredis, node-redis, redis-py, and go-redis all do this with that URL.
+
+## Rotate the password [#rotar-la-contraseña]
+
+**Rotate password** generates a new password: the old one stops working and any open connections that use it are closed. The instance restarts for a few seconds to apply the change. Then update `REDIS_URL` in your apps and redeploy.

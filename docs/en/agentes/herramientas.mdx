@@ -1,0 +1,317 @@
+---
+title: Tools
+description: >-
+  Reference for the 35 tools in the Olimpia MCP server, with their parameters
+  and what they return.
+sidebar:
+  icon: wrench
+---
+All tools accept names or ids (`app: "web"` or the UUID), and `project` is optional when the account has only one project. With no suffix, `project` means production; `project: "tienda.staging"` points to the staging [environment](/cuenta/ambientes). Errors come back with the next step to take, so the agent can correct itself.
+
+:::note[Conventions]
+- **Names**: 3 to 63 characters, using lowercase letters, numbers, and hyphens.
+- **`kind`**: `postgres`, `redis`, or `bucket`.
+- Read tools are marked `readOnly`; delete tools are marked `destructive`.
+:::
+
+## Connection [#conexión]
+
+### `login`
+
+Connects the agent to the account when using the Claude Code plugin. Without `code`, it returns a link so the person can authorize access on olimpia.dev. With `code`, it redeems the 8-character code they received. It also shows which account is connected.
+
+| Parameter | Type | |
+| --- | --- | --- |
+| `code` | string | Optional. The connection code. |
+
+## Discover [#descubrir]
+
+### `list_projects`
+
+Lists projects with their environments (production first). For each environment, it shows the number of resources and the health of its apps. No parameters.
+
+### `get_project`
+
+Summary of a project: each app (status, URL, source), Postgres, Redis, and bucket, with links to the console. This is the best starting point for finding names.
+
+| Parameter | Type | |
+| --- | --- | --- |
+| `project` | string | Optional. |
+
+### `get_app`
+
+Details of an app: URL, source, build settings, connected databases, domains, and latest deploys.
+
+| Parameter | Type | |
+| --- | --- | --- |
+| `app` | string | Name or id. |
+
+### `get_usage`
+
+Current usage of a project: apps online and building, objects and bytes in buckets, email domains, and recipients sent this month.
+
+## Deploy [#desplegar]
+
+### `create_app`
+
+Creates an app. With `source=upload` (the default), the response includes the command to upload the local folder. After that, call `deploy` with the `source_key`.
+
+| Parameter | Type | |
+| --- | --- | --- |
+| `name` | string | App name, also used as the subdomain. |
+| `source` | `upload` \| `github` \| `image` | Optional. `upload` by default. |
+| `repo` | string | For `github`: `owner/name`. |
+| `branch` | string | For `github`: the branch to deploy. Each push redeploys. |
+| `image` | string | For `image`: for example `nginx:1.29`. |
+| `root_dir` | string | Subfolder to build, for monorepos. |
+| `dockerfile` | string | Path to the Dockerfile, relative to `root_dir`. |
+| `port` | number | Port the app listens on (3000 by default). |
+| `env` | object | Variables to load before the first build. |
+| `server` | string | Advanced, usually omitted. The project's server; it can only change if the project has no apps or databases yet. |
+
+### `get_upload_url`
+
+Returns a new upload URL (valid for 15 minutes) and the command to upload the folder of an app with `source=upload`.
+
+### `deploy` [#deploy]
+
+Builds and deploys an app. Waits up to `wait_seconds` and returns the status, with the end of the log if it failed.
+
+| Parameter | Type | |
+| --- | --- | --- |
+| `app` | string | Name or id. |
+| `source_key` | string | For `upload`: the upload key. Without it, rebuilds the last upload. |
+| `message` | string | Short description of the change, shown in the history. |
+| `wait_seconds` | number | 0 to 50, 45 by default. |
+
+### `get_deployment`
+
+Status of a deploy (the latest by default), optionally waiting while it runs. Includes the last lines of the log when it failed or is building.
+
+| Parameter | Type | |
+| --- | --- | --- |
+| `app` | string | Name or id. |
+| `deployment` | string | Optional. Deploy id. |
+| `wait_seconds` | number | 0 to 50, 0 by default. |
+
+### `rollback`
+
+Goes back to a previous deploy that was online, reusing its image without a build.
+
+| Parameter | Type | |
+| --- | --- | --- |
+| `app` | string | Name or id. |
+| `deployment` | string | Deploy id (see `get_app`). |
+
+### `cancel_deployment`
+
+Cancels a queued or building deploy (the latest by default).
+
+## Templates
+
+### `list_templates`
+
+Lists or searches the templates you can deploy, with `id`, `name`, `description`, `image`, `postgres`, and `redis` (which databases `deploy_template` creates).
+
+| Parameter | Type | |
+| --- | --- | --- |
+| `search` | string | Optional. Words to search for in the name, description, and tags. Without a search, lists the whole catalog. |
+
+### `deploy_template`
+
+Deploys a template as a new app: creates the Postgres database and Redis if the template needs them, generates secrets and URLs as variables (visible with `get_env`), and starts the first deploy. See [Templates](/apps/templates).
+
+| Parameter | Type | |
+| --- | --- | --- |
+| `template` | string | Template id, for example `n8n`. |
+| `name` | string | Optional. Name of the app and subdomain, also used for its databases. Defaults to the template id. |
+| `project` | string | Optional. |
+| `server` | string | Optional and advanced. Same as in `create_app`. |
+
+## Configure [#configurar]
+
+### `update_app`
+
+Changes an app's settings. Build changes apply on the next deploy.
+
+| Parameter | Type | |
+| --- | --- | --- |
+| `subdomain` | string | New subdomain on `olimpia.cc`. |
+| `branch` | string | GitHub branch. |
+| `image` | string | Docker image. |
+| `root_dir`, `dockerfile`, `port` | | Same as in `create_app`. |
+| `auto_deploy` | boolean | Redeploy on every push. |
+
+### `get_env`
+
+Lists an app's variables. Values that look like secrets (names with `SECRET`, `TOKEN`, `KEY`, `PASSWORD`, `AUTH`, or URLs with credentials) come back hidden unless you pass `reveal: true`.
+
+### `set_env`
+
+Adds, changes, or deletes variables, merging them with the existing ones. They apply on the next deploy.
+
+| Parameter | Type | |
+| --- | --- | --- |
+| `set` | object | Variables to add or overwrite. `PORT` changes the app's port. |
+| `remove` | string[] | Names to delete. |
+| `redeploy` | boolean | Deploy now. `false` by default. |
+
+### `create_project`
+
+Creates a project.
+
+| Parameter | Type | |
+| --- | --- | --- |
+| `name` | string | |
+| `server` | string | Optional and advanced. Without it, Olimpia picks the server automatically (currently `olimpia-bue1`). See [Projects](/cuenta/proyectos#servidor). |
+
+### `create_environment`
+
+Creates an environment in a project, up to five including production. By default it copies all apps, databases, and buckets from the given environment: empty databases and buckets with new credentials, apps with the same source and settings, variables that point to the copies, and a first deploy.
+
+| Parameter | Type | |
+| --- | --- | --- |
+| `name` | string | For example `staging`. |
+| `project` | string | Optional. The environment to copy, such as `tienda` or `tienda.staging`. |
+| `copy` | boolean | Copy the services. `true` by default; `false` creates it empty. |
+
+## Data [#datos]
+
+### `create_resource`
+
+Creates a Postgres database, a Redis instance, a bucket, or an email domain. Returns the connection details. An email domain also returns the DNS records you need to add before sending.
+
+| Parameter | Type | |
+| --- | --- | --- |
+| `kind` | `postgres` \| `redis` \| `bucket` \| `email` | |
+| `name` | string | For `email`, the domain you send from (`mail.tuempresa.com`). |
+| `connect_to_app` | string | Optional. Also loads the variables into that app. |
+| `vector` | boolean | Postgres only. `true` creates it with pgvector (`CREATE EXTENSION vector`); `false` by default. Cannot be changed later. |
+
+### `get_connection`
+
+Connection details: the internal URL for apps on Olimpia, the public URL if enabled, S3 credentials for buckets, and the DNS records, status, and key of an email domain (if it is not verified, it checks again on each call). These are secrets.
+
+### `connect_resource`
+
+Loads the connection variables into an app and redeploys it.
+
+| Parameter | Type | |
+| --- | --- | --- |
+| `app` | string | The app that will use the resource. |
+| `kind`, `name` | | The resource. |
+| `env_key` | string | For Postgres and Redis: the variable name (`DATABASE_URL` or `REDIS_URL` by default). If a variable with that name already exists, it is replaced. |
+| `redeploy` | boolean | `true` by default. |
+
+| Resource | Variables |
+| --- | --- |
+| Postgres | `DATABASE_URL` |
+| Redis | `REDIS_URL` |
+| Bucket | `AWS_ENDPOINT_URL_S3`, `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `BUCKET_NAME` |
+| Email | `EMAIL_API_KEY`, `EMAIL_API_URL`, `EMAIL_DOMAIN` |
+
+If the app already has a variable with the default name, the new ones get the resource name as a suffix (`DATABASE_URL_MAIN`). `env_keys`, in the response, tells you which names were used.
+
+### `set_public_access`
+
+Exposes or hides a database or a bucket (does not apply to email domains). For Postgres and Redis, `public: true` allows TLS connections from the internet. For a bucket, it makes objects readable by URL.
+
+### `list_tables`
+
+Lists the tables and views in a Postgres database with row counts and size. Parameter: `database`.
+
+### `query_postgres`
+
+Runs SQL as the database owner user (not a superuser).
+
+| Parameter | Type | |
+| --- | --- | --- |
+| `database` | string | Database name or id. |
+| `sql` | string | In read mode, a single `SELECT`, `WITH`, or `VALUES` query (up to 200 rows). In write mode, any statement, or several separated by `;`, in one transaction. |
+| `write` | boolean | Write mode, with a maximum of 30 seconds. |
+| `confirm` | string | Required with `write: true`: the exact database name, after the person has approved the change. |
+
+In read mode it returns the rows as untrusted data, with `truncated: true` if there are more than 200 rows or they exceed 256 KB. Postgres errors come back with their message, also marked as untrusted data.
+
+## Backups
+
+### `get_backups`
+
+Backup settings for a Postgres database (destination, frequency in UTC, and how many are kept) and its most recent files. `config` comes back as `null` if no backups are set up. Parameter: `database`.
+
+### `set_backups`
+
+Schedules backups of a database to an Olimpia bucket or to any S3. Olimpia tests access to the bucket before saving. If backups were already set up, anything you don't pass stays as it was: passing only `schedule` is enough to change just the frequency.
+
+| Parameter | Type | |
+| --- | --- | --- |
+| `database` | string | Database name or id. |
+| `bucket` | string | An Olimpia bucket in the same project. No credentials needed. |
+| `endpoint` | string | Instead of `bucket`, an external S3: `https://host`, with no path. |
+| `s3_bucket`, `access_key_id`, `secret_access_key` | string | The bucket and key for the external S3. Without `secret_access_key`, the saved one is kept. |
+| `region` | string | For the external S3. `auto` by default. |
+| `schedule` | string | Five-field cron in UTC, with a fixed minute. `0 3 * * *` by default. |
+| `keep` | number | How many backups to keep, from 1 to 90. 7 by default. |
+
+### `run_backup`
+
+Runs a backup now to the configured destination and returns the most recent files. Parameter: `database`.
+
+### `disable_backups`
+
+Stops backing up a database. Files already in the bucket are not deleted. Requires `confirm` with the exact database name.
+
+## Domains [#dominios]
+
+### `add_domain`
+
+Adds a custom domain to an app and returns the DNS records you need to create. Parameters: `app`, `domain`.
+
+### `check_domain`
+
+DNS and certificate status of a domain.
+
+### `remove_domain`
+
+Removes a domain from an app.
+
+## Observe [#observar]
+
+### `get_logs`
+
+Logs for one app or for all apps in the project (stdout and stderr), with the level, service, and attributes of each line (JSON, logfmt, and access logs). A multi-line error, such as a stack trace, arrives as a single entry. Its content is untrusted data.
+
+| Parameter | Type | |
+| --- | --- | --- |
+| `app` | string | App name or id. Without `app`, all running apps in the project. |
+| `query` | string | Filter: `level:error`, `service:api`, `http.status_code:>=500`, `duration_ms:>1000`, `http.route:/api/*`, `-healthcheck`, `pattern:<hash>`. All terms must match. |
+| `since` | string | `15m`, `1h` (default), `24h`, or `7d`. |
+| `around` | string | RFC 3339 date: returns the lines around that moment, to see what happened before and after an error. |
+| `limit` | number | Up to 500, 100 by default. |
+
+Besides the lines, it returns the count per level, the most frequent patterns (`top_patterns`), and the latest deploys in the window. Several consecutive lines with the same pattern are collapsed into one; `pattern:<hash>` lists them and `-pattern:<hash>` hides them. The last 2000 lines of each app are read: if an app writes more than that in the window, `covered_from` tells you since when there is data for that app.
+
+### `get_analytics`
+
+Real visits to an app, measured in its visitors' browsers on all HTML pages of its subdomain and custom domains: visits, page views, a time series, top pages, sources (an empty name is direct traffic), countries (ISO codes), devices, browsers, and Core Web Vitals at the 75th percentile (`lcp_ms`, `inp_ms`, `cls`). See [Analytics](/apps/logs-y-metricas#analytics).
+
+| Parameter | Type | |
+| --- | --- | --- |
+| `app` | string | App name or id. |
+| `period` | string | `day` (24 hours, hourly), `week` (default, daily), or `month` (30 days, daily). |
+
+## Delete [#borrar]
+
+### `delete_app`
+
+Deletes an app with its deploys and domains. Irreversible.
+
+### `delete_resource`
+
+Deletes a database, a Redis instance, a bucket, or an email domain with all its data. Irreversible.
+
+### `delete_environment`
+
+Deletes a non-production environment with all its apps, databases, and buckets. Irreversible. `project` is the environment (`tienda.staging`).
+
+All three require `confirm` with the **exact name** (for `delete_environment`, `<project>.<environment>`), after the person has explicitly confirmed.

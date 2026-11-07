@@ -1,0 +1,68 @@
+---
+title: Deploy from GitHub
+description: >-
+  Automatic CI/CD. Connect a repository and every push to your branch builds and
+  publishes on its own, with no downtime.
+sidebar:
+  label: From GitHub
+  icon: git-branch
+---
+Connect a GitHub repository and Olimpia takes care of the rest: every push to the branch you chose triggers a build and a zero-downtime deploy. You don't need to write a workflow or store tokens in GitHub.
+
+```txt
+git push ──▶ GitHub avisa a Olimpia ──▶ build ──▶ deploy sin cortes ──▶ online
+```
+
+## Connect GitHub [#conectar-github]
+
+<Steps>
+  <Step title="Instalá la GitHub App de Olimpia">
+    In **Apps → New app**, click **Connect GitHub**. GitHub asks you to choose the account or organization and which repositories Olimpia can access. It only requests read permission on the code.
+  </Step>
+  <Step title="Elegí repositorio y rama">
+    The console lists the repositories you have access to. Choose one and the branch you want to deploy, for example `main`.
+  </Step>
+  <Step title="Ajustá el build si hace falta">
+    - **Root folder**: for monorepos, the app's folder (`apps/web`).
+    - **Dockerfile**: the path inside the root folder, if you want to build with Docker.
+    - **Port**: the port your app listens on.
+  </Step>
+  <Step title="Creá la app">
+    Olimpia builds the latest commit on the branch and publishes it. From then on, every push deploys automatically.
+  </Step>
+</Steps>
+
+## How automatic deploys work [#cómo-funciona-el-deploy-automático]
+
+- **One push, one deploy.** Every push to the configured branch queues a deploy of that commit. It appears in the history with the source **Push**.
+- **No long queues.** Each app has only one deploy in progress at a time. If several pushes arrive in a row, the ones still waiting in the queue are canceled and the latest one is built.
+- **No downtime.** The new version starts before the previous one is shut down. If the new container fails to start, the existing one keeps running.
+- **Private repos.** They work the same way: the GitHub App has access to the repositories you chose when you installed it.
+
+You can turn off automatic deploys in **Settings**. With automatic deploys off, you deploy whenever you want with **Deploy**, and Olimpia builds the latest commit on the branch.
+
+## Monorepos
+
+Create one app for each service in the repository, all pointing to the same repo with a different **Root folder**:
+
+| App | Root folder |
+| --- | --- |
+| `web` | `apps/web` |
+| `api` | `apps/api` |
+| `worker` | `apps/worker` |
+
+If a service needs files outside its folder (shared workspace packages), leave the root folder empty and use a `Dockerfile` at the root of the repository.
+
+## Permissions and access [#permisos-y-acceso]
+
+- Olimpia only sees the repositories you enabled in the GitHub App, and of those, only the ones your GitHub user can read.
+- To add or remove repositories, change the installation from GitHub (**Settings → Applications → Installed GitHub Apps → Olimpia → Configure**). Changes are picked up automatically.
+- If you sign in to Olimpia with email, connect your GitHub account once so the repository list stays up to date.
+
+## Rollback
+
+If a deploy breaks something, open **Deploys**, choose a previous version, and click **Roll back to this version**. Olimpia reuses the image it already built, so the rollback takes seconds. See [Deploys and rollbacks](/apps/deploys).
+
+:::tip[Need tests before deploying?]
+If you want to run your tests in GitHub Actions and deploy only when they pass, use an app with uploaded code and trigger it from your workflow. See [Deploy from your own CI](/apps/ci-propio).
+:::

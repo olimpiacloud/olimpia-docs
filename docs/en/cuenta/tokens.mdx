@@ -1,0 +1,47 @@
+---
+title: Personal tokens
+description: >-
+  Create tokens to use the API from scripts and CI, or to connect agents that
+  don't use OAuth.
+sidebar:
+  icon: key
+---
+A personal token gives programmatic access to your account, with the same permissions you have. Use it for the [REST API](/cuenta/api), to [deploy from your CI](/apps/ci-propio), and for [agents without OAuth](/agentes/conectar#ci-y-tokens).
+
+## Create a token [#crear-un-token]
+
+<Steps>
+  <Step title="Open Agents and tokens">
+    In the console, go to **Account → Agents and tokens**.
+  </Step>
+  <Step title="Create the token">
+    Under **Personal tokens**, enter a name that says where you'll use it (`github-actions`, `script-backups`) and click **Create token**.
+  </Step>
+  <Step title="Copy it now">
+    The token starts with `olimpia_pat_` and is shown only once. Store it in your CI's or your team's secrets manager.
+  </Step>
+</Steps>
+
+## Use it [#usarlo]
+
+Send it in the `Authorization` header:
+
+```bash
+curl -H "Authorization: Bearer olimpia_pat_..." https://api.olimpia.dev/projects
+```
+
+## What a token can't do [#qué-no-puede-hacer-un-token]
+
+For security reasons, some actions require a browser session and don't work with a token:
+
+- viewing or ending sessions,
+- creating other tokens,
+- linking GitHub.
+
+## Revoke [#revocar]
+
+In **Agents and tokens**, you can see when each token was last used. **Revoke** invalidates it immediately. You can have up to 50 tokens.
+
+:::warning
+A token has the same permissions as your account. Don't put it in your code, in a repository, or in the frontend.
+:::

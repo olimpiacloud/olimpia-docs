@@ -1,0 +1,47 @@
+---
+title: FAQ
+description: Short answers to the most common questions about Olimpia.
+sidebar:
+  label: Questions
+  icon: circle-help
+---
+<Accordion>
+  <AccordionItem title="Where does Olimpia run?">
+    In Buenos Aires, on top-tier infrastructure. Your apps, databases, and Redis instances run in the BUE region; web traffic comes in through the Cloudflare network. See [BUE Region](/plataforma/buenos-aires).
+  </AccordionItem>
+  <AccordionItem title="Do I have to change my code?">
+    No. Postgres and Redis are the same ones you already know, and buckets speak the S3 API: your drivers, ORMs, and SDKs work the same way. The only thing your app needs is to listen on `0.0.0.0:$PORT`.
+  </AccordionItem>
+  <AccordionItem title="Can I use just one product?">
+    Yes. Each product works on its own. You can start with a database and add apps or buckets later.
+  </AccordionItem>
+  <AccordionItem title="How does CI/CD with GitHub work?">
+    You install the Olimpia GitHub App and choose a repo and branch. Every push is then built and published automatically, with no downtime. See [Deploy from GitHub](/apps/github).
+  </AccordionItem>
+  <AccordionItem title="Do my apps connect to the database over the internet?">
+    No. They use the [internal network](/plataforma/red-interna). Databases don't accept outside connections until you enable external access.
+  </AccordionItem>
+  <AccordionItem title="Can I keep backups in my own AWS account?">
+    Yes. You set up a bucket on AWS S3, Cloudflare R2, Backblaze B2, MinIO, or any S3-compatible service and choose the frequency. See [Backups to your S3](/postgres/backups).
+  </AccordionItem>
+  <AccordionItem title="Can I use my own domain?">
+    Yes, up to 10 per app. You point a CNAME to `domains.olimpia.cc` and the certificate is issued automatically. See [Domains](/apps/dominios).
+  </AccordionItem>
+  <AccordionItem title="Can my agent deploy for me?">
+    Yes. Olimpia has an MCP server for Claude Code, Codex, Cursor, and any MCP client. See [For agents](/agentes).
+  </AccordionItem>
+  <AccordionItem title="How much does it cost?">
+    Olimpia charges based on usage. No card is required during early access, and we will publish pricing before the region opens.
+  </AccordionItem>
+  <AccordionItem title="When does Olimpia open?">
+    We're onboarding the first teams. Request access at [olimpia.dev](https://olimpia.dev) and we'll email you as soon as a spot opens up.
+  </AccordionItem>
+  <AccordionItem title="Can I run workers or scheduled tasks?">
+    Yes. A worker deploys like any other app: the container keeps running even if it doesn't serve HTTP (its URL just won't respond). Scheduled tasks (cron) as a standalone resource aren't available yet. In the meantime, schedule them inside a worker.
+  </AccordionItem>
+  <AccordionItem title="What happens to files my app writes to disk?">
+    They are lost on the next deploy. Store your data in Postgres, Redis, or a bucket.
+  </AccordionItem>
+</Accordion>
+
+Have another question? Email us at [hola@olimpia.dev](mailto:hola@olimpia.dev).

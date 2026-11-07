@@ -1,0 +1,31 @@
+---
+title: Public access
+description: >-
+  Make a bucket's objects readable by URL to serve images, downloads, or static
+  assets.
+sidebar:
+  icon: earth
+---
+Buckets are private by default: you can access them only with credentials or signed URLs. If you want to serve files to anyone (your site's images, files for download), make the bucket public.
+
+## Make a bucket public [#hacer-público-un-bucket]
+
+In the bucket, click **Make public**. From then on, anyone can read its objects by URL:
+
+```txt
+https://<nombre-del-bucket>.t3.storage.dev/<ruta/del/objeto>
+```
+
+The base URL appears in the bucket's credentials as the public URL. You still need credentials to write or delete objects.
+
+:::warning
+A public bucket exposes **all** of its objects. If only some files need to be public, use two buckets: one public and one private.
+:::
+
+## If it doesn't let you [#si-no-te-deja]
+
+During early access, making a bucket public may require a verified payment method. If the console shows you that error, email us at [hola@olimpia.dev](mailto:hola@olimpia.dev) and we'll enable it.
+
+## Make it private again [#volver-a-privado]
+
+**Make private** cuts off URL access immediately. Any signed URLs you've generated remain valid until they expire.

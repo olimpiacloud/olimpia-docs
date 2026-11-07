@@ -1,0 +1,46 @@
+---
+title: Ready-made prompts
+description: >-
+  Requests to copy and paste into your agent, from your first deploy to
+  migrating an app from another cloud.
+sidebar:
+  label: Prompts
+  icon: message-square-text
+---
+Copy any of these prompts into Claude Code, Codex, or Cursor with Olimpia [connected](/agentes/conectar).
+
+<Prompt description="**Deploy** the current folder" actions={["copy"]}>
+Deploy this folder to Olimpia as a new app. First check the stack, the start command, and the port, and make sure the app listens on 0.0.0.0 and on $PORT. When it finishes, verify the URL with curl and check the logs.
+</Prompt>
+
+<Prompt description="Your own **n8n**" actions={["copy"]}>
+Set up n8n on Olimpia from the template, in an app called flujos. When the deploy is live, verify the URL and tell me how to sign in and create the account.
+</Prompt>
+
+<Prompt description="**Database** for an app" actions={["copy"]}>
+Create a Postgres database on Olimpia, connect it to my app, and set up migrations to run when the app starts. Then deploy and verify that the tables exist with list_tables.
+</Prompt>
+
+<Prompt description="**Job queue** with Redis" actions={["copy"]}>
+Add a BullMQ job queue to this app using a Redis instance from Olimpia. Create the instance, connect it to the app with REDIS_URL, and deploy a separate worker that processes the jobs.
+</Prompt>
+
+<Prompt description="**File uploads** with a bucket" actions={["copy"]}>
+Create a bucket on Olimpia for this app and connect it. Implement browser uploads with signed URLs generated on the backend, using the AWS SDK with the AWS_* and BUCKET_NAME variables.
+</Prompt>
+
+<Prompt description="**Fix** the latest deploy" actions={["copy"]}>
+The latest deploy of my app on Olimpia failed. Read the error and the build log with get_deployment, find the cause in the code, fix it, and deploy again. Don't retry without changes.
+</Prompt>
+
+<Prompt description="**Custom domain**" actions={["copy"]}>
+Point the domain app.miempresa.com to my app on Olimpia. Tell me exactly which DNS records I need to create, then verify with check_domain until it is active.
+</Prompt>
+
+<Prompt description="**Migrate** from another cloud" actions={["copy"]}>
+I want to move this app to Olimpia. Look at how it is configured today (environment variables, database, port, start command), create the app and the equivalent resources on Olimpia, and put together a plan to migrate the Postgres data with pg_dump and psql using temporary external access. Don't delete anything without asking me.
+</Prompt>
+
+<Prompt description="Project **audit**" actions={["copy"]}>
+Review my project on Olimpia: list apps, databases, and buckets, tell me which ones have public access enabled, which apps have failed deploys, and whether there are resources that no app uses. Don't change anything, just report.
+</Prompt>
