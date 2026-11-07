@@ -4,6 +4,7 @@ description: >-
   Reference for the 35 tools in the Olimpia MCP server, with their parameters
   and what they return.
 sidebar:
+  label: Tools
   icon: wrench
 ---
 All tools accept names or ids (`app: "web"` or the UUID), and `project` is optional when the account has only one project. With no suffix, `project` means production; `project: "tienda.staging"` points to the staging [environment](/cuenta/ambientes). Errors come back with the next step to take, so the agent can correct itself.
@@ -314,4 +315,4 @@ Deletes a database, a Redis instance, a bucket, or an email domain with all its 
 
 Deletes a non-production environment with all its apps, databases, and buckets. Irreversible. `project` is the environment (`tienda.staging`).
 
-All three require `confirm` with the **exact name** (for `delete_environment`, `<project>.<environment>`), after the person has explicitly confirmed.
+All three require `confirm` with the **exact name** (for `delete_environment`, `<proyecto>.<ambiente>`), after the person has explicitly confirmed.
