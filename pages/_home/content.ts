@@ -24,7 +24,7 @@ export const home = {
     title: "Olimpia Docs: el cloud de Buenos Aires",
     description:
       "Documentación de Olimpia, el cloud de Buenos Aires: apps, Postgres, Redis y buckets compatibles con S3, operables desde la consola o desde tu agente por MCP.",
-    og: { image: "/art/og.jpg", alt: "Olimpia Docs: ruinas clásicas frente al Río de la Plata, en acuarela" },
+    og: { image: "/art/og.png", alt: "Olimpia Docs: ruinas clásicas frente al Río de la Plata" },
     eyebrow: "Documentación · Región BUE",
     heading: "Tu producto en producción, desde Buenos Aires.",
     lede: "Olimpia corre tus apps, tus bases Postgres y Redis y tus buckets en infraestructura de primer nivel en Buenos Aires. Esta documentación tiene dos puertas: una para tu agente y otra para vos.",
@@ -64,13 +64,13 @@ export const home = {
       mobile: "/art/banner.webp",
       agents: {
         src: "/art/home-agentes.webp",
-        alt: "Acuarela: un mecanismo de engranajes de bronce junto a un busto de Hermes, frente al Río de la Plata",
+        alt: "Ilustración: un mecanismo de engranajes de bronce junto a un busto de Hermes, frente al Río de la Plata",
         quote: "Tu agente despliega. Vos decidís.",
         caption: "Servidor MCP · OAuth 2.1",
       },
       humans: {
         src: "/art/home-humanos.webp",
-        alt: "Acuarela: una cariátide de mármol mira el Río de la Plata, con el Obelisco y el Puente de la Mujer de fondo",
+        alt: "Ilustración: una cariátide de mármol mira el Río de la Plata, con el Obelisco y el Puente de la Mujer de fondo",
         quote: "Lo que se construye sobre piedra, dura.",
         caption: "Hecho en Buenos Aires · 34°36′S 58°22′O",
       },
@@ -94,7 +94,7 @@ export const home = {
     title: "Olimpia Docs: the Buenos Aires cloud",
     description:
       "Documentation for Olimpia, the Buenos Aires cloud: apps, Postgres, Redis and S3-compatible buckets, run from the console or from your agent over MCP.",
-    og: { image: "/art/og.jpg", alt: "Olimpia Docs: classical ruins by the Río de la Plata, in watercolor" },
+    og: { image: "/art/og.png", alt: "Olimpia Docs: classical ruins by the Río de la Plata" },
     eyebrow: "Documentation · BUE region",
     heading: "Your product in production, from Buenos Aires.",
     lede: "Olimpia runs your apps, your Postgres and Redis databases and your buckets on first-class infrastructure in Buenos Aires. These docs have two doors: one for your agent and one for you.",
@@ -134,13 +134,13 @@ export const home = {
       mobile: "/art/banner.webp",
       agents: {
         src: "/art/home-agentes.webp",
-        alt: "Watercolor: a bronze gear mechanism next to a bust of Hermes, by the Río de la Plata",
+        alt: "Illustration: a bronze gear mechanism next to a bust of Hermes, by the Río de la Plata",
         quote: "Your agent deploys. You decide.",
         caption: "MCP server · OAuth 2.1",
       },
       humans: {
         src: "/art/home-humanos.webp",
-        alt: "Watercolor: a marble caryatid looks out over the Río de la Plata, with the Obelisk and Puente de la Mujer behind",
+        alt: "Illustration: a marble caryatid looks out over the Río de la Plata, with the Obelisk and Puente de la Mujer behind",
         quote: "What is built on stone, lasts.",
         caption: "Made in Buenos Aires · 34°36′S 58°22′W",
       },
