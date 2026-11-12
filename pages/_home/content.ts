@@ -28,9 +28,7 @@ export const home = {
     eyebrow: "Documentación · Región BUE",
     heading: "Tu producto en producción, desde Buenos Aires.",
     lede: "Olimpia corre tus apps, tus bases Postgres y Redis y tus buckets en Buenos Aires. Esta documentación tiene dos puertas: una para tu agente y otra para vos.",
-    tablist: "Elegí para quién es la documentación",
-    agentsTab: "Para agentes",
-    humansTab: "Para humanos",
+    doors: { agents: "Que lo haga tu agente", humans: "Hacelo vos" },
     agents: {
       intro:
         "Olimpia tiene un servidor MCP. Conectá tu agente una vez y despliega código, crea bases, lee logs y configura dominios por vos, siempre con tu permiso.",
@@ -68,12 +66,6 @@ export const home = {
         quote: "Tu agente despliega. Vos decidís.",
         caption: "Servidor MCP · OAuth 2.1",
       },
-      humans: {
-        src: "/arte/home-humanos.webp",
-        alt: "Ilustración: una cariátide de mármol mira el Río de la Plata, con el Obelisco y el Puente de la Mujer de fondo",
-        quote: "Lo que se construye sobre piedra, dura.",
-        caption: "Hecho en Buenos Aires · 34°36′S 58°22′O",
-      },
     },
     features: {
       eyebrow: "La plataforma",
@@ -98,9 +90,7 @@ export const home = {
     eyebrow: "Documentation · BUE region",
     heading: "Your product in production, from Buenos Aires.",
     lede: "Olimpia runs your apps, your Postgres and Redis databases and your buckets in Buenos Aires. These docs have two doors: one for your agent and one for you.",
-    tablist: "Choose who the docs are for",
-    agentsTab: "For agents",
-    humansTab: "For humans",
+    doors: { agents: "Let your agent do it", humans: "Do it yourself" },
     agents: {
       intro:
         "Olimpia has an MCP server. Connect your agent once and it deploys code, creates databases, reads logs and sets up domains for you, always with your permission.",
@@ -137,12 +127,6 @@ export const home = {
         alt: "Illustration: a bronze gear mechanism next to a bust of Hermes, by the Río de la Plata",
         quote: "Your agent deploys. You decide.",
         caption: "MCP server · OAuth 2.1",
-      },
-      humans: {
-        src: "/arte/home-humanos.webp",
-        alt: "Illustration: a marble caryatid looks out over the Río de la Plata, with the Obelisk and Puente de la Mujer behind",
-        quote: "What is built on stone, lasts.",
-        caption: "Made in Buenos Aires · 34°36′S 58°22′W",
       },
     },
     features: {

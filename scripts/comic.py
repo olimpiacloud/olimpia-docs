@@ -12,7 +12,6 @@ SCENES = {
     "banner": ("banner.png", (800, 533)),
     "infra": ("infra.png", (800, 533)),
     "home-agentes": ("home-agentes.png", (512, 768)),
-    "home-humanos": ("home-humanos.png", (512, 768)),
 }
 ICONS = ("anfora", "busto", "columna", "olivo", "teatro", "templo")
 
