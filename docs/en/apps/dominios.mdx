@@ -8,17 +8,19 @@ sidebar:
 ---
 ## Your Olimpia subdomain [#tu-subdominio-de-olimpia]
 
-Every app is available at `https://<subdominio>.olimpia.cc`, with HTTPS included. By default, the subdomain is the app name. You can change it in **Domains** or in **Settings**.
+Every app is available at `https://<subdominio>.olimpia.cc`, with HTTPS included. By default, the subdomain is the app name. You can change it in **Settings**.
 
 :::warning
 When you change the subdomain, the old address stops working immediately.
 :::
 
+If your app only uses custom domains, you can turn off the Olimpia subdomain in **Settings → Domains**: the app stops responding there, the subdomain stays reserved for you, and you can restore it at any time.
+
 ## Add a custom domain [#agregar-un-dominio-propio]
 
 <Steps>
   <Step title="Add the domain">
-    In **Domains → Add domain**, enter the domain or subdomain, for example `app.tuempresa.com`.
+    In **Settings → Domains**, click **Add domain** and enter the domain or subdomain, for example `app.tuempresa.com`.
   </Step>
   <Step title="Create the DNS records">
     The console shows the records to create with your DNS provider:
@@ -26,12 +28,14 @@ When you change the subdomain, the old address stops working immediately.
     | Type | Name | Value |
     | --- | --- | --- |
     | `CNAME` | `app` | `domains.olimpia.cc` |
-    | `TXT` | (shown in the console) | (shown in the console) |
+    | `TXT` | `_olimpia.app` | (shown in the console) |
 
-    The `TXT` record is optional. It lets you verify the domain before you point the `CNAME`, which is useful if you are migrating a domain that already has traffic.
+    The `_olimpia` `TXT` record is required: it proves the domain is yours. Until Olimpia sees it, it does not issue the certificate or send traffic to your app. Olimpia only needs to see it once.
+
+    If you are migrating a domain that already has traffic, create that `TXT` record first. Once it is verified, the console may show another, optional `TXT` record that lets you validate the certificate before you point the `CNAME`.
   </Step>
   <Step title="Wait for verification">
-    Olimpia checks DNS every 30 seconds, even if you close the page. Once DNS points to the right place, it issues the HTTPS certificate. This usually takes a few minutes. The domain moves through **Waiting for DNS → Issuing certificate → Active**.
+    Olimpia checks DNS every 30 seconds, even if you close the page. Once it sees the `TXT` record and the `CNAME` points to the right place, it issues the HTTPS certificate. This usually takes a few minutes. The domain moves through **Waiting for DNS → Issuing certificate → Active**.
   </Step>
 </Steps>
 

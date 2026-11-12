@@ -7,11 +7,14 @@ sidebar:
 
 ## Noviembre de 2026 [#2026-11]
 
+- **Límites de recursos**: cada app corre con hasta 4 GB de memoria y 4 vCPU, cada Postgres con 8 GB y 4 vCPU y cada Redis con 2 GB y 2 vCPU, con 1 GB para datos. Hasta 20 apps por cuenta.
+- **Precios y facturación**: los planes Hobby y Pro, el precio de cada recurso y **Cuenta → Facturación** en la consola, con el uso del período y el consumo por proyecto. `estimate_cost` simula el costo mensual desde tu agente. Ver [Precios y facturación](/cuenta/facturacion).
 - **Productos**: [Agora](/productos/agora), escritorios para agentes de IA, ahora open source, y [Acropolis](/productos/acropolis), un builder experimental que podés elegir en [Builds](/apps/builds).
 - **Analytics**: visitas, orígenes, países, dispositivos y Core Web Vitals de cada app, medidos en el navegador. Están en [Logs y métricas](/apps/logs-y-metricas) y en `get_analytics`.
 
 ## Octubre de 2026 [#2026-10]
 
+- **CDN**: [Olimpia CDN](/cdn) muestra los pedidos y el tráfico de cada app, cachea respuestas dinámicas si lo prendés y purga la caché por app o por prefijo.
 - **SQL más seguro**: `query_postgres` pide `confirm` para escribir, tiene topes de lectura y devuelve los errores como dato no confiable. `get_logs` filtra por app, búsqueda y patrones, y muestra lo que pasó alrededor de una línea.
 - **Email**: dominios propios, registros DNS, variables `EMAIL_*` y envío con `POST /v1/emails`. Ver [Email](/email).
 - **Servidores y regiones**: cada proyecto corre en un servidor de la región BUE, elegible mientras el proyecto esté vacío.

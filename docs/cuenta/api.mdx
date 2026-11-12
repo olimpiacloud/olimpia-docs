@@ -49,9 +49,13 @@ Los cuerpos van en JSON (`content-type: application/json`). Los errores responde
 | `POST` | `/apps/{id}/deployments` | Despliega. Ver abajo. |
 | `POST` | `/apps/{id}/deployments/{deployment}/cancel` | Cancela un deploy en cola o construyendo. |
 | `GET` | `/apps/{id}/deployments/{deployment}/log` | Log del build. |
-| `GET` | `/apps/{id}/logs` | Logs de la app. |
+| `GET` | `/apps/logs?project={id}&app={id}` | Logs de una app; sin `app`, de todas las apps del proyecto. |
 | `GET` | `/apps/{id}/metrics` | Métricas de CPU, memoria y disco. |
+| `GET` | `/apps/{id}/analytics?period=week` | Visitas y Core Web Vitals. `period` es `day`, `week` o `month`. |
+| `GET` | `/apps/{id}/cdn?period=day` | Tráfico y caché de la app. Ver [CDN](/cdn#desde-la-api). |
 | `GET` | `/apps/{id}/domains` | Dominios propios. |
+| `POST` | `/apps/{id}/domains` | Agrega un dominio: `{"hostname": "app.tuempresa.com"}`. |
+| `DELETE` | `/apps/{id}/domains/{domain}` | Quita un dominio. |
 | `POST` | `/apps/{id}/domains/{domain}/check` | Verifica un dominio ahora. |
 
 ### Crear una app

@@ -6,7 +6,7 @@ sidebar:
   icon: archive-restore
 ---
 
-Olimpia guarda sus propias copias diarias de cada base. Además, podés programar backups en **tu propio bucket**, para tener los datos bajo tu control, en tu proveedor y con tu retención.
+Los backups de cada base los programás vos: en un bucket de Olimpia o en **tu propio bucket**, para tener los datos bajo tu control, en tu proveedor y con tu retención. Una base sin backups configurados no tiene copias, así que configuralos apenas la crees.
 
 ## Configurar
 
@@ -62,7 +62,7 @@ gunzip -c backup.sql.gz | psql "postgresql://app:<contraseña>@pg-<id>.db.olimpi
 
 ## Hacer un backup ahora
 
-**Hacer backup ahora** corre uno en el momento, sin esperar al próximo horario. Útil antes de una migración grande.
+**Hacer backup ahora** corre uno en el momento, sin esperar al próximo horario. Útil antes de una migración grande. Se puede hacer uno cada 10 minutos por base.
 
 ## Desactivar
 

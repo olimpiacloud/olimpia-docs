@@ -1,6 +1,6 @@
 ---
 title: Redis
-description: Redis 8 persistente para caché, sesiones, colas y rate limiting, al lado de tus apps y sin perder claves por falta de memoria.
+description: Redis 8 persistente para caché, sesiones, colas y rate limiting, al lado de tus apps y sin desalojo de claves.
 sidebar:
   label: Introducción
   icon: zap
@@ -23,8 +23,9 @@ Una instancia de Redis de Olimpia es un Redis 8 propio, persistido en disco y co
 
 - **Redis 8**, listo en segundos.
 - **Persistencia en disco** (AOF): si la instancia se reinicia, tus datos siguen ahí.
-- **Sin desalojo de claves.** No hay `maxmemory`: Redis nunca borra claves para hacer lugar. Es lo que necesitan las colas como BullMQ, Sidekiq o Celery.
-- **Sin límite fijo de memoria.** Usa lo que necesita y pagás por uso.
+- **Sin desalojo de claves.** Redis nunca borra claves para hacer lugar (`noeviction`). Es lo que necesitan las colas como BullMQ, Sidekiq o Celery.
+- **Hasta 1 GB de datos.** Al llegar a ese tope (`maxmemory`), Redis rechaza las escrituras nuevas con un error de memoria en vez de borrar claves; las lecturas siguen funcionando. Poné vencimiento (`EX`) a lo que uses como caché.
+- **Pago por uso.** Cada instancia corre con hasta 2 GB de memoria y 2 vCPU, y pagás solo lo que usa. Ver [Precios y facturación](/cuenta/facturacion).
 - **Acceso externo opcional** por TLS. Ver [Conexión](/redis/conexion).
 - **Métricas**: memoria usada, operaciones por segundo, clientes conectados y bloqueados, cantidad de claves y aciertos de caché.
 

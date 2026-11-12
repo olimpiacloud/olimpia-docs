@@ -1,0 +1,73 @@
+---
+title: CDN
+description: Olimpia CDN serves your apps from the location closest to each user. Per-app metrics, optional response caching, and purging by domain or by prefix.
+sidebar:
+  label: Overview
+  icon: earth
+---
+
+All web traffic to your apps goes through Olimpia CDN, which handles it from the location closest to each user and answers from its cache whatever can be cached. There is nothing to install: every app gets it on its `olimpia.cc` subdomain and on its [custom domains](/apps/dominios).
+
+## Where to find it [#dónde-está]
+
+- **CDN**, in the project sidebar, lists every app with its domains, its requests, and how much was served from the cache.
+- The **CDN** tab of each app has the details, response caching, and purging.
+
+## Metrics [#métricas]
+
+| Value | What it is |
+| --- | --- |
+| **Requests** | The requests the app received, adding up its subdomain and its custom domains. |
+| **From cache** | The percentage of requests Olimpia CDN answered without reaching your app. |
+| **Traffic** | The bytes sent to your visitors. |
+| **Served from cache** | How much of that traffic came from the cache. |
+
+Choose the period: 24 hours or 7 days. The numbers can take a few minutes to update, and an app starts counting once it has a published domain.
+
+The app tab adds **Paths reaching your app**: the ten paths with the most requests that were not served from the cache. Start there if you want to cache more.
+
+## What gets cached [#qué-se-cachea]
+
+Out of the box, Olimpia CDN caches static files (images, JS, CSS, fonts) and honors the `Cache-Control` your app serves them with. HTML and API responses always reach your app.
+
+## Caching dynamic responses [#respuestas-dinamicas]
+
+To also cache HTML and API responses, turn on **Cache dynamic responses** in the app's **CDN** tab and mark in your code what can be stored:
+
+```txt
+Cache-Control: public, s-maxage=60
+```
+
+With the option on:
+
+- **Only responses that carry `Cache-Control` are cached.** A response without that header is not cached, not even a static file.
+- **`Vary` is ignored.** Do not mark as `public` a response that changes with the cookie or the language.
+- **Every deploy purges the app's cache**, so the new version never mixes with old responses.
+
+The change applies in under a minute, both when you turn it on and when you turn it off.
+
+:::warning
+Never mark a response with one user's data as `public`: the cache would serve it to anyone who requests the same URL.
+:::
+
+## Purging the cache [#purgar-la-caché]
+
+In the app's **CDN** tab:
+
+- **Purge everything** deletes what Olimpia CDN stored for that app on all its domains.
+- **Purge prefix** deletes only what starts with a path, such as `/blog`. The prefix starts with `/` and has no spaces, `?`, `#`, or `*`.
+
+A purge can take a few seconds to reach every location. Each account can purge up to 10 times every 10 minutes.
+
+## From the API [#desde-la-api]
+
+With a [personal token](/cuenta/tokens):
+
+| Method | Path | What it does |
+| --- | --- | --- |
+| `GET` | `/apps/cdn?project={id}&period=day` | Traffic for every app in the project. `period` is `day` or `week`. |
+| `GET` | `/apps/{id}/cdn?period=day` | Details for one app, with the paths that reach it. |
+| `PUT` | `/apps/{id}/cdn` | Turns response caching on or off: `{"cache": true}`. |
+| `POST` | `/apps/{id}/cdn/purge` | Purges everything, or a prefix with `{"prefix": "/blog"}`. |
+
+The [MCP server](/agentes/herramientas) does not have CDN tools yet.

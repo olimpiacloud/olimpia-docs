@@ -8,7 +8,7 @@ sidebar:
 ---
 ![Classical ruins by the Río de la Plata](/arte/banner.webp)
 
-Olimpia is a cloud platform for running your product in production. Push your code, connect a database, and in a few minutes your app is online with HTTPS, on top-tier infrastructure in Buenos Aires.
+Olimpia is a cloud platform for running your product in production. Push your code, connect a database, and in a few minutes your app is online with HTTPS, running in Buenos Aires.
 
 Everything lives inside **projects**: your apps, your Postgres databases, your Redis instances, and your buckets. You manage them from the [console](https://olimpia.dev/dashboard), or you ask your agent to do it for you over MCP.
 
@@ -29,13 +29,15 @@ Everything lives inside **projects**: your apps, your Postgres databases, your R
   </Card>
 </CardGroup>
 
+Every app also gets [Olimpia CDN](/cdn) and [Analytics](/apps/logs-y-metricas#analytics) with nothing to install, and your apps can send transactional [email](/email) from your own domain.
+
 ## Why Olimpia [#por-qué-olimpia]
 
-- **Runs in Buenos Aires.** The BUE region is right here, on top-tier infrastructure. Your data stays close to your users in Argentina. [More about the region](/plataforma/buenos-aires).
+- **Runs in Buenos Aires.** The BUE region is right here: your data stays close to your users in Argentina. [More about the region](/plataforma/buenos-aires).
 - **Internal network.** Your apps reach their databases over a private network. Databases don't accept outside connections until you allow them. [How it works](/plataforma/red-interna).
 - **CI/CD with GitHub.** Connect a repository, and every push to the branch you choose is built and published automatically, with no downtime and one-click rollback. [Deploy from GitHub](/apps/github).
 - **Backups to your S3.** Schedule backups of your databases to AWS S3, Cloudflare R2, Backblaze B2, MinIO, or any compatible service. [Set up backups](/postgres/backups).
-- **Built for agents.** Olimpia has an MCP server with 35 tools. Claude Code, Codex, Cursor, and any MCP client can deploy, query, and debug for you. [For agents](/agentes).
+- **Built for agents.** Olimpia has an MCP server with 37 tools. Claude Code, Codex, Cursor, and any MCP client can deploy, query, and debug for you. [For agents](/agentes).
 - **No code changes.** Postgres and Redis work the way they always have, and buckets speak the S3 API. Your drivers, ORMs, and SDKs work the same.
 
 ## Next steps [#cómo-seguir]

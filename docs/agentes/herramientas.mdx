@@ -1,6 +1,6 @@
 ---
 title: Herramientas
-description: Referencia de las 35 herramientas del servidor MCP de Olimpia, con sus parámetros y qué devuelven.
+description: Referencia de las 37 herramientas del servidor MCP de Olimpia, con sus parámetros y qué devuelven.
 sidebar:
   label: Herramientas
   icon: wrench
@@ -10,7 +10,7 @@ Todas las herramientas aceptan nombres o ids (`app: "web"` o el UUID), y `projec
 
 :::note[Convenciones]
 - **Nombres**: entre 3 y 63 caracteres, minúsculas, números y guiones.
-- **`kind`**: `postgres`, `redis` o `bucket`.
+- **`kind`**: `postgres`, `redis`, `bucket` o `email`.
 - Las herramientas de lectura están marcadas como `readOnly`; las de borrado, como `destructive`.
 :::
 
@@ -48,7 +48,7 @@ Detalle de una app: URL, origen, configuración de build, bases conectadas, domi
 
 ### `get_usage`
 
-Uso actual de un proyecto: apps online y construyendo, objetos y bytes en buckets, dominios de email y destinatarios enviados en el mes.
+Uso actual de un proyecto: apps online y construyendo, objetos y bytes en buckets, dominios de email y destinatarios enviados en el mes, contra el cupo mensual. Para estimar cuánto cuesta, usá [`estimate_cost`](#costos).
 
 ## Desplegar
 
@@ -64,7 +64,8 @@ Crea una app. Con `source=upload` (por defecto) la respuesta trae el comando par
 | `branch` | string | Para `github`: rama a desplegar. Cada push redespliega. |
 | `image` | string | Para `image`: por ejemplo `nginx:1.29`. |
 | `root_dir` | string | Subcarpeta a construir, para monorepos. |
-| `dockerfile` | string | Ruta al Dockerfile relativa a `root_dir`. |
+| `dockerfile` | string | Ruta al Dockerfile relativa a `root_dir`. Sin ella, Railpack detecta el stack. |
+| `builder` | `default` \| `acropolis` | Opcional. `default` usa el Dockerfile si hay uno y, si no, Railpack. `acropolis` construye con [Acropolis](/productos/acropolis), que ignora el Dockerfile; si no puede construir la app, sigue con el builder por defecto. |
 | `port` | number | Puerto en el que escucha la app (3000 por defecto). |
 | `env` | object | Variables a cargar antes del primer build. |
 | `server` | string | Avanzado, normalmente se omite. Servidor del proyecto; solo cambia si todavía no tiene apps ni bases. |
@@ -136,11 +137,17 @@ Cambia la configuración de una app. Los cambios de build se aplican en el próx
 
 | Parámetro | Tipo | |
 | --- | --- | --- |
+| `app` | string | Nombre o id. |
 | `subdomain` | string | Subdominio nuevo en `olimpia.cc`. |
+| `olimpia_domain` | boolean | `false` deja de servir la app en `<subdominio>.olimpia.cc`: los dominios propios siguen funcionando y el subdominio queda reservado. `true` la vuelve a servir. |
+| `source` | `upload` \| `github` \| `image` | Cambia el origen de la app. `github` necesita `repo` e `image` necesita `image`. |
+| `repo` | string | Para `github`: `owner/name`, para pasar a ese repositorio. |
 | `branch` | string | Rama de GitHub. |
 | `image` | string | Imagen de Docker. |
-| `root_dir`, `dockerfile`, `port` | | Como en `create_app`. |
+| `root_dir`, `dockerfile`, `builder`, `port` | | Como en `create_app`. |
+| `watch_paths` | string[] | Rutas desde la raíz del repositorio (`apps/web`, `packages/ui`, `bun.lock`): un push solo redespliega la app si toca alguna. Vacío, redespliega en cada push; con `builder: "acropolis"`, solo cuando cambian los archivos de los que depende la imagen. |
 | `auto_deploy` | boolean | Redesplegar en cada push. |
+| `confirm` | string | Obligatorio al cambiar `source`, `repo` o `image`: el nombre exacto de la app, después de que la persona aprobó el cambio. |
 
 ### `get_env`
 
@@ -163,7 +170,7 @@ Crea un proyecto.
 | Parámetro | Tipo | |
 | --- | --- | --- |
 | `name` | string | |
-| `server` | string | Opcional y avanzado. Sin él, Olimpia elige el servidor solo (hoy `olimpia-bue1`). Ver [Proyectos](/cuenta/proyectos#servidor). |
+| `server` | string | Opcional y avanzado. Sin él, Olimpia elige el servidor solo. Ver [Proyectos](/cuenta/proyectos#servidor). |
 
 ### `create_environment`
 
@@ -187,6 +194,7 @@ Crea una base Postgres, una instancia de Redis, un bucket o un dominio de email.
 | `name` | string | En `email`, el dominio desde el que se manda (`mail.tuempresa.com`). |
 | `connect_to_app` | string | Opcional. Además, carga las variables en esa app. |
 | `vector` | boolean | Solo Postgres. `true` la crea con pgvector (`CREATE EXTENSION vector`); por defecto, `false`. No se cambia después. |
+| `public` | boolean | Solo Postgres y Redis. `true` la expone a internet por TLS en `*.db.olimpia.cc`; por defecto, `false`: solo la alcanzan las apps de la cuenta. Se cambia después con `set_public_access`. |
 
 ### `get_connection`
 
@@ -214,7 +222,7 @@ Si la app ya tiene una variable con el nombre por defecto, las nuevas llevan el 
 
 ### `set_public_access`
 
-Expone u oculta una base o un bucket (no aplica a dominios de email). En Postgres y Redis, `public: true` permite conexiones por TLS desde internet; en un bucket, hace que los objetos se puedan leer por URL.
+Expone u oculta una base o un bucket (no aplica a dominios de email). En Postgres y Redis, `public: true` permite conexiones por TLS desde internet; en un bucket, hace que los objetos se puedan leer por URL. Parámetros: `kind`, `name` y `public`. Con `public: true` exige `confirm` con el nombre exacto del recurso, después de que la persona lo aprobó.
 
 ### `list_tables`
 
@@ -252,6 +260,8 @@ Programa backups de una base en un bucket de Olimpia o en cualquier S3. Olimpia 
 | `region` | string | Del S3 externo. `auto` por defecto. |
 | `schedule` | string | Cron de cinco campos en UTC, con el minuto fijo. `0 3 * * *` por defecto. |
 | `keep` | number | Cuántos backups conservar, de 1 a 90. 7 por defecto. |
+| `folder` | string | Carpeta dentro del bucket (letras, números, `-` y `_`). `backups` por defecto. |
+| `confirm` | string | Obligatorio con `endpoint`: el nombre exacto de la base, después de que la persona aprobó mandar sus backups a ese S3 externo. |
 
 ### `run_backup`
 
@@ -265,7 +275,7 @@ Deja de hacer backups de una base. Los archivos que ya están en el bucket no se
 
 ### `add_domain`
 
-Agrega un dominio propio a una app y devuelve los registros DNS que hay que crear. Parámetros: `app`, `domain`.
+Agrega un dominio propio a una app y devuelve los registros DNS que la persona tiene que crear en su proveedor de DNS: un `CNAME` y un `TXT` que prueba que el dominio es suyo. Parámetros: `app`, `domain`.
 
 ### `check_domain`
 
@@ -299,6 +309,22 @@ Visitas reales de una app, medidas en el navegador de sus visitantes en todas la
 | --- | --- | --- |
 | `app` | string | Nombre o id de la app. |
 | `period` | string | `day` (24 horas, por hora), `week` (por defecto, por día) o `month` (30 días, por día). |
+
+## Costos
+
+### `estimate_cost`
+
+Simula el costo mensual aproximado de una configuración a partir de su uso promedio esperado, antes o después de desplegarla. El uso se cobra por lo que se usa de verdad, medido cada minuto: memoria, CPU, disco de Postgres, buckets y emails. Los builds, los certificados, los dominios, los logs y las métricas no se cobran.
+
+| Parámetro | Tipo | |
+| --- | --- | --- |
+| `memory_gb` | number | Memoria promedio, en GB, que usan todas las apps, Postgres y Redis juntos, sin la caché de archivos. Una app de Node, Bun o Python en reposo usa entre 0,1 y 0,3 GB; un Postgres o un Redis en reposo, entre 0,05 y 0,2 GB. |
+| `vcpu` | number | vCPU promedio que usan de verdad (no las reservadas) entre todos. Una app casi sin tráfico usa 0,01 o menos; una ocupada todo el día, entre 0,2 y 1. |
+| `disk_gb` | number | GB guardados en bases Postgres. |
+| `bucket_gb` | number | GB guardados en buckets. |
+| `emails` | number | Destinatarios de email por mes. |
+
+Todos son opcionales y no hace falta `project`. Devuelve cada línea en USD (`lines`, con `kind`, `quantity`, `unit`, `usd_per_unit` y `usd`), el total de uso (`usage_usd`) y lo que cobraría cada plan (`monthly_usd.hobby` y `monthly_usd.pro`): Hobby, USD 5 por mes con USD 5 de uso incluido, y Pro, USD 20 por mes con USD 20, pagando el uso que pase de lo incluido. Es una estimación: el uso real cambia con el tráfico. Ver [Precios y facturación](/cuenta/facturacion).
 
 ## Borrar
 

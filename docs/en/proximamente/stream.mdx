@@ -23,4 +23,4 @@ Stream will let you publish and consume real-time events between your services, 
 
 ## In the meantime [#mientras-tanto]
 
-For job queues, use [Redis](/redis) with BullMQ, Sidekiq, or Celery. Olimpia never evicts keys when memory runs low, so your queues never lose jobs.
+For job queues, use [Redis](/redis) with BullMQ, Sidekiq, or Celery. Redis never evicts keys to make room, so your queues do not lose queued jobs.

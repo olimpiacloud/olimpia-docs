@@ -35,7 +35,8 @@ An Olimpia app is a container that runs your code and responds at `https://<subd
 - **Encrypted [environment variables](/apps/variables)**, available at build time and at runtime.
 - **[Logs and metrics](/apps/logs-y-metricas)**: the log for each build, live app logs, and CPU, memory, and disk usage for the last 7 days.
 - **[Private network](/plataforma/red-interna)** access to your Postgres and Redis databases.
-- **No resource caps.** Apps have no fixed CPU or memory limit: they use what they need and you pay for usage.
+- **[Olimpia CDN](/cdn) and [Analytics](/apps/logs-y-metricas#analytics)** on every app, with nothing to install.
+- **Usage-based pricing.** Each app runs with up to 4 GB of memory and 4 vCPU, and you pay only for what it uses. See [Limits](#límites).
 
 ## What your app needs [#lo-que-tu-app-necesita]
 
@@ -50,9 +51,24 @@ Each app has these tabs:
 
 | Tab | Purpose |
 | --- | --- |
+| **Overview** | The current deploy, recent activity, domains, connected resources, and CPU and memory usage. |
 | **Deploys** | History, status, build log, and rollback. |
 | **Logs** | Live app output, with search. |
-| **Metrics** | CPU, memory, and disk reads and writes. |
 | **Variables** | Environment variables and connections to the project's databases. |
-| **Domains** | Your `olimpia.cc` subdomain and your custom domains. |
-| **Settings** | Branch, root folder, Dockerfile, port, automatic deploys, and deletion. |
+| **Metrics** | CPU, memory, and disk reads and writes. |
+| **Analytics** | Visits, pages, sources, and Core Web Vitals. |
+| **CDN** | Requests, traffic, response caching, and purging. See [CDN](/cdn). |
+| **Settings** | Source, branch, root folder, Dockerfile, builder, port, automatic deploys, domains, and deletion. |
+
+## Limits [#límites]
+
+| Limit | Value |
+| --- | --- |
+| Memory | 4 GB per app. If the process goes over it, it is stopped and the app restarts. |
+| CPU | 4 vCPU per app. |
+| Container disk | Temporary. An app that writes more than 5 GB to its container is recreated. |
+| Apps | 20 per account. |
+| Variables | 200 per app, up to 32 KB each. |
+| Custom domains | 10 per app. |
+
+The limits are the same on every plan. Prices are in [Pricing and billing](/cuenta/facturacion).

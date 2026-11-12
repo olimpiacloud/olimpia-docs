@@ -1,0 +1,75 @@
+---
+title: Pricing and billing
+description: Olimpia's plans, the price of each resource, and where to see your usage, your plan, and your invoices in the console.
+sidebar:
+  label: Pricing and billing
+  icon: credit-card
+---
+
+Olimpia charges for what your services really use: the memory, CPU, and disk they actually consume, measured every minute, not what they reserve. A stopped service costs nothing. Every plan includes usage, and prices are in US dollars, plus taxes.
+
+## Plans [#planes]
+
+| | Hobby | Pro |
+| --- | --- | --- |
+| **Price** | USD 5 per month | USD 20 per month |
+| **Included usage** | USD 5 per month | USD 20 per month |
+| **Support** | By email | Priority, within one business day |
+
+- Usage above what is included is paid by usage. On Hobby, if you use USD 3 you pay 5; if you use USD 8, you pay 8.
+- Included usage does not roll over from one month to the next.
+- Both plans have the same features.
+
+## Usage prices [#precios-del-uso]
+
+| Resource | Price |
+| --- | --- |
+| **Memory** | USD 10 per GB per month |
+| **CPU** | USD 20 per vCPU per month |
+| **Postgres disk** | USD 0.25 per GB per month |
+| **Buckets** | USD 0.03 per GB per month |
+| **Email** | USD 0.50 per 1,000 recipients |
+
+- **Postgres and Redis are billed like an app**: their memory and CPU, and for Postgres also the disk the database takes up. There are no fixed database sizes.
+- **Memory is measured without the file cache**, and CPU is what your services use, not what they have available.
+- **Not billed**: builds, HTTPS certificates, custom domains, logs, metrics, and the MCP server.
+
+An example: an app and a database that together average 0.5 GB of memory and 0.1 vCPU, with 2 GB in Postgres, add up to USD 5 + USD 2 + USD 0.50 = USD 7.50 of usage per month. On Hobby you pay USD 7.50; on Pro, USD 20.
+
+## In the console [#en-la-consola]
+
+**Account → Billing** shows:
+
+- **Your plan**: what it costs, when it renews, and **Manage subscription and invoices**, which opens the payment portal to change your card, change or cancel the plan, and download your invoices. A canceled plan stays active until the end of the period.
+- **Choose a plan**, if you don't have one yet: Hobby or Pro. It takes you to the payment page and brings you back to the console with the plan active.
+- **Usage this period**: memory, CPU, disk, buckets, and emails sent, with what you used against what is included and the estimated amount to pay.
+- **Usage by project**: what each project used in each month, at list price. Email is counted per account, not per project.
+
+## During early access [#durante-el-acceso-anticipado]
+
+Olimpia is invite-only and does not ask for a card to get started. Your usage is measured from day one and you can see it in **Billing**; charges start when you choose a plan.
+
+## What is not available yet [#lo-que-todavía-no-está]
+
+- **The free trial** shown on [olimpia.dev](https://olimpia.dev) (USD 5 of usage, once, for 30 days) is not active yet.
+- **Spending caps** cannot be configured yet.
+- **Outbound traffic** (USD 0.05 per GB) is not measured or billed yet.
+
+## Limits [#límites]
+
+The price depends on usage, but every service has a resource ceiling, the same on every plan:
+
+| Service | Memory | CPU |
+| --- | --- | --- |
+| App | 4 GB | 4 vCPU |
+| Postgres | 8 GB | 4 vCPU |
+| Redis | 2 GB | 2 vCPU |
+
+Each account can also have up to 20 apps.
+
+## From your agent [#desde-tu-agente]
+
+- `get_usage` returns the current usage of a project.
+- `estimate_cost` simulates the monthly cost of a setup from its average usage, and what you would pay on Hobby and on Pro.
+
+See [Tools](/agentes/herramientas#costos).

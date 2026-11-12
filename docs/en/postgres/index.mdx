@@ -31,9 +31,9 @@ An Olimpia Postgres database is a full Postgres 18 instance with its own user an
 - **Postgres 18**, with the `app` database and the `app` user, which owns the database. If you created it with pgvector, it also includes the `vector` extension.
 - **Internal connection** for your apps and [optional external access](/postgres/conexion#acceso-externo) over TLS.
 - **[Data explorer](/postgres/explorador)** to view tables and rows from the console.
-- **[Backups to your S3](/postgres/backups)** on a schedule, in addition to the daily copies Olimpia keeps.
+- **[Scheduled backups](/postgres/backups)** to an Olimpia bucket or to your own S3.
 - **[Logs and metrics](/postgres/logs-y-metricas)**: errors, slow queries, CPU, memory, connections, and transactions per second.
-- **No size limit.** Olimpia measures storage every minute and bills by usage.
+- **Disk billed by usage.** You don't pick a disk size: Olimpia measures what the database takes up every minute and bills per GB.
 
 ## What you can and can't do [#lo-que-podés-y-no-podés-hacer]
 
@@ -44,6 +44,16 @@ The `app` user owns its database but is not a superuser:
 | Create tables, indexes, views, functions, and schemas | Use `ALTER SYSTEM` or change the server configuration |
 | Use trusted extensions such as `pgcrypto`, `citext`, `pg_trgm`, `unaccent`, `hstore`, and others, plus `vector` on pgvector databases | Install untrusted extensions |
 | Run migrations with any ORM | Create other superusers |
+
+## Limits [#límites]
+
+| Limit | Value |
+| --- | --- |
+| Memory | 8 GB per database. |
+| CPU | 4 vCPU per database. |
+| Connections | 20 at the same time with the `app` user. |
+
+If several apps share a database, split the connections across their pools: for example, a maximum of 8 in the API and 3 in a worker. Prices are in [Pricing and billing](/cuenta/facturacion).
 
 ## Embeddings with pgvector [#embeddings-con-pgvector]
 

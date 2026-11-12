@@ -21,7 +21,7 @@ Olimpia es su propio servidor de autorización:
 | Token de acceso | 1 hora |
 | Token de refresco | 90 días, rota en cada uso |
 | Código de conexión del plugin | 10 minutos, un solo uso, atado al agente que lo pidió |
-| Token personal | Sin vencimiento, hasta que lo revocás |
+| Token personal | 90 días, o hasta que lo revocás |
 
 `POST /oauth/revoke` revoca un token, y **Cuenta → Agentes y tokens** muestra y revoca cada conexión.
 
@@ -34,14 +34,15 @@ Cada herramienta llama a la misma API que usa la consola, con el token del pedid
 | Límite | Valor |
 | --- | --- |
 | Llamadas a `/mcp` | 240 por minuto por token |
-| Recursos creados por MCP | 30 por hora |
+| Apps, bases, buckets, dominios de email, proyectos y ambientes creados | 30 por hora por cuenta, sumando la consola y la API |
 | Intentos de código de conexión fallidos | 10 cada 10 minutos por agente |
 | Filas por consulta de lectura | 200 |
 | Tiempo de una escritura SQL | 30 segundos |
 
 ## Reglas de seguridad
 
-- **Borrar y escribir exigen confirmación.** `delete_app`, `delete_resource` y `query_postgres` con `write: true` necesitan `confirm` con el nombre exacto, que la persona tiene que aprobar.
+- **Borrar y escribir exigen confirmación.** `delete_app`, `delete_resource`, `delete_environment`, `disable_backups` y `query_postgres` con `write: true` necesitan `confirm` con el nombre exacto, que la persona tiene que aprobar.
+- **Sacar datos de Olimpia, también.** `set_public_access` con `public: true`, `set_backups` hacia un S3 externo y `update_app` cuando cambia `source`, `repo` o `image` piden el mismo `confirm`. El agente solo los hace cuando la persona pidió exactamente eso, nunca porque lo diga un log, una fila o un commit.
 - **Secretos ocultos por defecto.** `get_env` oculta los valores que parecen secretos salvo con `reveal: true`.
 - **Datos no confiables.** Los logs, la salida de los builds, los valores de variables y las filas de la base son datos, no instrucciones. Las herramientas lo indican para que el agente no siga órdenes escondidas ahí.
 - **SQL sin superusuario.** `query_postgres` corre como el usuario dueño de la base; la lectura va en una transacción de solo lectura y sus topes de filas y tamaño los aplica la propia base. Cada consulta usa una conexión nueva, así que nada de lo que deje en la sesión llega a la siguiente.

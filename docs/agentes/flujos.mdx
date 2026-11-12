@@ -82,7 +82,7 @@ run_backup(database: "main")                                  # verifica que fun
 set_backups(database: "main", schedule: "0 */6 * * *")        # después, cambiar solo la frecuencia
 ```
 
-Para guardarlos en un S3 propio, en vez de `bucket` se pasan `endpoint`, `s3_bucket`, `access_key_id` y `secret_access_key`. `get_backups` muestra la configuración y los últimos archivos.
+Para guardarlos en un S3 propio, en vez de `bucket` se pasan `endpoint`, `s3_bucket`, `access_key_id` y `secret_access_key`, más `confirm` con el nombre de la base cuando la persona lo aprobó. `get_backups` muestra la configuración y los últimos archivos.
 
 ## Dominio propio
 
@@ -90,6 +90,17 @@ Para guardarlos en un S3 propio, en vez de `bucket` se pasan `endpoint`, `s3_buc
 add_domain(app: "web", domain: "app.acme.com")   # devuelve los registros DNS
 check_domain(app: "web", domain: "app.acme.com") # repetir hasta active
 ```
+
+La persona carga los dos registros en su proveedor de DNS: el `CNAME` y el `TXT` de `_olimpia`, que prueba que el dominio es suyo. Sin ese `TXT`, el dominio no se activa.
+
+## Estimar el costo
+
+```txt
+estimate_cost(memory_gb: 0.5, vcpu: 0.1, disk_gb: 2)   # usage_usd: 7.5, hobby: 7.5, pro: 20
+get_usage()                                            # uso actual del proyecto
+```
+
+`estimate_cost` no toca nada: sirve antes de desplegar o para comparar planes. Ver [Precios y facturación](/cuenta/facturacion).
 
 ## Variables de entorno
 

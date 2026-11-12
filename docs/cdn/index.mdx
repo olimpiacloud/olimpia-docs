@@ -1,0 +1,73 @@
+---
+title: CDN
+description: Olimpia CDN sirve tus apps desde el punto más cercano a cada usuario. Métricas por app, caché de respuestas opcional y purga por dominio o por prefijo.
+sidebar:
+  label: Introducción
+  icon: earth
+---
+
+Todo el tráfico web de tus apps pasa por Olimpia CDN, que lo atiende desde el punto más cercano a cada usuario y responde desde su caché lo que se puede cachear. No hay nada que instalar: cada app lo tiene en su subdominio de `olimpia.cc` y en sus [dominios propios](/apps/dominios).
+
+## Dónde está
+
+- **CDN**, en la barra lateral del proyecto, lista todas las apps con sus dominios, sus pedidos y cuánto salió de la caché.
+- La pestaña **CDN** de cada app tiene el detalle, la caché de respuestas y la purga.
+
+## Métricas
+
+| Dato | Qué es |
+| --- | --- |
+| **Pedidos** | Los pedidos que recibió la app, sumando su subdominio y sus dominios propios. |
+| **Desde la caché** | El porcentaje de pedidos que Olimpia CDN respondió sin llegar a tu app. |
+| **Tráfico** | Los bytes enviados a tus visitantes. |
+| **Servido desde la caché** | Cuánto de ese tráfico salió de la caché. |
+
+Elegí el período: 24 horas o 7 días. Los números pueden tardar unos minutos en actualizarse, y una app empieza a contar cuando tiene un dominio publicado.
+
+La pestaña de la app suma **Rutas que llegan a tu app**: las diez rutas con más pedidos que no salieron de la caché. Es por donde conviene empezar si querés cachear más.
+
+## Qué se cachea
+
+Sin tocar nada, Olimpia CDN cachea los archivos estáticos (imágenes, JS, CSS, fuentes) y respeta el `Cache-Control` con el que los sirve tu app. El HTML y las respuestas de tu API llegan siempre a tu app.
+
+## Cachear respuestas dinámicas [#respuestas-dinamicas]
+
+Para cachear también el HTML y las respuestas de la API, prendé **Cachear respuestas dinámicas** en la pestaña **CDN** de la app y marcá en tu código lo que se puede guardar:
+
+```txt
+Cache-Control: public, s-maxage=60
+```
+
+Con la opción prendida:
+
+- **Solo se cachea lo que trae `Cache-Control`.** Una respuesta sin esa cabecera no se cachea, ni siquiera un archivo estático.
+- **`Vary` no se tiene en cuenta.** No marques como `public` una respuesta que cambia según la cookie o el idioma.
+- **Cada deploy purga la caché de la app**, así la versión nueva no convive con respuestas viejas.
+
+El cambio se aplica en menos de un minuto, al prender y al apagar.
+
+:::warning
+Nunca marques como `public` una respuesta con datos de un usuario: la caché se la serviría a cualquiera que pida la misma URL.
+:::
+
+## Purgar la caché
+
+En la pestaña **CDN** de la app:
+
+- **Purgar todo** borra lo que Olimpia CDN guardó de esa app en todos sus dominios.
+- **Purgar prefijo** borra solo lo que empieza con una ruta, por ejemplo `/blog`. El prefijo empieza con `/` y no lleva espacios, `?`, `#` ni `*`.
+
+La purga puede tardar unos segundos en llegar a todo el mundo. Cada cuenta puede purgar hasta 10 veces cada 10 minutos.
+
+## Desde la API
+
+Con un [token personal](/cuenta/tokens):
+
+| Método | Ruta | Qué hace |
+| --- | --- | --- |
+| `GET` | `/apps/cdn?project={id}&period=day` | Tráfico de cada app del proyecto. `period` es `day` o `week`. |
+| `GET` | `/apps/{id}/cdn?period=day` | Detalle de una app, con las rutas que llegan a ella. |
+| `PUT` | `/apps/{id}/cdn` | Prende o apaga la caché de respuestas: `{"cache": true}`. |
+| `POST` | `/apps/{id}/cdn/purge` | Purga todo, o un prefijo con `{"prefix": "/blog"}`. |
+
+El [servidor MCP](/agentes/herramientas) todavía no tiene herramientas para la CDN.

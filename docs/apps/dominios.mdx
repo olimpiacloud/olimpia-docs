@@ -7,17 +7,19 @@ sidebar:
 
 ## Tu subdominio de Olimpia
 
-Cada app responde en `https://<subdominio>.olimpia.cc`, con HTTPS incluido. Por defecto el subdominio es el nombre de la app; lo cambiás en **Dominios** o en **Configuración**.
+Cada app responde en `https://<subdominio>.olimpia.cc`, con HTTPS incluido. Por defecto el subdominio es el nombre de la app; lo cambiás en **Configuración**.
 
 :::warning
 Al cambiar el subdominio, la dirección anterior deja de responder en el momento.
 :::
 
+Si tu app solo usa dominios propios, podés desactivar el subdominio de Olimpia desde **Configuración → Dominios**: la app deja de responder ahí, el subdominio queda reservado para vos y lo restaurás cuando quieras.
+
 ## Agregar un dominio propio
 
 <Steps>
   <Step title="Agregá el dominio">
-    En **Dominios → Agregar dominio**, escribí el dominio o subdominio, por ejemplo `app.tuempresa.com`.
+    En **Configuración → Dominios**, tocá **Agregar dominio** y escribí el dominio o subdominio, por ejemplo `app.tuempresa.com`.
   </Step>
   <Step title="Cargá los registros DNS">
     La consola te muestra los registros a crear en tu proveedor de DNS:
@@ -25,12 +27,14 @@ Al cambiar el subdominio, la dirección anterior deja de responder en el momento
     | Tipo | Nombre | Valor |
     | --- | --- | --- |
     | `CNAME` | `app` | `domains.olimpia.cc` |
-    | `TXT` | (el que indique la consola) | (el que indique la consola) |
+    | `TXT` | `_olimpia.app` | (el que indique la consola) |
 
-    El `TXT` es opcional: sirve para validar el dominio antes de apuntar el `CNAME`, útil si estás migrando un dominio que ya tiene tráfico.
+    El `TXT` de `_olimpia` es obligatorio: prueba que el dominio es tuyo. Hasta que Olimpia lo ve, no emite el certificado ni le manda tráfico a tu app. Alcanza con que lo vea una vez.
+
+    Si estás migrando un dominio que ya tiene tráfico, cargá primero ese `TXT`. Una vez verificado, la consola puede mostrarte otro `TXT`, opcional, para validar el certificado antes de apuntar el `CNAME`.
   </Step>
   <Step title="Esperá la verificación">
-    Olimpia revisa el DNS cada 30 segundos, aunque cierres la página. Cuando el DNS apunta bien, emite el certificado HTTPS; suele tardar unos minutos. El dominio pasa por **Esperando DNS → Emitiendo certificado → Activo**.
+    Olimpia revisa el DNS cada 30 segundos, aunque cierres la página. Cuando ve el `TXT` y el `CNAME` apunta bien, emite el certificado HTTPS; suele tardar unos minutos. El dominio pasa por **Esperando DNS → Emitiendo certificado → Activo**.
   </Step>
 </Steps>
 

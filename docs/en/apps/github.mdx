@@ -53,6 +53,8 @@ Create one app for each service in the repository, all pointing to the same repo
 
 If a service needs files outside its folder (shared workspace packages), leave the root folder empty and use a `Dockerfile` at the root of the repository.
 
+To keep a push from redeploying every app in the repository, set **Watch paths** in each app's **Settings** (for example `apps/web, packages/ui`): a push only redeploys the app when it touches one of those paths. When empty, every push redeploys.
+
 ## Permissions and access [#permisos-y-acceso]
 
 - Olimpia only sees the repositories you enabled in the GitHub App, and of those, only the ones your GitHub user can read.

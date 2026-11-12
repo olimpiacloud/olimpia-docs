@@ -13,6 +13,8 @@ Cada deploy guarda su log de build. Mientras construye lo ves en vivo; cuando te
 
 La pestaña **Logs** muestra lo que tu app escribe en stdout y stderr, en vivo y con búsqueda. Para que aparezcan, tu app tiene que escribir sus logs ahí, no en archivos.
 
+La sección **Logs** del proyecto junta las líneas de todas sus apps en un solo lugar. Filtrá con `level:error`, `service:api` o `-healthcheck`, mirá los picos junto a los deploys y abrí cada línea con sus atributos.
+
 ```js
 console.log(JSON.stringify({ level: "info", msg: "pedido creado", id }));
 ```

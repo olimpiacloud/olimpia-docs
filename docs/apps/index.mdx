@@ -34,7 +34,8 @@ Una app de Olimpia es un contenedor que corre tu código y responde en `https://
 - **[Variables de entorno](/apps/variables) cifradas**, disponibles en el build y al correr.
 - **[Logs y métricas](/apps/logs-y-metricas)**: el log de cada build, los logs de la app en vivo y CPU, memoria y disco de los últimos 7 días.
 - **[Red interna](/plataforma/red-interna)** hacia tus bases Postgres y Redis.
-- **Sin topes de recursos.** Las apps no tienen límite fijo de CPU ni de memoria: usan lo que necesitan y pagás por uso.
+- **[Olimpia CDN](/cdn) y [Analytics](/apps/logs-y-metricas#analytics)** en cada app, sin instalar nada.
+- **Pago por uso.** Cada app corre con hasta 4 GB de memoria y 4 vCPU, y pagás solo lo que usa. Ver [Límites](#límites).
 
 ## Lo que tu app necesita
 
@@ -49,9 +50,24 @@ Cada app tiene estas pestañas:
 
 | Pestaña | Para qué |
 | --- | --- |
+| **Resumen** | El deploy actual, la actividad reciente, los dominios, los recursos conectados y el uso de CPU y memoria. |
 | **Deploys** | Historial, estado, log del build y rollback. |
 | **Logs** | Salida de la app en vivo, con búsqueda. |
-| **Métricas** | CPU, memoria y lecturas y escrituras de disco. |
 | **Variables** | Variables de entorno y conexión a las bases del proyecto. |
-| **Dominios** | Tu subdominio de `olimpia.cc` y tus dominios propios. |
-| **Configuración** | Rama, carpeta raíz, Dockerfile, puerto, deploy automático y borrado. |
+| **Métricas** | CPU, memoria y lecturas y escrituras de disco. |
+| **Analytics** | Visitas, páginas, orígenes y Core Web Vitals. |
+| **CDN** | Pedidos, tráfico, caché de respuestas y purga. Ver [CDN](/cdn). |
+| **Configuración** | Origen, rama, carpeta raíz, Dockerfile, builder, puerto, deploy automático, dominios y borrado. |
+
+## Límites
+
+| Límite | Valor |
+| --- | --- |
+| Memoria | 4 GB por app. Si el proceso la supera, se corta y la app se reinicia. |
+| CPU | 4 vCPU por app. |
+| Disco del contenedor | Temporal. Una app que escribe más de 5 GB en su contenedor se recrea. |
+| Apps | 20 por cuenta. |
+| Variables | 200 por app, de hasta 32 KB cada una. |
+| Dominios propios | 10 por app. |
+
+Los límites son iguales en todos los planes. Los precios están en [Precios y facturación](/cuenta/facturacion).

@@ -50,9 +50,13 @@ Request bodies use JSON (`content-type: application/json`). Errors return an HTT
 | `POST` | `/apps/{id}/deployments` | Deploys. See below. |
 | `POST` | `/apps/{id}/deployments/{deployment}/cancel` | Cancels a queued or building deploy. |
 | `GET` | `/apps/{id}/deployments/{deployment}/log` | Build log. |
-| `GET` | `/apps/{id}/logs` | App logs. |
+| `GET` | `/apps/logs?project={id}&app={id}` | Logs for one app; without `app`, for every app in the project. |
 | `GET` | `/apps/{id}/metrics` | CPU, memory, and disk metrics. |
+| `GET` | `/apps/{id}/analytics?period=week` | Visits and Core Web Vitals. `period` is `day`, `week`, or `month`. |
+| `GET` | `/apps/{id}/cdn?period=day` | Traffic and caching for the app. See [CDN](/cdn#desde-la-api). |
 | `GET` | `/apps/{id}/domains` | Custom domains. |
+| `POST` | `/apps/{id}/domains` | Adds a domain: `{"hostname": "app.tuempresa.com"}`. |
+| `DELETE` | `/apps/{id}/domains/{domain}` | Removes a domain. |
 | `POST` | `/apps/{id}/domains/{domain}/check` | Checks a domain now. |
 
 ### Create an app [#crear-una-app]

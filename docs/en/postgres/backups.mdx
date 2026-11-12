@@ -7,7 +7,7 @@ sidebar:
   label: Backups
   icon: archive-restore
 ---
-Olimpia keeps its own daily backups of every database. You can also schedule backups to **your own bucket**, so your data stays under your control, with your provider and your retention policy.
+You schedule the backups of each database yourself: to an Olimpia bucket or to **your own bucket**, so your data stays under your control, with your provider and your retention policy. A database with no backups configured has no copies, so set them up as soon as you create it.
 
 ## Set up [#configurar]
 
@@ -63,7 +63,7 @@ gunzip -c backup.sql.gz | psql "postgresql://app:<contraseña>@pg-<id>.db.olimpi
 
 ## Back up now [#hacer-un-backup-ahora]
 
-**Back up now** runs a backup immediately, without waiting for the next scheduled time. This is useful before a large migration.
+**Back up now** runs a backup immediately, without waiting for the next scheduled time. This is useful before a large migration. You can run one every 10 minutes per database.
 
 ## Disable [#desactivar]
 

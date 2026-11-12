@@ -52,6 +52,8 @@ Creá una app por cada servicio del repositorio, todas apuntando al mismo repo c
 
 Si un servicio necesita archivos de fuera de su carpeta (paquetes compartidos del workspace), dejá la carpeta raíz vacía y usá un `Dockerfile` en la raíz del repositorio.
 
+Para que un push no redespliegue todas las apps del repositorio, cargá **Rutas que redespliegan** en la **Configuración** de cada app (por ejemplo `apps/web, packages/ui`): un push solo la redespliega si toca alguna de esas rutas. Vacío, cada push redespliega.
+
 ## Permisos y acceso
 
 - Olimpia solo ve los repositorios que habilitaste en la GitHub App, y de esos, solo los que tu usuario de GitHub puede leer.

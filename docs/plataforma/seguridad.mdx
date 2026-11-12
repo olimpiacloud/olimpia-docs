@@ -7,7 +7,7 @@ sidebar:
 
 ## En el borde
 
-- **Todo el tráfico web pasa por Cloudflare.** Tus apps reciben HTTPS automático en `*.olimpia.cc` y en tus dominios propios, con protección contra ataques en el borde. El origen solo acepta conexiones de Cloudflare.
+- **Todo el tráfico web pasa por Olimpia CDN.** Tus apps reciben HTTPS automático en `*.olimpia.cc` y en tus dominios propios, con protección contra ataques en el borde. Los servidores de la región solo aceptan tráfico web que viene de ahí.
 - **Bases detrás de un proxy.** El acceso externo a Postgres y Redis entra por un proxy TCP con protección anti-DDoS y límites por IP de conexiones abiertas y nuevas. TLS es obligatorio: una conexión sin cifrar se corta.
 - **La dirección de la región no es pública.** Ningún registro DNS apunta directo a los servidores donde corren tus recursos.
 
@@ -22,13 +22,15 @@ sidebar:
 
 - **Postgres sin superusuario para vos ni para el explorador.** Tu usuario `app` es dueño de su base pero no superusuario. El explorador de la consola se conecta con ese mismo usuario, en transacciones de solo lectura.
 - **Redis sin comandos de administración.** El usuario `default` no puede usar `CONFIG`, `ACL`, `SHUTDOWN` ni otros comandos de administración.
-- **Backups.** Olimpia guarda sus propias copias diarias, y además podés [programar backups en tu propio S3](/postgres/backups).
+- **Backups bajo tu control.** Programás [backups de Postgres](/postgres/backups) en un bucket de Olimpia o en tu propio S3, con la frecuencia y la retención que elijas.
+- **Recursos acotados por servicio.** Cada app, base e instancia de Redis corre con su propio techo de memoria y CPU, así un servicio no deja sin recursos a los demás.
 
 ## Tu cuenta
 
 - Entrás con email y contraseña o con GitHub.
 - Ves y cerrás tus sesiones abiertas desde la consola.
 - Los intentos de inicio de sesión tienen límites por IP y por cuenta.
+- En **Cuenta → Actividad** ves lo que se hizo en tu cuenta desde la consola, la API o tus agentes: qué, cuándo y desde dónde.
 - Los agentes se conectan con [OAuth 2.1 y PKCE](/agentes/seguridad) o con tokens personales que podés revocar cuando quieras.
 
 ## Reportar un problema

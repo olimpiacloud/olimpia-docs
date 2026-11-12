@@ -1,7 +1,7 @@
 ---
 title: Tools
 description: >-
-  Reference for the 35 tools in the Olimpia MCP server, with their parameters
+  Reference for the 37 tools in the Olimpia MCP server, with their parameters
   and what they return.
 sidebar:
   label: Tools
@@ -11,7 +11,7 @@ All tools accept names or ids (`app: "web"` or the UUID), and `project` is optio
 
 :::note[Conventions]
 - **Names**: 3 to 63 characters, using lowercase letters, numbers, and hyphens.
-- **`kind`**: `postgres`, `redis`, or `bucket`.
+- **`kind`**: `postgres`, `redis`, `bucket`, or `email`.
 - Read tools are marked `readOnly`; delete tools are marked `destructive`.
 :::
 
@@ -49,7 +49,7 @@ Details of an app: URL, source, build settings, connected databases, domains, an
 
 ### `get_usage`
 
-Current usage of a project: apps online and building, objects and bytes in buckets, email domains, and recipients sent this month.
+Current usage of a project: apps online and building, objects and bytes in buckets, email domains, and recipients sent this month, against the monthly quota. To estimate what it costs, use [`estimate_cost`](#costos).
 
 ## Deploy [#desplegar]
 
@@ -65,7 +65,8 @@ Creates an app. With `source=upload` (the default), the response includes the co
 | `branch` | string | For `github`: the branch to deploy. Each push redeploys. |
 | `image` | string | For `image`: for example `nginx:1.29`. |
 | `root_dir` | string | Subfolder to build, for monorepos. |
-| `dockerfile` | string | Path to the Dockerfile, relative to `root_dir`. |
+| `dockerfile` | string | Path to the Dockerfile, relative to `root_dir`. Without it, Railpack detects the stack. |
+| `builder` | `default` \| `acropolis` | Optional. `default` uses the Dockerfile when there is one and Railpack otherwise. `acropolis` builds with [Acropolis](/productos/acropolis), which ignores the Dockerfile; if it cannot build the app, the build falls back to the default builder. |
 | `port` | number | Port the app listens on (3000 by default). |
 | `env` | object | Variables to load before the first build. |
 | `server` | string | Advanced, usually omitted. The project's server; it can only change if the project has no apps or databases yet. |
@@ -137,11 +138,17 @@ Changes an app's settings. Build changes apply on the next deploy.
 
 | Parameter | Type | |
 | --- | --- | --- |
+| `app` | string | Name or id. |
 | `subdomain` | string | New subdomain on `olimpia.cc`. |
+| `olimpia_domain` | boolean | `false` stops serving the app at `<subdominio>.olimpia.cc`: custom domains keep working and the subdomain stays reserved. `true` serves it again. |
+| `source` | `upload` \| `github` \| `image` | Switches the app to another source. `github` requires `repo` and `image` requires `image`. |
+| `repo` | string | For `github`: `owner/name`, to switch to that repository. |
 | `branch` | string | GitHub branch. |
 | `image` | string | Docker image. |
-| `root_dir`, `dockerfile`, `port` | | Same as in `create_app`. |
+| `root_dir`, `dockerfile`, `builder`, `port` | | Same as in `create_app`. |
+| `watch_paths` | string[] | Paths from the repository root (`apps/web`, `packages/ui`, `bun.lock`): a push only redeploys the app when it touches one of them. When empty, every push redeploys; with `builder: "acropolis"`, only when the files the image depends on change. |
 | `auto_deploy` | boolean | Redeploy on every push. |
+| `confirm` | string | Required when changing `source`, `repo`, or `image`: the exact app name, after the person approved the change. |
 
 ### `get_env`
 
@@ -164,7 +171,7 @@ Creates a project.
 | Parameter | Type | |
 | --- | --- | --- |
 | `name` | string | |
-| `server` | string | Optional and advanced. Without it, Olimpia picks the server automatically (currently `olimpia-bue1`). See [Projects](/cuenta/proyectos#servidor). |
+| `server` | string | Optional and advanced. Without it, Olimpia picks the server automatically. See [Projects](/cuenta/proyectos#servidor). |
 
 ### `create_environment`
 
@@ -188,6 +195,7 @@ Creates a Postgres database, a Redis instance, a bucket, or an email domain. Ret
 | `name` | string | For `email`, the domain you send from (`mail.tuempresa.com`). |
 | `connect_to_app` | string | Optional. Also loads the variables into that app. |
 | `vector` | boolean | Postgres only. `true` creates it with pgvector (`CREATE EXTENSION vector`); `false` by default. Cannot be changed later. |
+| `public` | boolean | Postgres and Redis only. `true` exposes it to the internet over TLS at `*.db.olimpia.cc`; `false` by default: only the account's apps can reach it. Change it later with `set_public_access`. |
 
 ### `get_connection`
 
@@ -215,7 +223,7 @@ If the app already has a variable with the default name, the new ones get the re
 
 ### `set_public_access`
 
-Exposes or hides a database or a bucket (does not apply to email domains). For Postgres and Redis, `public: true` allows TLS connections from the internet. For a bucket, it makes objects readable by URL.
+Exposes or hides a database or a bucket (does not apply to email domains). For Postgres and Redis, `public: true` allows TLS connections from the internet. For a bucket, it makes objects readable by URL. Parameters: `kind`, `name`, and `public`. With `public: true` it requires `confirm` set to the exact resource name, after the person approved it.
 
 ### `list_tables`
 
@@ -253,6 +261,8 @@ Schedules backups of a database to an Olimpia bucket or to any S3. Olimpia tests
 | `region` | string | For the external S3. `auto` by default. |
 | `schedule` | string | Five-field cron in UTC, with a fixed minute. `0 3 * * *` by default. |
 | `keep` | number | How many backups to keep, from 1 to 90. 7 by default. |
+| `folder` | string | Folder inside the bucket (letters, numbers, `-`, and `_`). `backups` by default. |
+| `confirm` | string | Required with `endpoint`: the exact database name, after the person approved sending its backups to that external S3. |
 
 ### `run_backup`
 
@@ -266,7 +276,7 @@ Stops backing up a database. Files already in the bucket are not deleted. Requir
 
 ### `add_domain`
 
-Adds a custom domain to an app and returns the DNS records you need to create. Parameters: `app`, `domain`.
+Adds a custom domain to an app and returns the DNS records the person must create at their DNS provider: a `CNAME` and a `TXT` record that proves they own the domain. Parameters: `app`, `domain`.
 
 ### `check_domain`
 
@@ -300,6 +310,22 @@ Real visits to an app, measured in its visitors' browsers on all HTML pages of i
 | --- | --- | --- |
 | `app` | string | App name or id. |
 | `period` | string | `day` (24 hours, hourly), `week` (default, daily), or `month` (30 days, daily). |
+
+## Costs [#costos]
+
+### `estimate_cost`
+
+Simulates the approximate monthly cost of a setup from its expected average usage, before or after deploying it. Usage is billed by what is really used, measured every minute: memory, CPU, Postgres disk, bucket storage, and emails. Builds, certificates, domains, logs, and metrics are free.
+
+| Parameter | Type | |
+| --- | --- | --- |
+| `memory_gb` | number | Average memory, in GB, used by all the apps, Postgres, and Redis together, without the file cache. An idle Node, Bun, or Python app uses about 0.1 to 0.3 GB; an idle Postgres or Redis, about 0.05 to 0.2 GB. |
+| `vcpu` | number | Average vCPUs actually used (not reserved) by all of them together. A mostly idle app uses 0.01 or less; one that is busy all day, 0.2 to 1. |
+| `disk_gb` | number | GB stored in Postgres databases. |
+| `bucket_gb` | number | GB stored in buckets. |
+| `emails` | number | Email recipients per month. |
+
+All of them are optional and `project` is not needed. It returns each line in USD (`lines`, with `kind`, `quantity`, `unit`, `usd_per_unit`, and `usd`), the usage total (`usage_usd`), and what each plan would charge (`monthly_usd.hobby` and `monthly_usd.pro`): Hobby, USD 5 per month with USD 5 of usage included, and Pro, USD 20 per month with USD 20, paying for the usage above what is included. It is an estimate: real usage varies with traffic. See [Pricing and billing](/cuenta/facturacion).
 
 ## Delete [#borrar]
 

@@ -1,37 +1,37 @@
 {
   "files": {
     "docs/(ayuda)/faq.mdx": {
-      "en": "0c92250021e1c662"
+      "en": "e7426b79e0d5b8fd"
     },
     "docs/(ayuda)/meta.ts": {
       "en": "872739e59f18315c"
     },
     "docs/(ayuda)/novedades.mdx": {
-      "en": "5f25193164bb61ad"
+      "en": "c95285ce55c199f7"
     },
     "docs/(empezar)/conceptos.mdx": {
-      "en": "8e56fb915c982106"
+      "en": "1990cdb45226912f"
     },
     "docs/(empezar)/introduccion.mdx": {
-      "en": "c7ca8d7f04ef86d4"
+      "en": "4e55e9b362ddc069"
     },
     "docs/(empezar)/meta.ts": {
       "en": "2b7eb0075cd3e27f"
     },
     "docs/(empezar)/primeros-pasos.mdx": {
-      "en": "2ee0d78121e0f03c"
+      "en": "4173f40a0dac74dd"
     },
     "docs/agentes/conectar.mdx": {
-      "en": "d6580def283a6932"
+      "en": "b84c7df4882274c7"
     },
     "docs/agentes/flujos.mdx": {
-      "en": "e6aaeea6f768acb9"
+      "en": "6f36d29be87067e5"
     },
     "docs/agentes/herramientas.mdx": {
-      "en": "d9ad51a232c59ed0"
+      "en": "d6aecc40aaa6cbb0"
     },
     "docs/agentes/index.mdx": {
-      "en": "64265b9047d2084c"
+      "en": "9acf225bd13a2eaa"
     },
     "docs/agentes/meta.ts": {
       "en": "d6c68217c3eb264d"
@@ -40,7 +40,7 @@
       "en": "8262e828e1606670"
     },
     "docs/agentes/seguridad.mdx": {
-      "en": "843c5fef49e0cf58"
+      "en": "feb9507ce778567d"
     },
     "docs/apps/builds.mdx": {
       "en": "7338b9ff41cb1f38"
@@ -55,28 +55,28 @@
       "en": "17f89b6c79181307"
     },
     "docs/apps/dominios.mdx": {
-      "en": "3900249327586d8f"
+      "en": "9633daa86fdf676c"
     },
     "docs/apps/github.mdx": {
-      "en": "78e022d91ca3a805"
+      "en": "5d5de21a90cf17b3"
     },
     "docs/apps/index.mdx": {
-      "en": "a193bdc9a1a82de9"
+      "en": "9a3ef32d22ca03bc"
     },
     "docs/apps/logs-y-metricas.mdx": {
-      "en": "d6292d4800ab1da9"
+      "en": "aa96b95ed876d285"
     },
     "docs/apps/meta.ts": {
       "en": "41d84707ace9a178"
     },
     "docs/apps/problemas.mdx": {
-      "en": "c2ceedaf087ecf30"
+      "en": "ef82ec907c81b180"
     },
     "docs/apps/subir-codigo.mdx": {
       "en": "43e1711c60d5f291"
     },
     "docs/apps/templates.mdx": {
-      "en": "4c2060d67e404c1a"
+      "en": "c3d12ff7dbce5c76"
     },
     "docs/apps/variables.mdx": {
       "en": "74d4d0f5e6387785"
@@ -88,43 +88,52 @@
       "en": "2d4711646a02b71f"
     },
     "docs/buckets/index.mdx": {
-      "en": "0546a9c77b1f7b4e"
+      "en": "0ea26680ca488f49"
     },
     "docs/buckets/meta.ts": {
       "en": "50ac5fd9004109be"
+    },
+    "docs/cdn/index.mdx": {
+      "en": "6da8c40770b9a00d"
+    },
+    "docs/cdn/meta.ts": {
+      "en": "42bf3b03f571dfe2"
     },
     "docs/cuenta/ambientes.mdx": {
       "en": "c839c689f4503650"
     },
     "docs/cuenta/api.mdx": {
-      "en": "2d87b55b953ddcee"
+      "en": "c9d198b3370cc3b4"
+    },
+    "docs/cuenta/facturacion.mdx": {
+      "en": "7b629ed81c83aa5f"
     },
     "docs/cuenta/index.mdx": {
       "en": "8e245c7267fca499"
     },
     "docs/cuenta/meta.ts": {
-      "en": "3c48601b8965b324"
+      "en": "63e7b7a169108eb2"
     },
     "docs/cuenta/proyectos.mdx": {
-      "en": "517938fbfb4c0004"
+      "en": "5abf6c6a11071d6e"
     },
     "docs/cuenta/tokens.mdx": {
-      "en": "edde01ae19dfad89"
+      "en": "b0b738e23a9182bc"
     },
     "docs/email/enviar.mdx": {
       "en": "5b798789cefea549"
     },
     "docs/email/index.mdx": {
-      "en": "00f562748bff1eda"
+      "en": "a576279b1f489554"
     },
     "docs/email/meta.ts": {
       "en": "ea9fd01e22ddadcc"
     },
     "docs/plataforma/buenos-aires.mdx": {
-      "en": "4de53962f0b34232"
+      "en": "4f93df442421a8a9"
     },
     "docs/plataforma/index.mdx": {
-      "en": "683d1846aef12923"
+      "en": "0adbe7d536497216"
     },
     "docs/plataforma/meta.ts": {
       "en": "a36176baf0073588"
@@ -133,10 +142,10 @@
       "en": "0fafb8bf0706dc20"
     },
     "docs/plataforma/seguridad.mdx": {
-      "en": "02bc868979176530"
+      "en": "7eaf70420899dbc8"
     },
     "docs/postgres/backups.mdx": {
-      "en": "8002359b94b9aab5"
+      "en": "893ae216da65d75e"
     },
     "docs/postgres/conexion.mdx": {
       "en": "18f15ef20f1da034"
@@ -145,7 +154,7 @@
       "en": "913c93d8f64e3a2e"
     },
     "docs/postgres/index.mdx": {
-      "en": "24e4f52d26088d0e"
+      "en": "9c1a59f6509f23d0"
     },
     "docs/postgres/logs-y-metricas.mdx": {
       "en": "80c06d2528d3ed58"
@@ -165,35 +174,29 @@
     "docs/productos/meta.ts": {
       "en": "282f5a7eed0585bb"
     },
-    "docs/proximamente/cdn.mdx": {
-      "en": "99930a7ebead4ed0"
-    },
     "docs/proximamente/equipos.mdx": {
       "en": "3cf1038bdf7a3287"
     },
-    "docs/proximamente/facturacion.mdx": {
-      "en": "aa7f97a1e027c8c9"
-    },
     "docs/proximamente/index.mdx": {
-      "en": "28407e79f302776c"
+      "en": "eceb4ae613c00dda"
     },
     "docs/proximamente/meta.ts": {
-      "en": "1cd70cbdbbd74a75"
+      "en": "40d115e8ef4bf557"
     },
     "docs/proximamente/regiones.mdx": {
-      "en": "5868c4ce4c2f9941"
+      "en": "8593cdbb3f1b3b85"
     },
     "docs/proximamente/replicas.mdx": {
-      "en": "cb61f53d521fbe76"
+      "en": "12ff5a753259bbe4"
     },
     "docs/proximamente/stream.mdx": {
-      "en": "099f8d3ed2d16703"
+      "en": "61a713c57360f62f"
     },
     "docs/redis/conexion.mdx": {
       "en": "895af6c5791dbb49"
     },
     "docs/redis/index.mdx": {
-      "en": "3e27be41b268e4d2"
+      "en": "5faccadd10fb474e"
     },
     "docs/redis/meta.ts": {
       "en": "79f8667c6fb7614c"

@@ -62,11 +62,11 @@ Empezá por el deploy que falló: abrilo en **Deploys** y leé el error y el fin
 
 ## Veo una página de Olimpia en lugar de mi app
 
-Esa página aparece cuando el subdominio no tiene un deploy online: la app todavía no terminó su primer deploy, no existe o cambió de subdominio. Revisá la dirección actual en **Dominios**.
+Esa página aparece cuando el subdominio no tiene un deploy online: la app todavía no terminó su primer deploy, no existe o cambió de subdominio. Revisá la dirección actual en **Configuración → Dominios**.
 
 ## Dominio propio que no se activa
 
-La consola muestra qué registros espera y qué encuentra. Los cambios de DNS pueden tardar unos minutos en propagarse. Un `CNAME` en la raíz del dominio necesita CNAME flattening o ALIAS. Ver [Dominios](/apps/dominios).
+La consola muestra qué registros espera y qué encuentra. Sin el `TXT` de `_olimpia`, que prueba que el dominio es tuyo, el dominio no avanza. Los cambios de DNS pueden tardar unos minutos en propagarse. Un `CNAME` en la raíz del dominio necesita CNAME flattening o ALIAS. Ver [Dominios](/apps/dominios).
 
 ## ¿Seguís trabado?
 

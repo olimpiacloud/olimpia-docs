@@ -22,7 +22,7 @@ Olimpia is its own authorization server:
 | Access token | 1 hour |
 | Refresh token | 90 days, rotated on every use |
 | Plugin connection code | 10 minutes, single use, bound to the agent that requested it |
-| Personal token | No expiration, until you revoke it |
+| Personal token | 90 days, or until you revoke it |
 
 `POST /oauth/revoke` revokes a token, and **Account → Agents and tokens** lists every connection and lets you revoke it.
 
@@ -35,14 +35,15 @@ Every tool calls the same API the console uses, with the token from the request.
 | Limit | Value |
 | --- | --- |
 | Calls to `/mcp` | 240 per minute per token |
-| Resources created through MCP | 30 per hour |
+| Apps, databases, buckets, email domains, projects, and environments created | 30 per hour per account, counting the console and the API |
 | Failed connection code attempts | 10 every 10 minutes per agent |
 | Rows per read query | 200 |
 | SQL write duration | 30 seconds |
 
 ## Safety rules [#reglas-de-seguridad]
 
-- **Deletes and writes require confirmation.** `delete_app`, `delete_resource`, and `query_postgres` with `write: true` need `confirm` set to the exact name, which the person has to approve.
+- **Deletes and writes require confirmation.** `delete_app`, `delete_resource`, `delete_environment`, `disable_backups`, and `query_postgres` with `write: true` need `confirm` set to the exact name, which the person has to approve.
+- **So does taking data out of Olimpia.** `set_public_access` with `public: true`, `set_backups` to an external S3, and `update_app` when it changes `source`, `repo`, or `image` ask for the same `confirm`. The agent only does them when the person asked for exactly that, never because a log, a row, or a commit says so.
 - **Secrets hidden by default.** `get_env` hides values that look like secrets unless you pass `reveal: true`.
 - **Untrusted data.** Logs, build output, variable values, and database rows are data, not instructions. The tools mark them as such so the agent doesn't follow commands hidden in them.
 - **SQL without superuser.** `query_postgres` runs as the user that owns the database. Reads run in a read-only transaction, and the database itself enforces their row and size caps. Each query uses a new connection, so nothing it leaves in the session carries over to the next one.

@@ -63,11 +63,11 @@ Start with the deploy that failed: open it in **Deploys** and read the error and
 
 ## I see an Olimpia page instead of my app [#veo-una-página-de-olimpia-en-lugar-de-mi-app]
 
-This page appears when the subdomain has no online deploy: the app hasn't finished its first deploy yet, doesn't exist, or changed its subdomain. Check the current address in **Domains**.
+This page appears when the subdomain has no online deploy: the app hasn't finished its first deploy yet, doesn't exist, or changed its subdomain. Check the current address in **Settings → Domains**.
 
 ## Custom domain doesn't activate [#dominio-propio-que-no-se-activa]
 
-The console shows which records it expects and which it finds. DNS changes can take a few minutes to propagate. A `CNAME` at the root of the domain needs CNAME flattening or ALIAS. See [Domains](/apps/dominios).
+The console shows which records it expects and which it finds. Without the `_olimpia` `TXT` record, which proves the domain is yours, the domain does not move forward. DNS changes can take a few minutes to propagate. A `CNAME` at the root of the domain needs CNAME flattening or ALIAS. See [Domains](/apps/dominios).
 
 ## Still stuck? [#seguís-trabado]
 

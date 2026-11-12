@@ -1,6 +1,6 @@
 ---
 title: Región Buenos Aires
-description: Olimpia corre en Buenos Aires, en infraestructura de primer nivel. Qué significa para tu latencia, tus datos y tus usuarios.
+description: Olimpia corre en Buenos Aires. Qué significa para tus datos y tus usuarios, y cómo llega el tráfico a tus apps y tus bases.
 sidebar:
   label: Región BUE
   icon: map-pin
@@ -8,22 +8,22 @@ sidebar:
 
 ![Un templo dórico con racks de servidores entre sus columnas](/arte/infra.webp)
 
-Olimpia nace en Buenos Aires. La primera región, **BUE**, corre en un datacenter de la ciudad, sobre infraestructura de primer nivel. Tus apps, tus bases y tus instancias de Redis están ahí, una al lado de la otra.
+Olimpia nace en Buenos Aires. La primera región, **BUE**, corre en la ciudad: tus apps, tus bases y tus instancias de Redis están ahí, una al lado de la otra.
 
 ## Por qué importa
 
-- **Latencia local.** Si tus usuarios están en Argentina, tus respuestas no cruzan el continente para llegar a un servidor en Virginia o en San Pablo. Tu app y tu base están en la misma ciudad que la mayoría de tus usuarios.
+- **Cerca de tus usuarios.** Tu app y tu base corren en Buenos Aires, en el mismo país que tus usuarios de Argentina.
 - **App y base, juntas.** Las consultas entre tu app y su base viajan por la [red interna](/plataforma/red-interna) de la región, sin salir a internet.
 - **Tus datos, en el país.** Las bases Postgres y las instancias de Redis guardan sus datos en Buenos Aires.
 
 ## Cómo llega el tráfico
 
 ```txt
-navegador ── HTTPS ──▶ borde de Cloudflare ──▶ región BUE ──▶ tu app
+navegador ── HTTPS ──▶ Olimpia CDN         ──▶ región BUE ──▶ tu app
 cliente   ── TLS   ──▶ proxy TCP protegido ──▶ región BUE ──▶ tu base (si es pública)
 ```
 
-- **Web y APIs.** Todo el tráfico HTTP entra por la red de Cloudflare, que termina TLS cerca del usuario y filtra ataques antes de que lleguen a la región. El origen solo acepta conexiones que vienen de Cloudflare.
+- **Web y APIs.** Todo el tráfico HTTP entra por [Olimpia CDN](/cdn), que termina TLS cerca del usuario y filtra ataques antes de que lleguen a la región. Los servidores de la región solo aceptan tráfico web que viene de ahí.
 - **Bases con acceso externo.** Las conexiones a Postgres y Redis desde fuera de Olimpia entran por un proxy TCP con protección anti-DDoS, que reenvía por un túnel cifrado. La dirección de la región no aparece en ningún registro DNS.
 - **Builds.** El código se construye en máquinas aisladas, separadas de donde corren tus apps. Un build pesado no le quita CPU a tu producción.
 
@@ -36,10 +36,11 @@ cliente   ── TLS   ──▶ proxy TCP protegido ──▶ región BUE ─�
 | Redis 8 | <Badge variant="success">Disponible</Badge> |
 | Buckets S3 | <Badge variant="success">Disponible</Badge> (almacenamiento global) |
 | Email | <Badge variant="success">Disponible</Badge> |
-| Stream, CDN | <Badge variant="warning">Próximamente</Badge> |
+| CDN | <Badge variant="success">Disponible</Badge> |
+| Stream | <Badge variant="warning">Próximamente</Badge> |
 
 Los buckets usan almacenamiento de objetos distribuido globalmente, compatible con S3, así que tus archivos se sirven rápido también fuera de Argentina.
 
 ## Más regiones
 
-Dentro de la región, cada proyecto corre en un servidor; el principal es `olimpia-bue1` ([Proyectos](/cuenta/proyectos#servidor)). Olimpia está pensada para correr en varias regiones. Vamos a anunciar las próximas a medida que abran. Mirá [Próximamente](/proximamente/regiones).
+Dentro de la región, cada proyecto queda asignado a un servidor ([Proyectos](/cuenta/proyectos#servidor)). Olimpia está pensada para correr en varias regiones. Vamos a anunciar las próximas a medida que abran. Mirá [Próximamente](/proximamente/regiones).

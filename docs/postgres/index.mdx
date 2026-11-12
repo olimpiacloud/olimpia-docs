@@ -30,9 +30,9 @@ Una base Postgres de Olimpia es un Postgres 18 completo, con su propio usuario y
 - **Postgres 18**, con la base `app` y el usuario `app`, dueño de la base. Si la creaste con pgvector, también trae la extensión `vector`.
 - **Conexión interna** para tus apps y [acceso externo opcional](/postgres/conexion#acceso-externo) por TLS.
 - **[Explorador de datos](/postgres/explorador)** para ver tablas y filas desde la consola.
-- **[Backups en tu S3](/postgres/backups)**, programados, además de las copias diarias que guarda Olimpia.
+- **[Backups programados](/postgres/backups)** en un bucket de Olimpia o en tu propio S3.
 - **[Logs y métricas](/postgres/logs-y-metricas)**: errores, consultas lentas, CPU, memoria, conexiones y transacciones por segundo.
-- **Sin límite de tamaño.** Olimpia mide el almacenamiento cada minuto y cobra por uso.
+- **Disco por uso.** No elegís un tamaño de disco: Olimpia mide lo que ocupa la base cada minuto y cobra por GB.
 
 ## Lo que podés y no podés hacer
 
@@ -43,6 +43,16 @@ El usuario `app` es dueño de su base pero no es superusuario:
 | Crear tablas, índices, vistas, funciones y esquemas | `ALTER SYSTEM` ni cambiar la configuración del servidor |
 | Usar extensiones confiables: `pgcrypto`, `citext`, `pg_trgm`, `unaccent`, `hstore` y otras, y `vector` en las bases con pgvector | Instalar extensiones no confiables |
 | Correr migraciones con cualquier ORM | Crear otros superusuarios |
+
+## Límites
+
+| Límite | Valor |
+| --- | --- |
+| Memoria | 8 GB por base. |
+| CPU | 4 vCPU por base. |
+| Conexiones | 20 simultáneas con el usuario `app`. |
+
+Si varias apps comparten una base, repartí las conexiones entre sus pools: por ejemplo, un máximo de 8 en la API y 3 en un worker. Los precios están en [Precios y facturación](/cuenta/facturacion).
 
 ## Embeddings con pgvector
 

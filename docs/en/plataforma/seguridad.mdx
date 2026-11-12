@@ -8,7 +8,7 @@ sidebar:
 ---
 ## At the edge [#en-el-borde]
 
-- **All web traffic goes through Cloudflare.** Your apps get automatic HTTPS on `*.olimpia.cc` and on your custom domains, with attack protection at the edge. The origin only accepts connections from Cloudflare.
+- **All web traffic goes through Olimpia CDN.** Your apps get automatic HTTPS on `*.olimpia.cc` and on your custom domains, with attack protection at the edge. The region's servers only accept web traffic that comes from there.
 - **Databases behind a proxy.** External access to Postgres and Redis goes through a TCP proxy with anti-DDoS protection and per-IP limits on open and new connections. TLS is required: unencrypted connections are dropped.
 - **The region's address is not public.** No DNS record points directly to the servers where your resources run.
 
@@ -23,13 +23,15 @@ sidebar:
 
 - **Postgres without superuser access for you or the explorer.** Your `app` user owns its database but is not a superuser. The console explorer connects with that same user, in read-only transactions.
 - **Redis without admin commands.** The `default` user can't run `CONFIG`, `ACL`, `SHUTDOWN`, or other admin commands.
-- **Backups.** Olimpia keeps its own daily backups, and you can also [schedule backups to your own S3](/postgres/backups).
+- **Backups under your control.** You schedule [Postgres backups](/postgres/backups) to an Olimpia bucket or to your own S3, with the frequency and retention you choose.
+- **Resources capped per service.** Every app, database, and Redis instance runs with its own memory and CPU ceiling, so one service cannot starve the others.
 
 ## Your account [#tu-cuenta]
 
 - Sign in with email and password or with GitHub.
 - View and end your active sessions from the console.
 - Sign-in attempts are rate-limited per IP and per account.
+- **Account → Activity** shows what was done in your account from the console, the API, or your agents: what, when, and from where.
 - Agents connect with [OAuth 2.1 and PKCE](/agentes/seguridad) or with personal tokens that you can revoke at any time.
 
 ## Report a problem [#reportar-un-problema]

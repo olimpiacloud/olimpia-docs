@@ -14,6 +14,8 @@ Every deploy saves its build log. You can watch it live while the build runs. Wh
 
 The **Logs** tab shows what your app writes to stdout and stderr, live and searchable. Your app must write its logs there, not to files, for them to show up.
 
+The project's **Logs** section brings the lines of all its apps together in one place. Filter with `level:error`, `service:api`, or `-healthcheck`, see spikes next to deploys, and open each line with its attributes.
+
 ```js
 console.log(JSON.stringify({ level: "info", msg: "pedido creado", id }));
 ```

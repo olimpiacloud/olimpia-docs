@@ -8,7 +8,7 @@ sidebar:
 
 <Accordion>
   <AccordionItem title="¿Dónde corre Olimpia?">
-    En Buenos Aires, en infraestructura de primer nivel. Tus apps, bases e instancias de Redis corren en la región BUE; el tráfico web entra por la red de Cloudflare. Ver [Región BUE](/plataforma/buenos-aires).
+    En Buenos Aires. Tus apps, bases e instancias de Redis corren en la región BUE; el tráfico web entra por [Olimpia CDN](/cdn). Ver [Región BUE](/plataforma/buenos-aires).
   </AccordionItem>
   <AccordionItem title="¿Tengo que cambiar mi código?">
     No. Postgres y Redis son los de siempre y los buckets hablan la API de S3: tus drivers, ORMs y SDKs funcionan igual. Lo único que necesita tu app es escuchar en `0.0.0.0:$PORT`.
@@ -26,13 +26,13 @@ sidebar:
     Sí. Configurás un bucket de AWS S3, Cloudflare R2, Backblaze B2, MinIO o cualquier S3 y elegís la frecuencia. Ver [Backups en tu S3](/postgres/backups).
   </AccordionItem>
   <AccordionItem title="¿Puedo usar mi dominio?">
-    Sí, hasta 10 por app. Apuntás un CNAME a `domains.olimpia.cc` y el certificado se emite solo. Ver [Dominios](/apps/dominios).
+    Sí, hasta 10 por app. Apuntás un CNAME a `domains.olimpia.cc`, cargás el TXT que prueba que el dominio es tuyo y el certificado se emite solo. Ver [Dominios](/apps/dominios).
   </AccordionItem>
   <AccordionItem title="¿Mi agente puede desplegar por mí?">
     Sí. Olimpia tiene un servidor MCP para Claude Code, Codex, Cursor y cualquier cliente MCP. Ver [Para agentes](/agentes).
   </AccordionItem>
   <AccordionItem title="¿Cuánto cuesta?">
-    Olimpia cobra por uso. Durante el acceso anticipado no se pide tarjeta, y publicamos los precios antes de abrir la región.
+    Hobby cuesta USD 5 por mes con USD 5 de uso incluido, y Pro, USD 20 con USD 20. Pagás por la memoria, la CPU y el disco que tus servicios usan de verdad, medidos por minuto. Durante el acceso anticipado no se pide tarjeta para empezar. Ver [Precios y facturación](/cuenta/facturacion).
   </AccordionItem>
   <AccordionItem title="¿Cuándo abre Olimpia?">
     Estamos sumando a los primeros equipos. Pedí acceso en [olimpia.dev](https://olimpia.dev) y te escribimos apenas haya lugar.

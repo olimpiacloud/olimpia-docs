@@ -50,6 +50,8 @@ Each domain has its own key, which can only send from addresses on that domain. 
 - **3,000 recipients per month** per account, counting `to`, `cc`, and `bcc` across all your domains. A failed send doesn't count.
 - **Up to 50 recipients** per email and **up to 100 emails** per batch send.
 
+Every recipient counts as usage: USD 0.50 per 1,000. See [Pricing and billing](/cuenta/facturacion).
+
 ## Reputation [#reputación]
 
 All sends share the reputation of Olimpia's infrastructure, so we protect it per domain. In the domain details you can see sends, bounces, and complaints from the last 7 days. With 50 or more sends in those 7 days, if bounces exceed **10%** or complaints exceed **0.3%**, sending from that domain is suspended and the API responds with `403`. To reactivate it, email us at [hola@olimpia.dev](mailto:hola@olimpia.dev).

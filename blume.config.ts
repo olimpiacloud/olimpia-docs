@@ -19,6 +19,10 @@ export default defineConfig({
     { from: "/agentes/skill", to: "/agentes/conectar#skill" },
     { from: "/agentes/ci-y-tokens", to: "/agentes/conectar#ci-y-tokens" },
     { from: "/agentes/docs-para-agentes", to: "/agentes/conectar#docs-para-agentes" },
+    { from: "/proximamente/cdn", to: "/cdn" },
+    { from: "/proximamente/facturacion", to: "/cuenta/facturacion" },
+    { from: "/en/proximamente/cdn", to: "/en/cdn" },
+    { from: "/en/proximamente/facturacion", to: "/en/cuenta/facturacion" },
   ],
   agents: {
     llmsTxt: {

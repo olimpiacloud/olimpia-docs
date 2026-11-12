@@ -18,7 +18,7 @@ A personal token gives programmatic access to your account, with the same permis
     Under **Personal tokens**, enter a name that says where you'll use it (`github-actions`, `script-backups`) and click **Create token**.
   </Step>
   <Step title="Copy it now">
-    The token starts with `olimpia_pat_` and is shown only once. Store it in your CI's or your team's secrets manager.
+    The token starts with `olimpia_pat_` and is shown only once. Store it in your CI's or your team's secrets manager. It expires after 90 days: before that date, create a new one and replace it.
   </Step>
 </Steps>
 
@@ -40,7 +40,7 @@ For security reasons, some actions require a browser session and don't work with
 
 ## Revoke [#revocar]
 
-In **Agents and tokens**, you can see when each token was last used. **Revoke** invalidates it immediately. You can have up to 50 tokens.
+In **Agents and tokens**, you can see when each token was last used and when it expires. **Revoke** invalidates it immediately. You can have up to 50 tokens.
 
 :::warning
 A token has the same permissions as your account. Don't put it in your code, in a repository, or in the frontend.

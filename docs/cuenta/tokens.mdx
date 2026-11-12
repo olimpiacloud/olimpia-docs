@@ -17,7 +17,7 @@ Un token personal da acceso programático a tu cuenta, con los mismos permisos q
     En **Tokens personales**, poné un nombre que diga dónde lo vas a usar (`github-actions`, `script-backups`) y tocá **Crear token**.
   </Step>
   <Step title="Copialo ahora">
-    El token empieza con `olimpia_pat_` y se muestra una sola vez. Guardalo en el gestor de secretos de tu CI o de tu equipo.
+    El token empieza con `olimpia_pat_` y se muestra una sola vez. Guardalo en el gestor de secretos de tu CI o de tu equipo. Vence a los 90 días: antes de esa fecha, creá uno nuevo y reemplazalo.
   </Step>
 </Steps>
 
@@ -39,7 +39,7 @@ Por seguridad, algunas acciones necesitan una sesión en el navegador y no funci
 
 ## Revocar
 
-En **Agentes y tokens** ves cuándo se usó cada token por última vez. **Revocar** lo invalida al instante. Podés tener hasta 50 tokens.
+En **Agentes y tokens** ves cuándo se usó cada token por última vez y cuándo vence. **Revocar** lo invalida al instante. Podés tener hasta 50 tokens.
 
 :::warning
 Un token tiene los mismos permisos que tu cuenta. No lo pongas en el código, en un repositorio ni en el frontend.

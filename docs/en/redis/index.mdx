@@ -2,7 +2,7 @@
 title: Redis
 description: >-
   Persistent Redis 8 for caching, sessions, queues, and rate limiting, right
-  next to your apps, without losing keys when memory runs low.
+  next to your apps, with no key eviction.
 sidebar:
   label: Introduction
   icon: zap
@@ -24,8 +24,9 @@ An Olimpia Redis instance is your own Redis 8, persisted to disk and connected t
 
 - **Redis 8**, ready in seconds.
 - **Disk persistence** (AOF): if the instance restarts, your data is still there.
-- **No key eviction.** There is no `maxmemory`, so Redis never deletes keys to free up space. This is what queues like BullMQ, Sidekiq, or Celery need.
-- **No fixed memory limit.** It uses what it needs, and you pay for what you use.
+- **No key eviction.** Redis never deletes keys to free up space (`noeviction`). This is what queues like BullMQ, Sidekiq, or Celery need.
+- **Up to 1 GB of data.** When it reaches that cap (`maxmemory`), Redis rejects new writes with an out-of-memory error instead of deleting keys; reads keep working. Set an expiration (`EX`) on anything you use as a cache.
+- **Usage-based pricing.** Each instance runs with up to 2 GB of memory and 2 vCPU, and you pay only for what it uses. See [Pricing and billing](/cuenta/facturacion).
 - **Optional external access** over TLS. See [Connection](/redis/conexion).
 - **Metrics**: memory used, operations per second, connected and blocked clients, number of keys, and cache hits.
 
