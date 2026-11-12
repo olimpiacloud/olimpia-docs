@@ -33,7 +33,7 @@
   --olimpia-olivo: #58c492;
 }
 
-img[src^="/art/"] {
+img[src^="/arte/"] {
   image-rendering: pixelated;
 }
 

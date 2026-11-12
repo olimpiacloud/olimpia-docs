@@ -24,7 +24,7 @@ bunx blume validate
 | `docs/` | Contenido en MDX. Cada carpeta es un grupo del sidebar, ordenado por su `meta.ts`. |
 | `docs/agentes/` | Pestaña "Para agentes" (MCP, skill, herramientas, prompts). |
 | `docs/proximamente/` | Módulos todavía no habilitados en Olimpia. |
-| `public/art/` | Ilustraciones en dither estilo cómic (tinta, celeste y blanco). Salen de las acuarelas de `art-src/` con `uv run --with pillow --with numpy python scripts/comic.py art-src public/art`. |
+| `public/arte/` | Ilustraciones en dither estilo cómic (tinta, celeste y blanco). Salen de las acuarelas de `art-src/` con `uv run --with pillow --with numpy python scripts/comic.py art-src public/arte`. |
 | `blume.config.ts` y `theme.css` | Configuración y estética (paleta y tipografías de olimpia.dev). |
 
 Cuando un módulo de `docs/proximamente/` se habilita en Olimpia, su página se mueve a su propia sección y se le saca el badge `Pronto`.
