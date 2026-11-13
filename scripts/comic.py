@@ -67,9 +67,6 @@ def main(src, out):
         print(name)
     for name in ICONS:
         icon(Image.open(src / "icons" / f"{name}.webp").convert("RGBA"), 48).save(out / f"{name}.webp", lossless=True, method=6)
-    card = Image.open(src / "banner.png").convert("RGB")
-    card = card.crop((0, (card.height - card.width * 630 // 1200) // 2, card.width, (card.height + card.width * 630 // 1200) // 2))
-    scene(card, (600, 315)).quantize(4).save(out / "og.png", optimize=True)
 
 
 main(*sys.argv[1:3])
