@@ -1,71 +1,71 @@
 {
-  "version": 1,
+  "version": 2,
   "skills": {
     "astro-best-practices": {
       "source": "incluud/astro-agent-skills",
       "sourceType": "github",
       "skillPath": "skills/astro-best-practices/SKILL.md",
-      "computedHash": "353ad7ebffed9a06dab2cb762b28ec6b8fb07abb00cb731b34c9df60315e0e7f"
+      "computedHash": "c1985bff9075848cd7670e72f49e72f06a53a24881580c6e2bf9b010b30527a7"
     },
     "astro-developer": {
       "source": "withastro/astro",
       "sourceType": "github",
       "skillPath": ".agents/skills/astro-developer/SKILL.md",
-      "computedHash": "cd767f617a4c2baef1950ab5fe45bc9b5e88d255f3c374e64b7bc1ee929eb920"
+      "computedHash": "d3b2e5557470705037a177bd15e0bfe3ad3a983c08e95422ba67d2d4144d602c"
     },
     "blume": {
       "source": "haydenbleasel/blume",
       "sourceType": "github",
       "skillPath": "skills/blume/SKILL.md",
-      "computedHash": "d36f655fad257bece83eeb2cedbe506bc7320cd1897b69048a45a0d8f45fb365"
+      "computedHash": "b5a5bb3f21c7490b3778b81781d744b20c5c2088ad22a705bcc9e6d4864c62ea"
     },
     "blume-migrate": {
       "source": "haydenbleasel/blume",
       "sourceType": "github",
       "skillPath": "skills/blume-migrate/SKILL.md",
-      "computedHash": "1dd4b87e8c747b517369f2175bd83d9671a16decc54aab2773f2eb3a7ddb383c"
+      "computedHash": "1bd1511adc3b150f24965e65608eed0e0eb866f9e6da120aac40778050d61e3b"
     },
     "blume-update-docs": {
       "source": "haydenbleasel/blume",
       "sourceType": "github",
       "skillPath": "skills/blume-update-docs/SKILL.md",
-      "computedHash": "484f1f58068762161d7322dfb52383684156b52a8998c44d918e80e9d91ec7a3"
+      "computedHash": "f621a0225a8e0b6d78916de2d8bdfa6b188bc7390f41934b2213387c3ef9e68d"
     },
     "blume-write-skill": {
       "source": "haydenbleasel/blume",
       "sourceType": "github",
       "skillPath": "skills/blume-write-skill/SKILL.md",
-      "computedHash": "f25a13c2ec6683d20c3e4bd695c1be963cd586ac9e332f296985cff9e2dd7fbc"
+      "computedHash": "cf62f96ed6e370af342c5cacbd184dc8c80b81c8a4c98f735418142116b0757c"
     },
     "copywriting": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/copywriting/SKILL.md",
-      "computedHash": "779f05c8be67da475e6a7af78de3e0400b0038e371ce898dd6ff9d3331aab7db"
+      "computedHash": "b948ac03ec661626b8fc198786ecf761a97e0dacf626cb90d3b5016e9e3baf2f"
     },
     "emil-design-eng": {
       "source": "emilkowalski/skills",
       "sourceType": "github",
       "skillPath": "skills/emil-design-eng/SKILL.md",
-      "computedHash": "51f2537e04d15911b41d78e2de24c36a0e26d41beae15e82a954fe5496a5eda9"
+      "computedHash": "e1b377ccde1d32743d1d3f7d8626629deb8055c9114d180c184697928cc66cc6"
     },
     "high-end-visual-design": {
       "source": "leonxlnx/taste-skill",
       "sourceType": "github",
       "skillPath": "skills/soft-skill/SKILL.md",
-      "computedHash": "7db385e4c5370e5a7fca9704a1361b056e4504ea6a03924bb86f33a4f00b5c73"
+      "computedHash": "d5f1d07d14b1e72454e49c4de69adc65022f4eda0126e1902b84a2e0c3fec47b"
     },
     "olimpia": {
       "source": "olimpiacloud/olimpia-skills",
       "sourceType": "github",
       "skillPath": "skills/olimpia/SKILL.md",
-      "computedHash": "5f2df37f073129dd597cc989fa2aad7be70bc46848e831895c01449fc69a91aa"
+      "computedHash": "6d9e0c4ce6eaf1e99b81f70fa58c4bca36555c9cb3a68aa7e9217cc6df7cf711"
     },
     "ponytail": {
       "source": "dietrichgebert/ponytail",
       "sourceType": "github",
       "skillPath": "skills/ponytail/SKILL.md",
-      "computedHash": "210fa0831f649ce9f8a305f7b7c8cf2a0dd09ac4dd53067109941b96e7811d4e"
+      "computedHash": "56d72677aca02689ac89bd48734e8c19b40ab86716d1257eaf5f1238b43cda6b"
     }
   }
 }
